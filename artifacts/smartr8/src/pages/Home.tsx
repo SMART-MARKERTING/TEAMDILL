@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FunnelModal } from "@/components/FunnelModal";
@@ -28,11 +28,11 @@ export default function Home() {
                 Real mortgage options from a loan officer who actually picks up the phone.
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                I'm Mykoal at Adaxa Home in Scottsdale. Whether you want to pull cash from your home, lower your monthly payment, or just see what's possible, I'll show you real options from 99+ lenders. No pressure, no credit pull.
+                I'm Mykoal at Adaxa Home in Scottsdale. Whether you want to pull cash from your home, lower your monthly payment, or just see what's possible, I'll show you real options from 99+ lenders. No credit pull required to see your options. We only pull credit when you give the OK.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-accent hover:bg-accent/90 text-white shadow-lg text-lg h-14"
                   onClick={() => openFunnel()}
                   data-testid="hero-primary-cta"
@@ -40,9 +40,9 @@ export default function Home() {
                   See My Options
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="h-14 text-lg border-2"
                   asChild
                   data-testid="hero-secondary-cta"
@@ -54,8 +54,26 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="relative h-64 md:h-[400px] w-full max-w-md mx-auto animate-in fade-in zoom-in-95 duration-700 delay-150">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/30 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
+
+            {/* HEADSHOT */}
+            <div className="relative h-64 md:h-[420px] w-full max-w-md mx-auto animate-in fade-in zoom-in-95 duration-700 delay-150 flex items-center justify-center">
+              <img
+                src="/mykoal-headshot.jpg"
+                alt="Mykoal DeShazo — VP & Senior Loan Officer at Adaxa Home"
+                className="h-64 w-64 md:h-[380px] md:w-[380px] rounded-full object-cover object-top border-4 border-white shadow-2xl"
+                onError={(e) => {
+                  const el = e.currentTarget;
+                  el.style.display = "none";
+                  const fallback = el.nextElementSibling as HTMLElement | null;
+                  if (fallback) fallback.style.display = "flex";
+                }}
+                data-testid="hero-headshot"
+              />
+              {/* Fallback shown only if image fails to load */}
+              <div
+                className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/30 rounded-full items-center justify-center border-4 border-white shadow-xl hidden"
+                aria-hidden="true"
+              >
                 <span className="text-8xl font-bold text-primary/20 tracking-tighter">MD</span>
               </div>
             </div>
@@ -81,7 +99,7 @@ export default function Home() {
         <section className="py-20 px-4 container mx-auto max-w-5xl">
           <h2 className="text-3xl font-bold text-center mb-12 text-primary">How can I help you today?</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <Card 
+            <Card
               className="hover:border-primary/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md"
               onClick={() => openFunnel("Pull cash out of my home")}
               data-testid="path-card-cash"
@@ -98,7 +116,7 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card 
+            <Card
               className="hover:border-primary/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md"
               onClick={() => openFunnel("Lower my monthly payment")}
               data-testid="path-card-lower"
@@ -115,7 +133,7 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card 
+            <Card
               className="hover:border-primary/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md"
               onClick={() => openFunnel("Not sure, show me options")}
               data-testid="path-card-unsure"
@@ -140,19 +158,19 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center mb-16 text-primary">How it works</h2>
             <div className="grid md:grid-cols-3 gap-12 relative">
               <div className="hidden md:block absolute top-6 left-[15%] right-[15%] h-[2px] bg-border z-0"></div>
-              
+
               <div className="relative z-10 flex flex-col items-center text-center">
                 <div className="h-12 w-12 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xl mb-6 shadow-md">1</div>
                 <h3 className="font-semibold text-xl mb-3">Tell me about your home and goal</h3>
                 <p className="text-muted-foreground">Quick form, no credit pull required to see what's possible.</p>
               </div>
-              
+
               <div className="relative z-10 flex flex-col items-center text-center">
                 <div className="h-12 w-12 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xl mb-6 shadow-md">2</div>
                 <h3 className="font-semibold text-xl mb-3">I pull options from 99+ lenders</h3>
                 <p className="text-muted-foreground">Cash out, HELOC, refi, whatever fits your specific situation.</p>
               </div>
-              
+
               <div className="relative z-10 flex flex-col items-center text-center">
                 <div className="h-12 w-12 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xl mb-6 shadow-md">3</div>
                 <h3 className="font-semibold text-xl mb-3">You pick what works</h3>
@@ -164,7 +182,16 @@ export default function Home() {
 
         {/* ABOUT MYKOAL */}
         <section className="py-20 px-4 container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-8 text-primary">About Mykoal</h2>
+          <div className="flex flex-col items-center mb-8">
+            <img
+              src="/mykoal-headshot.jpg"
+              alt="Mykoal DeShazo"
+              className="h-24 w-24 rounded-full object-cover object-top border-4 border-white shadow-lg mb-6"
+              onError={(e) => { e.currentTarget.style.display = "none"; }}
+              data-testid="about-headshot"
+            />
+            <h2 className="text-3xl font-bold text-primary">About Mykoal</h2>
+          </div>
           <div className="prose prose-lg mx-auto text-muted-foreground">
             <p className="lead text-xl text-foreground font-medium mb-6">
               I'm Vice President and Senior Loan Officer at Adaxa Home in Scottsdale, AZ, with 7+ years closing mortgages.
@@ -188,8 +215,8 @@ export default function Home() {
           <div className="container mx-auto max-w-3xl">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to see your options?</h2>
             <p className="text-xl text-primary-foreground/80 mb-10">Quick conversation. No credit pull. No commitment.</p>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-accent hover:bg-accent/90 text-white shadow-xl text-xl h-16 px-8 mb-6"
               onClick={() => openFunnel()}
               data-testid="footer-cta"
@@ -205,10 +232,10 @@ export default function Home() {
       </main>
 
       <Footer />
-      <FunnelModal 
-        isOpen={isFunnelOpen} 
-        onClose={() => setIsFunnelOpen(false)} 
-        initialGoal={initialGoal} 
+      <FunnelModal
+        isOpen={isFunnelOpen}
+        onClose={() => setIsFunnelOpen(false)}
+        initialGoal={initialGoal}
       />
     </div>
   );

@@ -1,0 +1,76 @@
+Major cleanup pass on the lead funnel site. Fix the following issues:
+
+1. METADATA — Replace the placeholder Replit metadata:
+   - Title: "Mykoal DeShazo | VP & Senior Loan Officer at Adaxa Home"
+   - Meta description: "Real mortgage options from a Senior Loan Officer 
+     at Adaxa Home in Scottsdale. Cash out, refi, HELOC and more from 
+     99+ lenders. No credit pull, no pressure. NMLS #1912347. Equal 
+     Housing Opportunity."
+   - OG title, OG description: match above
+   - Remove ALL references to "Replit" from metadata
+   - Twitter card: summary_large_image with matching title/description
+   - On /thank-you: add noindex meta tag
+   - Add a favicon using a square crop of the Adaxa logo "A" mark. 
+     Generate favicon.ico, 16x16, 32x32, and 180x180 apple-touch-icon
+
+2. HEADSHOT — Replace the "MD" placeholder circle in the hero with 
+   the actual headshot image from /public/mykoal-headshot.jpg. Round 
+   border, white shadow, same dimensions.
+
+3. HEADSHOT IN ABOUT SECTION — Add a smaller circular headshot above 
+   the "About Mykoal" heading (same file, smaller size, centered)
+
+4. EQUAL HOUSING OPPORTUNITY LOGO — Add the official EHO logo as 
+   /public/eho-logo.png. Display it in the footer next to or above 
+   the "Equal Housing Opportunity" text. Also add it to the funnel 
+   modal footer.
+
+5. MOBILE HEADER FIX — Currently "Mykoal DeShazo" and "Vice President 
+   | Senior Loan Officer at Adaxa Home" text is hidden on mobile 
+   (hidden sm:flex). Make it visible on mobile too — stack vertically 
+   under or next to the logo. This is critical for compliance — 
+   mobile visitors must see who they're dealing with.
+
+6. PATH CARDS NOT CLICKABLE — The three cards on the home page 
+   ("Pull cash from your home", "Lower my monthly payment", "Not sure 
+   show me options") have cursor-pointer styling but no actual onClick 
+   handler. Wire them to open the funnel modal with the goal 
+   pre-selected based on which card was clicked:
+   - Card 1 → opens funnel, Step 1 pre-selects "Pull cash out of my home"
+   - Card 2 → opens funnel, Step 1 pre-selects "Lower my monthly payment"
+   - Card 3 → opens funnel, Step 1 pre-selects "Not sure, show me options"
+
+7. HERO COPY TWEAK — Change "No pressure, no credit pull." to:
+   "No credit pull required to see your options. We only pull credit 
+   when you give the OK."
+
+8. PRIVACY POLICY & TERMS LINKS — Add to footer below the EHO line:
+   "Privacy Policy" link → https://adaxahome.com/privacy-policy
+   "Terms of Use" link → https://adaxahome.com/terms-of-use
+   (Confirm these URLs exist on adaxahome.com — if not, leave linked 
+   to adaxahome.com homepage for now)
+
+9. STATES LICENSED — Add to footer between EHO and disclaimer:
+   "Licensed in multiple states. See adaxahome.com for full state 
+   licensing details."
+
+10. VERIFY THE FUNNEL MODAL EXISTS — When users click "See My Options" 
+    or any of the path cards, a multi-step funnel modal should open 
+    with 6 screens (goal, home value, mortgage balance, credit, zip, 
+    contact info). If this doesn't exist yet, build it per the original 
+    spec. Verify the funnel:
+    - Uses one question per screen with auto-advance buttons
+    - Has progress bar at top
+    - Has back button on every screen except step 1
+    - Step 6 has TCPA consent checkbox (required): "I agree to be 
+      contacted by Mykoal DeShazo at Adaxa Home by phone, text, or 
+      email about mortgage options. I can opt out anytime. Standard 
+      message rates may apply."
+    - Submits to https://formspree.io/f/maqvlqrg with hidden inputs 
+      for _subject and _next
+    - Redirects to /thank-you on success
+    - Does NOT collect SSN, DOB, full address, or income — only name, 
+      phone, email, zip, goal, credit range, consent
+
+Run npm run build and confirm clean. Send the updated preview link 
+when done.
