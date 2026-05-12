@@ -1,0 +1,207 @@
+Build a single-page lead capture funnel for a licensed mortgage 
+loan officer. Static Next.js site for Cloudflare Pages deployment. 
+No multi-page navigation. One landing page + one thank-you page 
++ one 404. That's it.
+
+OWNER INFO (use everywhere applicable):
+- Name: Mykoal DeShazo
+- Title: Vice President | Senior Loan Officer
+- Company: Adaxa Home, LLC
+- Personal NMLS: #1912347
+- Company NMLS: #2380533
+- Address: 16767 N Perimeter Dr., Ste 150, Scottsdale, AZ 85260
+- Phone: (949) 418-5486
+- Email: mykoal@adaxahome.com
+
+TECH STACK:
+- Next.js with static export (output: 'export' in next.config.js)
+- Tailwind CSS
+- Build outputs to /out folder
+- Deployable to Cloudflare Pages
+- No backend, no API routes, no database
+
+DESIGN:
+- Match adaxahome.com brand: clean black + white + light gray
+- Inter font family
+- Professional, trust-focused, not flashy
+- Mobile-first responsive
+- Use /public/adaxa-logo.png and /public/mykoal-headshot.jpg
+
+PAGE STRUCTURE (just 3 routes):
+1. / (the funnel)
+2. /thank-you
+3. /404
+
+============================================
+HOME PAGE (/) — SINGLE PAGE FUNNEL
+============================================
+
+SECTION 1: HEADER
+- Adaxa logo (top left, 36px height, links to /)
+- To the right of logo: "Mykoal DeShazo" (bold) above 
+  "Vice President | Senior Loan Officer at Adaxa Home" (smaller, muted)
+- Top right: (949) 418-5486 as a tel: link
+
+SECTION 2: HERO
+- Headline: "Real mortgage options from a loan officer who actually 
+  picks up the phone."
+- Subhead: "I'm Mykoal at Adaxa Home in Scottsdale. Whether you 
+  want to pull cash from your home, lower your monthly payment, 
+  or just see what's possible, I'll show you real options from 
+  99+ lenders. No pressure, no credit pull."
+- Two CTA buttons:
+  * Primary: "See My Options" → opens the funnel modal/screen
+  * Secondary: "Text Me" → tel:9494185486
+- Optional: headshot of Mykoal on the right side
+
+SECTION 3: TRUST STRIP
+"7+ years closing loans. 99+ wholesale lenders. Vice President at 
+Adaxa Home. Licensed since 2017."
+
+SECTION 4: THREE PATHS (visual cards, NOT separate pages — clicking 
+any of these opens the SAME funnel, just pre-selects the goal)
+- Card 1: "Pull cash from your home" → opens funnel with goal pre-selected
+- Card 2: "Lower my monthly payment" → opens funnel with goal pre-selected
+- Card 3: "Not sure, show me options" → opens funnel with goal pre-selected
+
+SECTION 5: ABOUT MYKOAL
+- Photo of Mykoal on one side
+- Text: "I'm Vice President and Senior Loan Officer at Adaxa Home 
+  in Scottsdale, AZ, with 7+ years closing mortgages. I work with 
+  99+ wholesale lenders — Rocket, loanDepot, Carrington, CAKE, and 
+  more — which means I'm not stuck pitching one product. I look at 
+  your situation and bring you the option that actually fits."
+- Below: phone, email, NMLS #1912347
+
+SECTION 6: HOW IT WORKS (3 steps)
+1. "Tell me about your home and goal" — Quick form, no credit pull
+2. "I pull options from 99+ lenders" — Cash out, HELOC, refi, whatever fits
+3. "You pick what works" — We close it together
+
+SECTION 7: FINAL CTA
+- Headline: "Ready to see your options?"
+- Subhead: "Quick conversation. No credit pull. No commitment."
+- Button: "See My Options" → opens funnel
+- Below: "Or text me directly at (949) 418-5486"
+
+SECTION 8: FOOTER
+Mykoal DeShazo | Vice President | Senior Loan Officer | NMLS #1912347
+Adaxa Home, LLC | NMLS #2380533
+16767 N Perimeter Dr., Ste 150, Scottsdale, AZ 85260
+Equal Housing Opportunity (with EHO logo)
+Full licensing and disclosures at adaxahome.com
+This is not a commitment to lend. All loans subject to credit approval, 
+income verification, and property appraisal. Rates and terms subject 
+to change.
+
+============================================
+THE FUNNEL (modal or slide-up overlay on home page)
+============================================
+
+6-step multi-step funnel. One question per screen. Auto-advance 
+on click for buttons. Progress bar at top showing "Step X of 6". 
+Back button on every screen except step 1.
+
+SCREEN 1 — GOAL
+Question: "What are you trying to do?"
+Options (single-select buttons, auto-advance):
+- "Pull cash out of my home"
+- "Lower my monthly payment"
+- "Buy or refinance a property"
+- "Not sure, show me options"
+
+SCREEN 2 — HOME VALUE
+Question: "About how much is your home worth?"
+Options:
+- Under $400K
+- $400K to $600K
+- $600K to $800K
+- $800K to $1M
+- Over $1M
+
+SCREEN 3 — MORTGAGE BALANCE
+Question: "About how much do you still owe?"
+Options:
+- Under $200K
+- $200K to $400K
+- $400K to $600K
+- Over $600K
+- I own it free and clear
+
+SCREEN 4 — CREDIT
+Question: "Your credit is roughly..."
+Options:
+- 760 or higher
+- 720 to 759
+- 680 to 719
+- 620 to 679
+- Below 620
+- Not sure
+
+SCREEN 5 — ZIP
+Question: "What zip code is the property in?"
+Type: single 5-digit text input
+"Continue" button to advance
+
+SCREEN 6 — CONTACT (final step)
+Heading: "Last step. Where should I send your options?"
+Subhead: "No spam. No credit pull. Real options sent within hours."
+Fields:
+- Full Name (required)
+- Phone (required)
+- Email (required)
+- Consent checkbox (required): "I agree to be contacted by Mykoal 
+  DeShazo at Adaxa Home by phone, text, or email about mortgage 
+  options. I can opt out anytime. Standard message rates may apply."
+Submit button: "Get My Options"
+
+DO NOT collect: SSN, DOB, full address, income, or any sensitive PII. 
+ZIP code only.
+
+FUNNEL SUBMISSION (Formspree):
+Use this single endpoint for all submissions:
+https://formspree.io/f/maqvlqrg
+
+Hidden inputs:
+<input type="hidden" name="_subject" value="New SMARTR8 lead — [GOAL]" />
+<input type="hidden" name="_next" value="https://smartr8.com/thank-you" />
+
+(Replace [GOAL] dynamically with the goal they picked in Screen 1)
+
+Include all 6 screen answers in submission as named fields:
+goal, home_value, mortgage_balance, credit_range, property_zip, 
+full_name, phone, email, consent
+
+On submit success, redirect to /thank-you.
+
+============================================
+THANK YOU PAGE (/thank-you)
+============================================
+
+- Header (same as home)
+- Headline: "Got it. Let's talk."
+- Body: "I'll review what you sent and reach out within a few hours. 
+  If you want to lock in a time now, grab a slot below. While you 
+  wait, save my number: (949) 418-5486. Text me anytime."
+- Cal.com embed placeholder (I'll add the URL later)
+- Footer (same as home)
+- noindex meta tag (don't index this page)
+
+============================================
+404 PAGE (/404)
+============================================
+"Page not found. Let's get you home." Button back to /.
+
+============================================
+DEPLOYMENT README
+============================================
+Include a README.md at project root with steps for:
+1. Push to GitHub from Replit
+2. Connect GitHub repo to Cloudflare Pages
+3. Build settings: Framework "Next.js (Static HTML Export)", 
+   Build command "npm run build", Output directory "out"
+4. Add custom domain smartr8.com in Cloudflare Pages
+5. Where to swap in the Cal.com URL on /thank-you
+
+Run npm run build and confirm it builds clean with no errors. 
+Send me the preview URL when done.

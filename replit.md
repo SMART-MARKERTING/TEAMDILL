@@ -1,45 +1,63 @@
-# [Project name]
+# SMARTR8 — Adaxa Home Lead Funnel
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A static lead capture funnel for Mykoal DeShazo, VP & Senior Loan Officer at Adaxa Home, LLC. Single-page funnel with a 6-step multi-step modal, Formspree form submission, and three routes: /, /thank-you, /404.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/smartr8 run dev` — run the frontend (port assigned by workflow)
+- `pnpm --filter @workspace/smartr8 run build` — build static output to `artifacts/smartr8/dist/public/`
 - `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React + Vite (static export)
+- Routing: wouter
+- Styling: Tailwind CSS v4 + shadcn/ui
+- Forms: react-hook-form + zod
+- Lead submission: Formspree (https://formspree.io/f/maqvlqrg)
+- No backend, no database
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/smartr8/src/pages/Home.tsx` — main landing page
+- `artifacts/smartr8/src/pages/ThankYou.tsx` — thank-you page (noindex)
+- `artifacts/smartr8/src/pages/not-found.tsx` — 404 page
+- `artifacts/smartr8/src/components/FunnelModal.tsx` — 6-step lead capture funnel
+- `artifacts/smartr8/src/components/Header.tsx` — shared header
+- `artifacts/smartr8/src/components/Footer.tsx` — shared footer
+- `artifacts/smartr8/src/App.tsx` — wouter router
+- `artifacts/smartr8/src/index.css` — theme variables (Inter font, Adaxa brand colors)
+- `artifacts/smartr8/public/adaxa-logo.jpg` — Adaxa Home logo
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Static-only React + Vite instead of Next.js — same deployment target (Cloudflare Pages static), simpler monorepo integration
+- Formspree for lead submission — no backend needed, free tier handles the volume
+- Wouter for routing — lightweight, matches the existing monorepo pattern
+- 6-step funnel built as a modal overlay — keeps everything on one URL for analytics
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+A trust-first mortgage lead funnel. Homeowners land, choose their goal (cash-out, lower payment, explore options), complete 6 quick questions about their property, and submit contact info. Mykoal gets email notifications via Formspree and follows up personally.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Owner: Mykoal DeShazo, VP | Senior Loan Officer, Adaxa Home LLC
+- NMLS #1912347 (personal), NMLS #2380533 (company)
+- Phone: (949) 418-5486, Email: mykoal@adaxahome.com
+- Brand: clean black + white + light gray, Inter font, professional + trust-focused
+- Formspree endpoint: https://formspree.io/f/maqvlqrg
+- Cal.com booking embed on /thank-you — URL TBD, placeholder in ThankYou.tsx
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Always add Google Fonts `@import url(...)` as the VERY FIRST line of index.css — PostCSS will fail silently if it appears after other imports
+- The Vite build uses BASE_PATH env var from the workflow — don't hardcode "/" as base
+- For Cloudflare Pages deployment, build command must install pnpm first: `npm install -g pnpm && pnpm install && pnpm --filter @workspace/smartr8 run build`
+- Build output directory for Cloudflare: `artifacts/smartr8/dist/public`
 
 ## Pointers
 
+- See `README.md` for full Cloudflare Pages deployment steps and Cal.com embed instructions
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
