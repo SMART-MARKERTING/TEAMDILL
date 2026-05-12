@@ -72,7 +72,7 @@ export default function Home() {
               <span className="hidden md:inline text-border">•</span>
               <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Vice President at Adaxa Home</span>
               <span className="hidden md:inline text-border">•</span>
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Licensed since 2017</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Licensed since 2020</span>
             </div>
           </div>
         </section>

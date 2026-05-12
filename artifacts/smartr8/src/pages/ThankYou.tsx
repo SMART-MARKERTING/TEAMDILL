@@ -1,22 +1,30 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export default function ThankYou() {
   useEffect(() => {
-    // Add noindex meta tag
-    let meta = document.querySelector('meta[name="robots"]');
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.setAttribute('name', 'robots');
-      document.head.appendChild(meta);
+    const prevTitle = document.title;
+    document.title = "Thanks, talk soon";
+
+    let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    const createdRobots = !robotsMeta;
+    if (!robotsMeta) {
+      robotsMeta = document.createElement("meta");
+      robotsMeta.setAttribute("name", "robots");
+      document.head.appendChild(robotsMeta);
     }
-    meta.setAttribute('content', 'noindex, nofollow');
+    const prevRobots = robotsMeta.getAttribute("content");
+    robotsMeta.setAttribute("content", "noindex, nofollow");
 
     return () => {
-      // Cleanup on unmount
-      if (meta && meta.getAttribute('content') === 'noindex, nofollow') {
-        document.head.removeChild(meta);
+      document.title = prevTitle;
+      if (robotsMeta) {
+        if (createdRobots) {
+          document.head.removeChild(robotsMeta);
+        } else {
+          robotsMeta.setAttribute("content", prevRobots ?? "");
+        }
       }
     };
   }, []);
@@ -32,16 +40,20 @@ export default function ThankYou() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
             </svg>
           </div>
-          
+
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary mb-6">
             Got it. Let's talk.
           </h1>
-          
+
           <p className="text-xl text-muted-foreground leading-relaxed mb-12">
-            I'll review what you sent and reach out within a few hours. If you want to lock in a time now, grab a slot below. While you wait, save my number: <a href="tel:9494185486" className="font-semibold text-primary hover:underline">(949) 418-5486</a>. Text me anytime.
+            I'll review what you sent and reach out within a few hours. If you want to lock in a time now, grab a slot below. While you wait, save my number:{" "}
+            <a href="tel:9494185486" className="font-semibold text-primary hover:underline">
+              (949) 418-5486
+            </a>
+            . Text me anytime.
           </p>
 
-          <div 
+          <div
             className="w-full min-h-[500px] border border-border rounded-xl bg-card shadow-sm flex items-center justify-center p-8 text-muted-foreground"
             data-testid="calcom-placeholder"
           >
