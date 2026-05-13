@@ -139,8 +139,14 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
       });
       if (result.success) {
         saveRateContext({ creditScore: answers.credit_range, funnel: funnelType });
+        const whatsNextPath: Record<FunnelId, string> = {
+          cashout: "/apply/cash-out/whats-next",
+          heloc: "/heloc/whats-next",
+          "rate-reduction": "/apply/rate-reduction/whats-next",
+          purchase: "/apply/purchase/whats-next",
+        };
         onClose();
-        setLocation(`/apply/cash-out/whats-next?name=${encodeURIComponent(firstName)}&credit=${encodeURIComponent(answers.credit_range)}&funnel=${funnelType}`);
+        setLocation(`${whatsNextPath[funnelType]}?name=${encodeURIComponent(firstName)}&credit=${encodeURIComponent(answers.credit_range)}&funnel=${funnelType}`);
       } else {
         setError(result.error || SUBMIT_ERR);
         setIsSubmitting(false);

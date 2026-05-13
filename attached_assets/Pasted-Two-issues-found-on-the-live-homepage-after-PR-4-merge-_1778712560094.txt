@@ -1,0 +1,39 @@
+Two issues found on the live homepage after PR #4 merge:
+
+ISSUE 1: The homepage "See My Options" button opens a modal/flow that is STILL submitting to Formspree, not the new LeadMailbox Worker. PR #4 claimed all Formspree references were removed, but the homepage modal flow appears to have been missed.
+
+ISSUE 2: After completing the homepage modal flow, the user is sent directly to /thank-you (with the calendar embed). They are NOT seeing the new "What's next?" decision page with the three options (See My HELOC Rate Now, Schedule Appointment, Continue Application).
+
+INVESTIGATE:
+
+1. Find the component that handles the homepage "See My Options" button click. Likely candidates:
+   - src/components/FunnelModal.tsx
+   - src/components/HelocForm.tsx
+   - Some other component on the homepage
+
+2. Confirm: does this component currently POST to Formspree, LeadMailbox, or something else? Check the submit handler.
+
+3. Confirm: what does the post-submission redirect look like? Where does the user land?
+
+REQUIRED FIXES:
+
+1. If any Formspree reference remains, replace it with the same submitLead() utility used by /heloc, /apply/cash-out, /apply/rate-reduction, /apply/purchase. This routes through the Cloudflare Worker → LeadMailbox.
+
+2. After successful submission from the homepage modal, redirect the user to:
+   - /heloc/whats-next?name=[firstName] if the goal selected was equity/cash-out related
+   - OR /apply/cash-out/whats-next?name=[firstName] if cash-out specifically was chosen
+   
+   Use whatever logic makes sense given the multi-goal homepage modal — match the goal to the appropriate /whats-next page.
+   
+   The /whats-next pages already exist with the three-option layout (See HELOC options / Schedule call / Continue Application). The homepage should leverage them, not bypass them.
+
+3. Search the entire codebase one more time for "formspree" (case-insensitive). Report any remaining matches. If any exist, replace them.
+
+VERIFICATION:
+
+Before pushing, test in dev preview that:
+- Submitting the homepage modal sends data through /api/submit-lead (check Network tab in dev tools)
+- After submission, the user lands on a /whats-next page (NOT /thank-you directly)
+- The user sees the three options on /whats-next
+
+Open a new PR (PR #5) targeting main. Do not auto-merge.
