@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -128,11 +129,11 @@ const INITIAL_FORM: FormData = {
 };
 
 export function HelocForm() {
+  const [, setLocation] = useLocation();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
@@ -200,8 +201,6 @@ export function HelocForm() {
       data.append("property_state", form.state);
       data.append("page", "heloc");
 
-      /* ANALYTICS: fire "generate_lead" conversion event here */
-
       const res = await fetch("https://formspree.io/f/meennekb", {
         method: "POST",
         body: data,
@@ -209,7 +208,8 @@ export function HelocForm() {
       });
 
       if (res.ok) {
-        setSubmitted(true);
+        /* ANALYTICS: fire "generate_lead" conversion event here */
+        setLocation(`/heloc/next-steps?name=${encodeURIComponent(form.first_name)}`);
       } else {
         const json = await res.json();
         setError(json.error || "There was a problem submitting your form. Please try again.");
@@ -220,29 +220,6 @@ export function HelocForm() {
       setIsSubmitting(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <div className="text-center py-10 animate-in fade-in duration-500">
-        <div
-          className="h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-6"
-          style={{ backgroundColor: "rgba(26,58,71,0.12)" }}
-        >
-          <Check className="w-8 h-8" style={{ color: "#13485A" }} />
-        </div>
-        <h3 className="text-2xl font-bold mb-3" style={{ color: "#13485A" }}>
-          Thanks, {form.first_name}.
-        </h3>
-        <p className="text-muted-foreground text-lg max-w-md mx-auto">
-          I'll reach out within one business day. For urgent questions, text or call{" "}
-          <a href="tel:9494185486" className="font-semibold hover:underline" style={{ color: "#13485A" }}>
-            (949) 418-5486
-          </a>
-          .
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full max-w-xl mx-auto">

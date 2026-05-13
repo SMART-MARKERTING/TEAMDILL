@@ -242,8 +242,7 @@ export default function Heloc() {
                 <div className="text-sm text-muted-foreground font-medium">Years in the Mortgage Industry</div>
               </div>
               <div>
-                {/* PLACEHOLDER_CLOSED_VOLUME */}
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">$100M+</div>
+                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">$199M+</div>
                 <div className="text-sm text-muted-foreground font-medium">in Closed Loans</div>
               </div>
             </div>
@@ -264,31 +263,28 @@ export default function Heloc() {
 
             {/* Testimonials */}
             <div className="grid md:grid-cols-3 gap-6 mb-10">
-              {/* TESTIMONIAL_PLACEHOLDER_1 */}
               <Card className="shadow-sm">
-                <CardContent className="p-6">
-                  <p className="text-muted-foreground text-sm italic leading-relaxed mb-4">
-                    "TESTIMONIAL_PLACEHOLDER_1 — Your testimonial quote goes here."
+                <CardContent className="p-6 flex flex-col h-full">
+                  <p className="text-muted-foreground text-sm italic leading-relaxed mb-4 flex-1">
+                    "Quick. Easy, straight to it. Mykoal was very communicative start to finish. I went to the extent of shopping many lenders, at least 10 of them, and Mykoal was patient and gave me the best deal by far."
                   </p>
-                  <div className="text-xs font-semibold text-primary">First Name L., City, State</div>
+                  <div className="text-xs font-semibold text-primary">Ethan W.</div>
                 </CardContent>
               </Card>
-              {/* TESTIMONIAL_PLACEHOLDER_2 */}
               <Card className="shadow-sm">
-                <CardContent className="p-6">
-                  <p className="text-muted-foreground text-sm italic leading-relaxed mb-4">
-                    "TESTIMONIAL_PLACEHOLDER_2 — Your testimonial quote goes here."
+                <CardContent className="p-6 flex flex-col h-full">
+                  <p className="text-muted-foreground text-sm italic leading-relaxed mb-4 flex-1">
+                    "Excellent customer service. Went the extra mile to determine the best options for us and then stay with us throughout the entire process, even ensuring that technology glitches were addressed in a timely fashion."
                   </p>
-                  <div className="text-xs font-semibold text-primary">First Name L., City, State</div>
+                  <div className="text-xs font-semibold text-primary">Michelle F.</div>
                 </CardContent>
               </Card>
-              {/* TESTIMONIAL_PLACEHOLDER_3 */}
               <Card className="shadow-sm">
-                <CardContent className="p-6">
-                  <p className="text-muted-foreground text-sm italic leading-relaxed mb-4">
-                    "TESTIMONIAL_PLACEHOLDER_3 — Your testimonial quote goes here."
+                <CardContent className="p-6 flex flex-col h-full">
+                  <p className="text-muted-foreground text-sm italic leading-relaxed mb-4 flex-1">
+                    "Mykoal did a great job working with us. He's good at follow up and keeping you updated. He also has all the patience in the world. Nice professional young man. Would definitely recommend him to do your loan."
                   </p>
-                  <div className="text-xs font-semibold text-primary">First Name L., City, State</div>
+                  <div className="text-xs font-semibold text-primary">Raymond L.</div>
                 </CardContent>
               </Card>
             </div>
@@ -296,7 +292,7 @@ export default function Heloc() {
             {/* Review aggregate */}
             <div className="text-center text-sm text-muted-foreground">
               <span className="text-yellow-500 mr-1" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-              4.9/5 across Google &middot; {/* PLACEHOLDER_REVIEW_COUNT */}100+ verified reviews
+              4.9/5 across Google verified reviews
             </div>
           </div>
         </section>
@@ -398,7 +394,7 @@ export default function Heloc() {
               Office: <a href="tel:9494185486" className="hover:text-primary">(949) 418-5486</a> &middot; Email: <a href="mailto:mykoal@adaxahome.com" className="hover:text-primary">mykoal@adaxahome.com</a>
             </p>
             <p className="text-xs text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              All loans subject to credit approval and underwriting guidelines. Not all applicants will qualify. Rates and terms are subject to change without notice and based on creditworthiness, loan-to-value, occupancy, property type, and other factors. APR may vary. This is not a commitment to lend. Adaxa Home is licensed in {/* PLACEHOLDER_LICENSED_STATES */}multiple states. For licensing information, visit NMLS Consumer Access at{" "}
+              All loans subject to credit approval and underwriting guidelines. Not all applicants will qualify. Rates and terms are subject to change without notice and based on creditworthiness, loan-to-value, occupancy, property type, and other factors. APR may vary. This is not a commitment to lend. Adaxa Home is licensed in AZ, CA, CO, FL, MI, MN, OR, PA, TX, VA, and WA. For licensing information, visit NMLS Consumer Access at{" "}
               <a
                 href="https://www.nmlsconsumeraccess.org/TuringTestPage.aspx?ReturnUrl=/EntityDetails.aspx/COMPANY/2380533"
                 target="_blank"
