@@ -1,0 +1,710 @@
+I need you to do a substantial expansion of the smartr8.com site. This involves rebuilding the existing /heloc page with a new pattern AND building 3 new application funnels alongside it. Match the existing site's design language exactly. Do NOT introduce new colors, fonts, or component patterns.
+
+═══════════════════════════════════════════════════════
+PART 1: STACK DISCOVERY (MANDATORY FIRST STEP)
+═══════════════════════════════════════════════════════
+
+Before writing any code, inspect the existing repo and report back:
+
+1. The framework in use (Next.js App Router/Pages, Astro, Vite + React, etc.)
+2. The current homepage component location and structure
+3. The existing /heloc page location and its current 4-step form structure (Home, Goal, Timeline, Info)
+4. The existing /heloc/instant-options page (do NOT modify this page, it stays as-is)
+5. Existing form submission pattern (Formspree integration already exists per past work, confirm the endpoint structure)
+6. Existing component library: Button, Card, Section wrappers, Form Field components
+7. Existing design tokens: primary color (dark teal #13485A or similar), accent color (red/coral for CTAs), fonts, spacing scale, border radii
+8. Compliance footer structure currently in use
+9. Any analytics already installed (GA4, Meta Pixel, etc.)
+10. Cal.com or calendar integration on the existing thank-you page
+
+Report findings and confirm scope BEFORE writing any code.
+
+═══════════════════════════════════════════════════════
+PART 2: WHAT'S BEING BUILT
+═══════════════════════════════════════════════════════
+
+THREE major additions:
+
+A) NEW homepage section: 4 "Apply Now" buttons placed BELOW the existing "How can I help you today?" cards
+B) REBUILT /heloc funnel with a new one-question-per-page pattern
+C) THREE new application funnels using the same pattern: /apply/cash-out, /apply/rate-reduction, /apply/purchase
+
+PLUS a "What's next?" decision page after every funnel completion.
+
+═══════════════════════════════════════════════════════
+PART 3: HOMEPAGE — NEW "READY TO APPLY?" SECTION
+═══════════════════════════════════════════════════════
+
+PLACEMENT: Insert directly BELOW the existing "How can I help you today?" section. Do NOT modify the existing 3 cards (Pull cash from your home / Lower my monthly payment / Not sure, show me options). Those stay as-is.
+
+NEW SECTION CONTENT:
+
+Section Header: Ready to Apply?
+Subhead: Pick the option that fits. Each starts with a quick qualifying flow — about 60 seconds, no credit pull required to see your options.
+
+Below the heading, a responsive grid of 4 cards:
+
+Card 1: APPLY FOR HELOC
+- Icon: PiggyBank or Home (from lucide-react, matching existing icon library)
+- Headline: Apply for HELOC
+- Supporting copy: Tap your equity without touching your low first mortgage rate.
+- Links to: /heloc
+
+Card 2: APPLY FOR CASH-OUT REFINANCE
+- Icon: HandCoins or Banknote
+- Headline: Apply for Cash-Out Refinance
+- Supporting copy: Convert your equity into cash for renovations, debt consolidation, or anything else.
+- Links to: /apply/cash-out
+
+Card 3: APPLY FOR RATE REDUCTION REFINANCE
+- Icon: TrendingDown or RefreshCw
+- Headline: Apply for Rate Reduction Refinance
+- Supporting copy: Lower your monthly payment without taking cash out.
+- Links to: /apply/rate-reduction
+
+Card 4: APPLY TO PURCHASE A HOME
+- Icon: Key or Home
+- Headline: Apply to Purchase a Home
+- Supporting copy: Pre-qualify in minutes. VA, FHA, Conventional, and Jumbo programs.
+- Links to: /apply/purchase
+
+LAYOUT:
+- Desktop: 4 cards in single row, equal width
+- Tablet: 2x2 grid
+- Mobile: Stacked vertically, full width
+
+STYLING:
+- Match existing card styling on the homepage (same border-radius, padding, shadow patterns)
+- Each card is one tap target (entire card is a Link/anchor)
+- Hover state: subtle elevation lift + arrow animation
+- Use primary text color for headlines, muted for supporting copy
+- Each card has a CTA visual element (arrow or chevron) in the bottom-right corner that animates on hover
+- Generous tap-target height (min 200px on mobile)
+
+ACCESSIBILITY:
+- Proper semantic markup (each card wrapped in <a> or framework Link component)
+- aria-label combining headline + supporting copy
+- Keyboard navigable with visible focus states
+- WCAG AA color contrast
+
+BELOW THE GRID:
+Small centered text: Not sure which fits? Text or call (949) 418-5486.
+
+═══════════════════════════════════════════════════════
+PART 4: REBUILD EXISTING /heloc FUNNEL + BUILD 3 NEW APPLY FUNNELS
+═══════════════════════════════════════════════════════
+
+CRITICAL: All 4 funnels use the SAME design pattern, but with loan-purpose-specific questions. The /heloc page must be REBUILT to match this new pattern (the existing 4-step form is being replaced).
+
+PRESERVE THE EXISTING /heloc/instant-options PAGE EXACTLY AS-IS. Only the form/funnel pages change.
+
+────────── THE PATTERN: ONE QUESTION PER PAGE ──────────
+
+Each funnel is a multi-step form where each step asks ONE focused question per screen, with the user tapping a multiple-choice option that AUTO-ADVANCES to the next page. No manual "Continue" button needed for most steps (auto-advance on selection). The exceptions are the address page, DOB page, and final contact info page where the user types and needs to confirm with a Continue/Submit button.
+
+Top of every funnel page:
+- Existing site header (with phone number and Mykoal info)
+- Progress bar showing "Step X of N" and percentage complete
+- Back button (left side, on all pages except page 1)
+
+Body of each funnel page:
+- ONE question as a large H2 heading
+- Optional one-line subhead with context
+- Multiple-choice options as tappable cards (NOT radio buttons — full-card tap targets)
+- "Other" option at bottom that reveals a custom input field when tapped
+- Auto-advance to next page on selection (300-500ms delay for visual confirmation)
+
+Bottom of every funnel page:
+- Compliance footer: "Equal Housing Opportunity · NMLS #1912347 · Adaxa Home, LLC NMLS #2380533"
+
+────────── MULTIPLE-CHOICE RANGES (apply consistently) ──────────
+
+For dollar amount questions, use these standardized ranges as tappable cards:
+
+Home value ranges:
+- Under $300,000
+- $300,000 - $500,000
+- $500,000 - $750,000
+- $750,000 - $1,000,000
+- $1,000,000 - $1,500,000
+- Over $1,500,000
+- Other (custom input)
+
+Mortgage balance ranges:
+- Under $200,000
+- $200,000 - $400,000
+- $400,000 - $600,000
+- $600,000 - $800,000
+- $800,000 - $1,000,000
+- Over $1,000,000
+- No mortgage
+- Other (custom input)
+
+Cash needed ranges (cash-out):
+- Under $50,000
+- $50,000 - $100,000
+- $100,000 - $250,000
+- $250,000 - $500,000
+- Over $500,000
+- Other (custom input)
+
+Purchase price ranges:
+- Under $300,000
+- $300,000 - $500,000
+- $500,000 - $750,000
+- $750,000 - $1,000,000
+- $1,000,000 - $1,500,000
+- Over $1,500,000
+- Other (custom input)
+
+Down payment ranges:
+- Less than 5%
+- 5% - 10%
+- 10% - 20%
+- 20%+
+- Not sure yet
+- Other (custom input)
+
+Current rate ranges (rate reduction):
+- Under 4%
+- 4% - 5%
+- 5% - 6%
+- 6% - 7%
+- 7% - 8%
+- Over 8%
+- Not sure
+- Other (custom input)
+
+Credit score ranges (all funnels):
+- 580 - 619
+- 620 - 659
+- 660 - 699
+- 700 - 739
+- 740 - 779
+- 780+
+- Not sure
+
+────────── HELOC FUNNEL (rebuild from existing /heloc) ──────────
+
+Step 1: What's your name?
+- First Name (text input)
+- Last Name (text input)
+- Continue button (required since user is typing)
+
+Step 2: What's your property address?
+- Google Places autocomplete address field (see Part 5 for setup)
+- Continue button
+
+Step 3: What's your home's estimated value?
+- Multiple-choice cards (home value ranges above)
+- Auto-advance on selection
+
+Step 4: How much do you owe on your current mortgage?
+- Multiple-choice cards (mortgage balance ranges)
+- Auto-advance
+
+Step 5: What will you use the HELOC for? (select all that apply)
+- Home renovation or addition
+- Debt consolidation
+- Investment property purchase
+- Business or self-employment capital
+- Emergency reserve / access to funds
+- Something else
+- Continue button (multi-select needs a confirm step)
+
+Step 6: When are you looking to access the funds?
+- As soon as possible
+- Within 1 to 3 months
+- Just exploring options
+- Auto-advance
+
+Step 7: What's your estimated credit score?
+- Multiple-choice cards (credit score ranges)
+- Auto-advance
+
+Step 8: What's your date of birth?
+- MM/DD/YYYY input (native date input recommended for mobile keyboards)
+- Continue button
+
+Step 9: How can we reach you?
+- Email
+- Mobile Phone
+- Consent checkbox (required): "By submitting, you agree to be contacted by Mykoal DeShazo at Adaxa Home regarding your inquiry. Consent is not a condition of any service. Standard rates may apply. You can opt out at any time. View our Privacy Policy and Terms of Use."
+- Submit button: "Get My HELOC Options"
+
+────────── CASH-OUT REFINANCE FUNNEL (/apply/cash-out) ──────────
+
+Same pattern as HELOC, but with these differences:
+
+Step 5 (replacing HELOC use question):
+Question: How much cash are you looking to pull out?
+- Multiple-choice cards (cash needed ranges)
+- Auto-advance
+
+Step 6 (replacing HELOC timeline):
+Question: What will you use the cash for? (select all that apply)
+- Home renovation or addition
+- Debt consolidation
+- Investment property purchase
+- Major purchase
+- Emergency reserve
+- Other
+- Continue button
+
+Submit button text: "Get My Cash-Out Options"
+
+────────── RATE REDUCTION REFINANCE FUNNEL (/apply/rate-reduction) ──────────
+
+Same pattern, with these changes:
+
+Step 5 (new):
+Question: What's your current interest rate?
+- Multiple-choice cards (current rate ranges)
+- Auto-advance
+
+Step 6 (new):
+Question: What's your primary goal?
+- Lower my monthly payment
+- Shorten my loan term
+- Switch from adjustable to fixed
+- Both lower payment and shorter term
+- Auto-advance
+
+Submit button text: "See My Refinance Options"
+
+────────── PURCHASE FUNNEL (/apply/purchase) ──────────
+
+This funnel has different step 1-4 because there's no existing mortgage:
+
+Step 1: What's your name?
+- First Name + Last Name
+- Continue button
+
+Step 2: What's your target property's location?
+- Google Places autocomplete (city, state OR full address if known)
+- Continue button
+
+Step 3: What's your target purchase price range?
+- Multiple-choice cards (purchase price ranges)
+- Auto-advance
+
+Step 4: How much do you plan to put down?
+- Multiple-choice cards (down payment ranges)
+- Auto-advance
+
+Step 5: What type of property?
+- Primary residence
+- Second home / vacation
+- Investment property
+- Auto-advance
+
+Step 6: What loan type interests you most?
+- VA loan
+- FHA loan
+- Conventional
+- Jumbo
+- Not sure / show me options
+- Auto-advance
+
+Step 7: What's your estimated credit score?
+- Multiple-choice cards (credit score ranges)
+- Auto-advance
+
+Step 8: What's your date of birth?
+- MM/DD/YYYY input
+- Continue button
+
+Step 9: How can we reach you?
+- Email + Mobile Phone + Consent checkbox
+- Submit button: "Get My Pre-Approval Options"
+
+═══════════════════════════════════════════════════════
+PART 5: GOOGLE PLACES API SETUP (Step-by-step for Mykoal)
+═══════════════════════════════════════════════════════
+
+The address fields use Google Places Autocomplete. Mykoal needs to set up the API key. Include these step-by-step instructions in a README file at the root of the repo called GOOGLE_PLACES_SETUP.md:
+
+```
+GOOGLE PLACES API SETUP — Step by Step
+
+1. Go to https://console.cloud.google.com
+2. Sign in with your Google account
+3. Top of page, click the project dropdown, then click "New Project"
+4. Project name: Smartr8 Forms
+5. Click Create. Wait for it to provision (15-30 seconds)
+6. Make sure the new project is selected in the top dropdown
+7. Left sidebar: Click "APIs & Services" then "Library"
+8. Search "Places API" — click it — click ENABLE
+9. Go back to Library
+10. Search "Maps JavaScript API" — click it — click ENABLE
+11. Left sidebar: APIs & Services → Credentials
+12. Click "+ CREATE CREDENTIALS" at top → "API key"
+13. A popup shows your API key. COPY IT.
+14. Click "Edit API key" (pencil icon) on the new key
+15. Under "Application restrictions":
+    - Select "HTTP referrers (web sites)"
+    - Click "ADD AN ITEM" and add each of these:
+      - https://smartr8.com/*
+      - https://www.smartr8.com/*
+      - https://*.pages.dev/*  (for Cloudflare preview deployments)
+      - http://localhost:*  (for local development)
+16. Under "API restrictions":
+    - Select "Restrict key"
+    - Check: Places API AND Maps JavaScript API
+17. Click Save
+
+18. In Replit, add the API key as an environment variable:
+    - Open the "Secrets" tab in your Replit
+    - Key: GOOGLE_PLACES_API_KEY
+    - Value: paste your API key
+    - Save
+
+19. Set up billing (required even for free tier):
+    - In Google Cloud Console, go to "Billing"
+    - Add a payment method
+    - Google gives you $200/month free credit which covers ~10,000 address lookups
+    - You won't be charged unless you exceed that (you won't)
+
+20. Verify: Send Replit a test, "Check if Google Places autocomplete is working on the test page" — if you see address suggestions appear when typing, it's working.
+```
+
+The Replit code itself should:
+- Use the Google Maps JavaScript API loader (do NOT install heavy npm packages like @react-google-maps/api — use the lightweight @googlemaps/js-api-loader or vanilla JS)
+- Reference the API key via process.env.GOOGLE_PLACES_API_KEY (or framework equivalent)
+- Show a graceful fallback if API key is missing: a regular text input with a note "Address autocomplete temporarily unavailable, please type your full address"
+- Only load the Google Maps script on funnel pages where it's needed (not the homepage) — performance optimization
+
+═══════════════════════════════════════════════════════
+PART 6: FORM SUBMISSION HANDLING
+═══════════════════════════════════════════════════════
+
+All 4 funnels use the SAME Formspree endpoint:
+FORMSPREE_ENDPOINT = https://formspree.io/f/maqvlqrg
+
+To differentiate the funnels in Mykoal's inbox, use hidden fields in each form.
+
+For HELOC funnel:
+<input type="hidden" name="_subject" value="New HELOC lead from smartr8.com" />
+<input type="hidden" name="loan_purpose" value="HELOC" />
+
+For Cash-Out funnel:
+<input type="hidden" name="_subject" value="New CASH-OUT REFI lead from smartr8.com" />
+<input type="hidden" name="loan_purpose" value="Cash-Out Refinance" />
+
+For Rate Reduction funnel:
+<input type="hidden" name="_subject" value="New RATE REDUCTION lead from smartr8.com" />
+<input type="hidden" name="loan_purpose" value="Rate Reduction Refinance" />
+
+For Purchase funnel:
+<input type="hidden" name="_subject" value="New PURCHASE lead from smartr8.com" />
+<input type="hidden" name="loan_purpose" value="Purchase" />
+
+Additional hidden field on ALL forms:
+<input type="hidden" name="_next" value="" /> — leave blank, the redirect to /whats-next is handled in JavaScript
+
+ON SUBMIT BEHAVIOR (all 4 funnels):
+
+1. Validate all required fields. If missing, show inline error messages.
+
+2. POST to Formspree endpoint with all form data.
+
+3. POST to LoanOfficer.ai inbound webhook (placeholder URL — Mykoal will replace post-deploy):
+   const LOAN_OFFICER_AI_WEBHOOK = "REPLACE_WITH_LOAN_OFFICER_AI_WEBHOOK_URL"
+   
+   Payload structure:
+   {
+     "source": "smartr8.com",
+     "funnel": "[heloc | cashout | rate-reduction | purchase]",
+     "firstName": "...",
+     "lastName": "...",
+     "email": "...",
+     "phone": "...",
+     "address": "...",
+     "city": "...",
+     "state": "...",
+     "zip": "...",
+     "homeValue": "...",
+     "mortgageBalance": "...",
+     "creditScore": "...",
+     "dob": "MM/DD/YYYY",
+     "loanPurpose": "...",
+     "additionalFields": { ... funnel-specific fields ... },
+     "submittedAt": "ISO 8601 timestamp"
+   }
+
+   Wrap this POST in a try/catch — if it fails, log to console but DON'T block the user. Formspree submission is the primary, LoanOfficer.ai is secondary.
+
+4. On both POSTs complete (or after a 5-second timeout), redirect to:
+   - HELOC submission → /heloc/whats-next
+   - Cash-Out submission → /apply/cash-out/whats-next
+   - Rate Reduction submission → /apply/rate-reduction/whats-next
+   - Purchase submission → /apply/purchase/whats-next
+
+5. Pass the borrower's first name as a URL parameter so the next page can greet them:
+   /heloc/whats-next?name=John
+
+═══════════════════════════════════════════════════════
+PART 7: "WHAT'S NEXT?" PAGES (one per funnel)
+═══════════════════════════════════════════════════════
+
+Build 4 new pages, one per funnel:
+- /heloc/whats-next
+- /apply/cash-out/whats-next
+- /apply/rate-reduction/whats-next
+- /apply/purchase/whats-next
+
+Each page has the same top structure:
+
+HEADER (above main content):
+- Existing site header
+
+HERO SECTION:
+- Large H1: "Your quote is on its way, [First Name]."
+  (Pull first name from URL parameter ?name=)
+- Subhead: "While I review your information, here's how I can help you move forward right now."
+
+BODY: 3 path cards (or 2 for Rate Reduction)
+
+────────── /heloc/whats-next ──────────
+
+Card 1 (RECOMMENDED — visual highlight):
+- Badge: "RECOMMENDED"
+- Icon: Zap or Sparkles
+- Headline: See My Instant HELOC Options
+- Body: Review two digital HELOC programs that may offer fast qualification and rate review, depending on your profile.
+- CTA Button: See My Options → links to /heloc/instant-options
+
+Card 2:
+- Icon: Calendar
+- Headline: Schedule a Call
+- Body: Want help comparing your options before moving forward? Book a time to talk through your goals.
+- CTA Button: Book a Time → links to Cal.com embed (use existing Cal.com link from current thank-you page)
+
+Card 3:
+- Icon: FileText or ArrowRight
+- Headline: Continue to Full Application
+- Body: Ready to start your formal application? This takes you directly to my secure application portal.
+- CTA Button: Continue Application → links to https://prod.lendingpad.com/adaxa-home/pos#/?loid=dabbfd28-9b5f-46b8-9029-aa478433a995
+
+────────── /apply/cash-out/whats-next ──────────
+
+Card 1 (RECOMMENDED):
+- Badge: "WORTH CONSIDERING"
+- Headline: Compare to a HELOC
+- Body: Most homeowners with low first mortgage rates do better with a HELOC. See the difference before committing.
+- CTA Button: Compare HELOC → links to /heloc/instant-options
+
+Card 2:
+- Icon: Calendar
+- Headline: Schedule a Call
+- Body: Talk through your options with me before moving forward.
+- CTA Button: Book a Time → Cal.com
+
+Card 3:
+- Icon: FileText
+- Headline: Continue to Full Application
+- Body: Ready to start your formal cash-out refinance application?
+- CTA Button: Continue Application → LendingPad URL above
+
+────────── /apply/rate-reduction/whats-next ──────────
+
+Two cards only (no HELOC comparison since rate reduction is the goal):
+
+Card 1 (RECOMMENDED):
+- Badge: "RECOMMENDED"
+- Icon: Calendar
+- Headline: Schedule a Call
+- Body: Rate reduction is highly personal. Let's talk through your options together to make sure we get you the best fit.
+- CTA Button: Book a Time → Cal.com
+
+Card 2:
+- Icon: FileText
+- Headline: Continue to Full Application
+- Body: Ready to start your refinance application?
+- CTA Button: Continue Application → LendingPad URL above
+
+────────── /apply/purchase/whats-next ──────────
+
+Card 1 (RECOMMENDED):
+- Badge: "FAST TRACK"
+- Icon: Zap
+- Headline: Get Pre-Approved
+- Body: Pre-approval positions you to make competitive offers. Most pre-approvals are done in 24 hours.
+- CTA Button: Start Pre-Approval → LendingPad URL above
+
+Card 2:
+- Icon: Calendar
+- Headline: Schedule a Call
+- Body: Want to talk through programs and strategy first? Let's chat.
+- CTA Button: Book a Time → Cal.com
+
+Card 3:
+- Icon: FileText
+- Headline: Continue to Full Application
+- Body: Ready to start your purchase application?
+- CTA Button: Continue Application → LendingPad URL above
+
+────────── COMPLIANCE FOOTER (all whats-next pages) ──────────
+
+Existing site footer (with Privacy Policy, Terms of Use, Texas Compliance Notice, NMLS Consumer Access links — these already exist in the current footer per past builds).
+
+═══════════════════════════════════════════════════════
+PART 8: HOMEPAGE "PULL CASH FROM YOUR HOME" CARD FLOW UPDATE
+═══════════════════════════════════════════════════════
+
+The existing "Pull cash from your home" card on the homepage currently links to a form that ultimately goes to /thank-you (or similar) with a Cal.com calendar.
+
+NEW FLOW:
+1. User clicks "Pull cash from your home" card on homepage
+2. Existing form (DO NOT modify the form itself in this prompt)
+3. After form submission, instead of going directly to the calendar, redirect to the NEW /apply/cash-out/whats-next page (with the 3 path cards described in Part 7)
+4. The user can then choose: Compare to HELOC, Schedule a Call, or Continue Application
+
+This means the homepage card now funnels into the same "What's next?" decision page as the cash-out apply funnel. Clean reuse.
+
+Find where the existing form submits and update its post-submit redirect destination to /apply/cash-out/whats-next.
+
+═══════════════════════════════════════════════════════
+PART 9: GA4 ANALYTICS
+═══════════════════════════════════════════════════════
+
+Install Google Analytics 4. Mykoal will provide the GA4 Measurement ID — leave a clearly marked placeholder:
+
+GA4_MEASUREMENT_ID = "G-XXXXXXXXXX"
+
+Add the GA4 script tag to the global layout file so it loads on every page.
+
+Fire these custom events:
+
+ON FUNNEL START (page 1 visible):
+gtag('event', 'funnel_start', {
+  funnel: 'heloc' | 'cash_out' | 'rate_reduction' | 'purchase'
+});
+
+ON EACH STEP ADVANCE:
+gtag('event', 'funnel_step_completed', {
+  funnel: '...',
+  step_number: 1-9,
+  step_name: 'name' | 'address' | 'home_value' | etc.
+});
+
+ON FORM SUBMIT (success):
+gtag('event', 'generate_lead', {
+  funnel: '...',
+  currency: 'USD',
+  value: 0
+});
+
+ON "WHAT'S NEXT?" PAGE OPTION CLICK:
+gtag('event', 'whats_next_clicked', {
+  funnel: '...',
+  option: 'see_heloc_options' | 'schedule_call' | 'continue_application'
+});
+
+If GA4 isn't yet set up by Mykoal, leave a console.log fallback so events don't error out:
+if (typeof gtag !== 'undefined') { gtag(...) } else { console.log('GA event:', ...) }
+
+═══════════════════════════════════════════════════════
+PART 10: TECHNICAL REQUIREMENTS
+═══════════════════════════════════════════════════════
+
+MOBILE FIRST:
+- 70%+ of traffic is mobile. Build mobile-first, then enhance for desktop.
+- Test at 375px width minimum.
+- Big tap targets on all interactive cards (minimum 44px tall).
+- Native mobile keyboards on all inputs (email, tel, date types correctly set).
+
+PERFORMANCE:
+- Lazy load Google Maps script (only load on funnel pages)
+- Modern image formats (WebP/AVIF) if existing site uses them
+- Keep total page weight under 500KB per page
+- Lighthouse target: 90+ on mobile
+
+ACCESSIBILITY:
+- All form inputs have associated labels
+- Color contrast meets WCAG AA
+- Full keyboard navigation
+- Visible focus states everywhere
+- Screen reader friendly progress bar (aria-valuenow, aria-valuemin, aria-valuemax)
+
+SEO:
+- Each funnel page has unique title and meta description
+- Each /apply/... page is canonical and indexable
+- Schema.org FinancialService markup with NMLS info
+
+STATE MANAGEMENT:
+- Funnel state (current step, all answers) persists in URL params or sessionStorage so refresh doesn't lose progress
+- Back button works correctly through all funnel steps
+
+CONSISTENCY:
+- Reuse existing components wherever possible
+- Don't introduce new dependencies unless absolutely necessary
+- If a component pattern exists (e.g., the existing /heloc form's progress bar), reuse it exactly
+
+═══════════════════════════════════════════════════════
+PART 11: DEPLOYMENT
+═══════════════════════════════════════════════════════
+
+GITHUB:
+- Create a new branch: feature/multi-funnel-rebuild
+- Conventional commits (feat:, fix:, refactor:)
+- Open a pull request to main when complete
+- Detailed PR description listing every file changed and every new file
+- Do NOT auto-merge — preview must be reviewed first
+
+CLOUDFLARE:
+- PR auto-triggers Cloudflare Pages preview deployment
+- Share the preview URL when the PR is opened
+- Confirm all 4 funnels work end-to-end on the preview
+
+═══════════════════════════════════════════════════════
+PART 12: PLACEHOLDERS TO ASK ME FOR (POST-DEPLOY)
+═══════════════════════════════════════════════════════
+
+Before completing the PR, list out the placeholders that need to be filled in. The PR description should include a "POST-DEPLOY CHECKLIST" with these items:
+
+[ ] Replace GOOGLE_PLACES_API_KEY with real key (see GOOGLE_PLACES_SETUP.md)
+[ ] Replace GA4_MEASUREMENT_ID with real measurement ID
+[ ] Replace LOAN_OFFICER_AI_WEBHOOK with real webhook URL
+[ ] Verify Privacy Policy URL: https://adaxahome.com/privacy
+[ ] Verify Terms of Use URL: https://adaxahome.com/terms-of-use
+[ ] Confirm Cal.com embed link is correct on whats-next pages
+[ ] Test each funnel end-to-end (HELOC, cash-out, rate reduction, purchase)
+[ ] Verify each funnel's Formspree submission lands in inbox with correct subject line
+[ ] Confirm LendingPad redirect works from each whats-next page
+
+═══════════════════════════════════════════════════════
+PART 13: WHAT NOT TO DO
+═══════════════════════════════════════════════════════
+
+- Do NOT modify the existing /heloc/instant-options page (the Deephaven + Adaxa cards) — that page stays exactly as-is
+- Do NOT modify the existing homepage hero, "How can I help you today?" cards, "How it works" section, "About Mykoal" section, or final CTA band
+- Do NOT change site-wide colors, fonts, or design tokens
+- Do NOT install heavy new dependencies (e.g., @react-google-maps/api). Use lightweight alternatives.
+- Do NOT auto-merge the PR
+- Do NOT collect SSN, full income figures, or asset/liability details — LendingPad handles those
+- Do NOT use em dashes anywhere in user-facing copy
+- Do NOT use emoji in any copy
+- Do NOT use smart quotes — straight quotes and apostrophes only
+- Do NOT include rate quotes or APR claims anywhere
+- Do NOT use the words "guaranteed," "approved," "everyone qualifies," "no credit check," or "lowest rate"
+- Do NOT skip the stack discovery phase in Part 1
+
+═══════════════════════════════════════════════════════
+PART 14: ORDER OF OPERATIONS
+═══════════════════════════════════════════════════════
+
+1. Run stack discovery (Part 1). Report findings.
+2. Wait for my confirmation before proceeding.
+3. Build the homepage "Ready to Apply?" section (Part 3) first — smallest change.
+4. Build the new funnel pattern and the 3 new funnels (Part 4).
+5. Rebuild the existing /heloc funnel using the same pattern (Part 4).
+6. Build the 4 "What's next?" pages (Part 7).
+7. Wire up Google Places autocomplete (Part 5).
+8. Wire up form submissions (Part 6).
+9. Update the "Pull cash from your home" homepage card flow (Part 8).
+10. Install GA4 (Part 9).
+11. Run full build, fix any errors, verify everything works in the preview.
+12. Open PR with detailed description and POST-DEPLOY CHECKLIST.
+
+Start with Part 1.
