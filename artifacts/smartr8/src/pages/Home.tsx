@@ -153,23 +153,25 @@ export default function Home() {
         </section>
 
         {/* READY TO APPLY */}
-        <section className="py-20 px-4 bg-secondary/30">
+        <section className="py-12 px-4 bg-secondary/30">
           <div className="container mx-auto max-w-5xl">
-            <h2 className="text-3xl font-bold text-center mb-4 text-primary">Ready to Apply?</h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Choose the path that fits your situation. Each takes about 3 minutes and requires no credit pull.
+            <h2 className="text-3xl font-bold text-center mb-2 text-primary">Ready to Apply?</h2>
+            <p className="text-center text-muted-foreground mb-8 text-sm">
+              Pick your path. About 3 minutes, no credit pull.
             </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <Link href="/heloc">
                 <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
-                  <CardContent className="p-6 flex flex-col items-center text-center gap-3 h-full">
-                    <div className="h-14 w-14 bg-primary/5 rounded-full flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                      <Droplets className="h-7 w-7 text-primary" />
+                  <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
+                    <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <Droplets className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg leading-tight">HELOC</h3>
-                    <p className="text-muted-foreground text-sm flex-1">Tap your equity without refinancing your mortgage.</p>
-                    <div className="text-primary font-medium text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                      Start HELOC <ArrowRight className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm md:text-base text-foreground leading-tight">HELOC</div>
+                      <div className="text-muted-foreground text-xs mt-0.5">Tap your equity</div>
+                    </div>
+                    <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                      Start <ArrowRight className="h-3 w-3" />
                     </div>
                   </CardContent>
                 </Card>
@@ -177,14 +179,16 @@ export default function Home() {
 
               <Link href="/apply/cash-out">
                 <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
-                  <CardContent className="p-6 flex flex-col items-center text-center gap-3 h-full">
-                    <div className="h-14 w-14 bg-primary/5 rounded-full flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                      <HomeIcon className="h-7 w-7 text-primary" />
+                  <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
+                    <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <HomeIcon className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg leading-tight">Cash-Out Refi</h3>
-                    <p className="text-muted-foreground text-sm flex-1">Pull cash and replace your existing mortgage in one loan.</p>
-                    <div className="text-primary font-medium text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                      Start Cash-Out <ArrowRight className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm md:text-base text-foreground leading-tight">Cash-Out Refi</div>
+                      <div className="text-muted-foreground text-xs mt-0.5">Pull equity, one loan</div>
+                    </div>
+                    <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                      Start <ArrowRight className="h-3 w-3" />
                     </div>
                   </CardContent>
                 </Card>
@@ -192,14 +196,16 @@ export default function Home() {
 
               <Link href="/apply/rate-reduction">
                 <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
-                  <CardContent className="p-6 flex flex-col items-center text-center gap-3 h-full">
-                    <div className="h-14 w-14 bg-primary/5 rounded-full flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                      <TrendingDown className="h-7 w-7 text-primary" />
+                  <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
+                    <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <TrendingDown className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg leading-tight">Lower My Rate</h3>
-                    <p className="text-muted-foreground text-sm flex-1">Reduce your monthly payment or shorten your loan term.</p>
-                    <div className="text-primary font-medium text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                      Start Refi <ArrowRight className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm md:text-base text-foreground leading-tight">Lower My Rate</div>
+                      <div className="text-muted-foreground text-xs mt-0.5">Reduce your payment</div>
+                    </div>
+                    <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                      Start <ArrowRight className="h-3 w-3" />
                     </div>
                   </CardContent>
                 </Card>
@@ -207,14 +213,16 @@ export default function Home() {
 
               <Link href="/apply/purchase">
                 <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
-                  <CardContent className="p-6 flex flex-col items-center text-center gap-3 h-full">
-                    <div className="h-14 w-14 bg-primary/5 rounded-full flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                      <Key className="h-7 w-7 text-primary" />
+                  <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
+                    <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <Key className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg leading-tight">Buy a Home</h3>
-                    <p className="text-muted-foreground text-sm flex-1">Get pre-approved and find the right loan for your purchase.</p>
-                    <div className="text-primary font-medium text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform mt-2">
-                      Start Purchase <ArrowRight className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm md:text-base text-foreground leading-tight">Buy a Home</div>
+                      <div className="text-muted-foreground text-xs mt-0.5">Get pre-approved fast</div>
+                    </div>
+                    <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                      Start <ArrowRight className="h-3 w-3" />
                     </div>
                   </CardContent>
                 </Card>

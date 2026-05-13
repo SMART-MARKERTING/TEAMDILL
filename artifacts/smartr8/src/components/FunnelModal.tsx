@@ -8,6 +8,37 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 
+const HOME_VALUE_RANGES = [
+  "Under $300,000",
+  "$300,000 - $500,000",
+  "$500,000 - $750,000",
+  "$750,000 - $1,000,000",
+  "$1,000,000 - $1,500,000",
+  "Over $1,500,000",
+  "Other",
+];
+
+const MORTGAGE_RANGES = [
+  "Under $200,000",
+  "$200,000 - $400,000",
+  "$400,000 - $600,000",
+  "$600,000 - $800,000",
+  "$800,000 - $1,000,000",
+  "Over $1,000,000",
+  "No mortgage",
+  "Other",
+];
+
+const CREDIT_RANGES = [
+  "580 - 619",
+  "620 - 659",
+  "660 - 699",
+  "700 - 739",
+  "740 - 779",
+  "780+",
+  "Not sure",
+];
+
 interface FunnelModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,7 +54,9 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
   const [answers, setAnswers] = useState({
     goal: initialGoal || "",
     home_value: "",
+    home_value_draft: "",
     mortgage_balance: "",
+    mortgage_balance_draft: "",
     credit_range: "",
     property_zip: "",
     full_name: "",
@@ -49,9 +82,17 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
     setAnswers(prev => ({ ...prev, [key]: value }));
   };
 
+  const autoAdvance = (key: keyof typeof answers, value: string) => {
+    setAnswers(prev => ({ ...prev, [key]: value }));
+    setTimeout(() => setStep(prev => prev + 1), 380);
+  };
+
   const handleOptionSelect = (key: keyof typeof answers, value: string) => {
     updateAnswer(key, value);
-    if (step < 5) setStep(prev => prev + 1);
+    if (value === "Other") return;
+    if (step < 5) {
+      setTimeout(() => setStep(prev => prev + 1), 380);
+    }
   };
 
   const handleNext = () => {
@@ -74,8 +115,19 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
 
     try {
       const formData = new FormData();
-      Object.entries(answers).forEach(([key, value]) => {
-        formData.append(key, String(value));
+      const submitAnswers = {
+        goal: answers.goal,
+        home_value: answers.home_value,
+        mortgage_balance: answers.mortgage_balance,
+        credit_range: answers.credit_range,
+        property_zip: answers.property_zip,
+        full_name: answers.full_name,
+        phone: answers.phone,
+        email: answers.email,
+        consent: String(answers.consent),
+      };
+      Object.entries(submitAnswers).forEach(([key, value]) => {
+        formData.append(key, value);
       });
       formData.append("_subject", `New SMARTR8 lead — ${answers.goal || "General"}`);
 
@@ -101,6 +153,11 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
   };
 
   const progress = (step / 6) * 100;
+
+  const optionClass = (selected: boolean) =>
+    `h-auto py-3.5 justify-start px-4 text-left text-base font-normal whitespace-normal transition-colors ${
+      selected ? "border-primary ring-1 ring-primary bg-primary/5" : ""
+    }`;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -143,7 +200,7 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
                       key={option}
                       type="button"
                       variant="outline"
-                      className={`h-auto py-4 justify-start px-4 text-left text-base font-normal whitespace-normal ${answers.goal === option ? "border-primary ring-1 ring-primary bg-primary/5" : ""}`}
+                      className={optionClass(answers.goal === option)}
                       onClick={() => handleOptionSelect("goal", option)}
                       data-testid={`funnel-goal-${option.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z-]/g, "")}`}
                     >
@@ -158,25 +215,42 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
             {step === 2 && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 flex-1">
                 <h2 className="text-2xl font-bold text-primary mb-6">About how much is your home worth?</h2>
-                <div className="flex flex-col gap-3">
-                  {[
-                    "Under $400K",
-                    "$400K to $600K",
-                    "$600K to $800K",
-                    "$800K to $1M",
-                    "Over $1M",
-                  ].map(option => (
+                <div className="flex flex-col gap-2.5">
+                  {HOME_VALUE_RANGES.map(option => (
                     <Button
                       key={option}
                       type="button"
                       variant="outline"
-                      className={`h-auto py-4 justify-start px-4 text-left text-base font-normal ${answers.home_value === option ? "border-primary ring-1 ring-primary bg-primary/5" : ""}`}
+                      className={optionClass(answers.home_value === option)}
                       onClick={() => handleOptionSelect("home_value", option)}
-                      data-testid={`funnel-value-${option.toLowerCase().replace(/[\s$+]/g, "-")}`}
+                      data-testid={`funnel-value-${option.toLowerCase().replace(/[\s$+,]/g, "-")}`}
                     >
                       {option}
                     </Button>
                   ))}
+                  {answers.home_value === "Other" && (
+                    <div className="mt-2 flex flex-col gap-3">
+                      <Input
+                        placeholder="e.g. $425,000"
+                        value={answers.home_value_draft}
+                        onChange={(e) => updateAnswer("home_value_draft", e.target.value)}
+                        className="text-lg py-6"
+                        autoFocus
+                        data-testid="funnel-value-other-input"
+                      />
+                      <Button
+                        type="button"
+                        className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold"
+                        disabled={!answers.home_value_draft.trim()}
+                        onClick={() => {
+                          autoAdvance("home_value", answers.home_value_draft);
+                        }}
+                        data-testid="funnel-value-other-continue"
+                      >
+                        Continue
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -184,26 +258,43 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
             {/* STEP 3 — MORTGAGE BALANCE */}
             {step === 3 && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 flex-1">
-                <h2 className="text-2xl font-bold text-primary mb-6">About how much do you still owe?</h2>
-                <div className="flex flex-col gap-3">
-                  {[
-                    "Under $200K",
-                    "$200K to $400K",
-                    "$400K to $600K",
-                    "Over $600K",
-                    "I own it free and clear",
-                  ].map(option => (
+                <h2 className="text-2xl font-bold text-primary mb-6">How much do you owe on your mortgage?</h2>
+                <div className="flex flex-col gap-2.5">
+                  {MORTGAGE_RANGES.map(option => (
                     <Button
                       key={option}
                       type="button"
                       variant="outline"
-                      className={`h-auto py-4 justify-start px-4 text-left text-base font-normal ${answers.mortgage_balance === option ? "border-primary ring-1 ring-primary bg-primary/5" : ""}`}
+                      className={optionClass(answers.mortgage_balance === option)}
                       onClick={() => handleOptionSelect("mortgage_balance", option)}
-                      data-testid={`funnel-balance-${option.toLowerCase().replace(/[\s$+]/g, "-")}`}
+                      data-testid={`funnel-balance-${option.toLowerCase().replace(/[\s$+,]/g, "-")}`}
                     >
                       {option}
                     </Button>
                   ))}
+                  {answers.mortgage_balance === "Other" && (
+                    <div className="mt-2 flex flex-col gap-3">
+                      <Input
+                        placeholder="e.g. $325,000"
+                        value={answers.mortgage_balance_draft}
+                        onChange={(e) => updateAnswer("mortgage_balance_draft", e.target.value)}
+                        className="text-lg py-6"
+                        autoFocus
+                        data-testid="funnel-balance-other-input"
+                      />
+                      <Button
+                        type="button"
+                        className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold"
+                        disabled={!answers.mortgage_balance_draft.trim()}
+                        onClick={() => {
+                          autoAdvance("mortgage_balance", answers.mortgage_balance_draft);
+                        }}
+                        data-testid="funnel-balance-other-continue"
+                      >
+                        Continue
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -211,21 +302,14 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
             {/* STEP 4 — CREDIT */}
             {step === 4 && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 flex-1">
-                <h2 className="text-2xl font-bold text-primary mb-6">Your credit is roughly...</h2>
-                <div className="flex flex-col gap-3">
-                  {[
-                    "760 or higher",
-                    "720 to 759",
-                    "680 to 719",
-                    "620 to 679",
-                    "Below 620",
-                    "Not sure",
-                  ].map(option => (
+                <h2 className="text-2xl font-bold text-primary mb-6">Your estimated credit score is...</h2>
+                <div className="flex flex-col gap-2.5">
+                  {CREDIT_RANGES.map(option => (
                     <Button
                       key={option}
                       type="button"
                       variant="outline"
-                      className={`h-auto py-4 justify-start px-4 text-left text-base font-normal ${answers.credit_range === option ? "border-primary ring-1 ring-primary bg-primary/5" : ""}`}
+                      className={optionClass(answers.credit_range === option)}
                       onClick={() => handleOptionSelect("credit_range", option)}
                       data-testid={`funnel-credit-${option.toLowerCase().replace(/\s+/g, "-")}`}
                     >
@@ -255,7 +339,7 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
                 <div className="mt-8 pt-4 border-t">
                   <Button
                     type="button"
-                    className="w-full h-12 text-lg bg-primary hover:bg-primary/90"
+                    className="w-full h-12 text-lg bg-primary hover:bg-primary/90 text-white"
                     disabled={answers.property_zip.length < 5}
                     onClick={handleNext}
                     data-testid="funnel-zip-continue"
