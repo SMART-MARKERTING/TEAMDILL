@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { submitLead, type FunnelId } from "@/lib/submitLead";
+import { saveRateContext } from "@/lib/rateEstimate";
 
 const HOME_VALUE_RANGES = [
   "Under $300,000",
@@ -137,8 +138,9 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
         additionalFields: { goal: answers.goal },
       });
       if (result.success) {
+        saveRateContext({ creditScore: answers.credit_range, funnel: funnelType });
         onClose();
-        setLocation(`/apply/cash-out/whats-next?name=${encodeURIComponent(firstName)}`);
+        setLocation(`/apply/cash-out/whats-next?name=${encodeURIComponent(firstName)}&credit=${encodeURIComponent(answers.credit_range)}&funnel=${funnelType}`);
       } else {
         setError(result.error || SUBMIT_ERR);
         setIsSubmitting(false);

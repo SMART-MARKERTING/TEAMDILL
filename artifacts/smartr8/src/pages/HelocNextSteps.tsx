@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CalendarDays, Phone, MessageSquare, Zap } from "lucide-react";
 import { Link } from "wouter";
+import { RateEstimateCard } from "@/components/RateEstimateCard";
 
 export default function HelocNextSteps() {
   const search = useSearch();
@@ -31,6 +32,11 @@ export default function HelocNextSteps() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Choose the fastest path for your situation. You can review instant HELOC options, schedule a quick conversation, or reach out directly.
             </p>
+          </div>
+
+          {/* Rate estimate card */}
+          <div className="mb-10">
+            <RateEstimateCard />
           </div>
 
           {/* Three option cards */}

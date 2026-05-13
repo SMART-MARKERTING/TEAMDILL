@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { RateEstimateCard } from "@/components/RateEstimateCard";
 
 export default function ThankYou() {
   useEffect(() => {
@@ -98,13 +99,18 @@ export default function ThankYou() {
             Got it. Let's talk.
           </h1>
 
-          <p className="text-xl text-muted-foreground leading-relaxed mb-10">
+          <p className="text-xl text-muted-foreground leading-relaxed mb-8">
             I'll review what you sent and reach out within a few hours. If you want to lock in a time now, grab a slot below. While you wait, save my number:{" "}
             <a href="tel:9494185486" className="font-semibold hover:underline" style={{ color: "#1A3A47" }}>
               (949) 418-5486
             </a>
             . Text me anytime.
           </p>
+
+          {/* Rate estimate card */}
+          <div className="mb-10 text-left">
+            <RateEstimateCard />
+          </div>
 
           {/* Cal.com booking section */}
           <div className="w-full mb-8">

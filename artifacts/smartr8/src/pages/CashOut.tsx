@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitLead } from "@/lib/submitLead";
+import { saveRateContext } from "@/lib/rateEstimate";
 import { useGA4 } from "@/hooks/useGA4";
 
 const SESSION_KEY = "funnel_cashout";
@@ -62,7 +63,7 @@ export default function CashOutFunnel() {
     setIsSubmitting(true); setSubmitError("");
     try {
       const result = await submitLead({ funnel:"cashout", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, homeValue:st.homeValue, mortgageBalance:st.mortgageBalance, creditScore:st.creditScore, dob:st.dob, honeypot:st.honeypot, pageLoadTime:st.pageLoadTime, additionalFields:{ cashNeeded:st.cashNeeded, cashPurposes:st.cashPurposes } });
-      if (result.success) { ga4.trackLead(); sessionStorage.removeItem(SESSION_KEY); setLocation(`/apply/cash-out/whats-next?name=${encodeURIComponent(st.firstName)}`); }
+      if (result.success) { ga4.trackLead(); saveRateContext({ creditScore: st.creditScore, funnel: "cashout" }); sessionStorage.removeItem(SESSION_KEY); setLocation(`/apply/cash-out/whats-next?name=${encodeURIComponent(st.firstName)}&credit=${encodeURIComponent(st.creditScore)}&funnel=cashout`); }
       else { setSubmitError(result.error || SUBMIT_ERR); setIsSubmitting(false); }
     } catch { setSubmitError(SUBMIT_ERR); setIsSubmitting(false); }
   };

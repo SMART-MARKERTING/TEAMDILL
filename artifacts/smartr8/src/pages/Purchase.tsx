@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitLead } from "@/lib/submitLead";
+import { saveRateContext } from "@/lib/rateEstimate";
 import { useGA4 } from "@/hooks/useGA4";
 
 const SESSION_KEY = "funnel_purchase";
@@ -60,7 +61,7 @@ export default function PurchaseFunnel() {
     setIsSubmitting(true); setSubmitError("");
     try {
       const result = await submitLead({ funnel:"purchase", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, creditScore:st.creditScore, dob:st.dob, honeypot:st.honeypot, pageLoadTime:st.pageLoadTime, additionalFields:{ purchasePrice:st.purchasePrice, downPayment:st.downPayment, propertyType:st.propertyType, loanType:st.loanType } });
-      if (result.success) { ga4.trackLead(); sessionStorage.removeItem(SESSION_KEY); setLocation(`/apply/purchase/whats-next?name=${encodeURIComponent(st.firstName)}`); }
+      if (result.success) { ga4.trackLead(); saveRateContext({ creditScore: st.creditScore, funnel: "purchase" }); sessionStorage.removeItem(SESSION_KEY); setLocation(`/apply/purchase/whats-next?name=${encodeURIComponent(st.firstName)}&credit=${encodeURIComponent(st.creditScore)}&funnel=purchase`); }
       else { setSubmitError(result.error || SUBMIT_ERR); setIsSubmitting(false); }
     } catch { setSubmitError(SUBMIT_ERR); setIsSubmitting(false); }
   };

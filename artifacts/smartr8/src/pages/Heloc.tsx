@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitLead } from "@/lib/submitLead";
+import { saveRateContext } from "@/lib/rateEstimate";
 import { useGA4 } from "@/hooks/useGA4";
 
 const SESSION_KEY = "funnel_heloc";
@@ -61,7 +62,7 @@ export default function HelocFunnel() {
     setIsSubmitting(true); setSubmitError("");
     try {
       const result = await submitLead({ funnel:"heloc", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, homeValue:st.homeValue, mortgageBalance:st.mortgageBalance, creditScore:st.creditScore, dob:st.dob, honeypot:st.honeypot, pageLoadTime:st.pageLoadTime, additionalFields:{ helocPurposes:st.helocPurposes, timeline:st.timeline } });
-      if (result.success) { ga4.trackLead(); sessionStorage.removeItem(SESSION_KEY); setLocation(`/heloc/whats-next?name=${encodeURIComponent(st.firstName)}`); }
+      if (result.success) { ga4.trackLead(); saveRateContext({ creditScore: st.creditScore, funnel: "heloc" }); sessionStorage.removeItem(SESSION_KEY); setLocation(`/heloc/whats-next?name=${encodeURIComponent(st.firstName)}&credit=${encodeURIComponent(st.creditScore)}&funnel=heloc`); }
       else { setSubmitError(result.error || SUBMIT_ERR); setIsSubmitting(false); }
     } catch { setSubmitError(SUBMIT_ERR); setIsSubmitting(false); }
   };
