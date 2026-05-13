@@ -59,7 +59,7 @@ export default function HelocFunnel() {
     if (!st.email || !st.phone) { setSubmitError("Please fill in your email and phone."); return; }
     setIsSubmitting(true); setSubmitError("");
     try {
-      await submitLead({ funnel:"heloc", subjectLine:"New HELOC lead – mobile app", loanPurpose:"HELOC", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, homeValue:st.homeValue, mortgageBalance:st.mortgageBalance, creditScore:st.creditScore, dob, additionalFields:{ helocPurposes:st.helocPurposes, timeline:st.timeline } });
+      await submitLead({ funnel:"heloc", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, homeValue:st.homeValue, mortgageBalance:st.mortgageBalance, creditScore:st.creditScore, dob, additionalFields:{ helocPurposes:st.helocPurposes, timeline:st.timeline } });
       router.replace({ pathname:"/whats-next", params:{ funnel:"heloc", name:st.firstName } });
     } catch { setSubmitError("Something went wrong. Please try again."); setIsSubmitting(false); }
   };

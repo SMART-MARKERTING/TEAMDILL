@@ -45,7 +45,7 @@ export default function PurchaseFunnel() {
     if (!st.email || !st.phone) { setSubmitError("Please fill in your email and phone."); return; }
     setIsSubmitting(true); setSubmitError("");
     try {
-      await submitLead({ funnel:"purchase", subjectLine:"New PURCHASE lead – mobile app", loanPurpose:"Purchase", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:locationStr, city:st.city, state:st.stateCode, zip:"", creditScore:st.creditScore, dob, additionalFields:{ purchasePrice:st.purchasePrice, downPayment:st.downPayment, propertyType:st.propertyType, loanType:st.loanType } });
+      await submitLead({ funnel:"purchase", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:locationStr, city:st.city, state:st.stateCode, zip:"", creditScore:st.creditScore, dob, additionalFields:{ purchasePrice:st.purchasePrice, downPayment:st.downPayment, propertyType:st.propertyType, loanType:st.loanType } });
       router.replace({ pathname:"/whats-next", params:{ funnel:"purchase", name:st.firstName } });
     } catch { setSubmitError("Something went wrong. Please try again."); setIsSubmitting(false); }
   };

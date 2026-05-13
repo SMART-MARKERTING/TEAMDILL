@@ -7,10 +7,20 @@ type WhatsnextOption =
   | "compare_heloc"
   | "get_preapproved";
 
-function gtag(event: string, eventName: string, params: Record<string, unknown>) {
-  const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-  if (typeof w.gtag !== "undefined") {
-    w.gtag(event, eventName, params);
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...a: unknown[]) => void;
+  }
+}
+
+function trackEvent(eventName: string, params: Record<string, unknown>) {
+  if (typeof window === "undefined") return;
+
+  if (Array.isArray(window.dataLayer)) {
+    window.dataLayer.push({ event: eventName, ...params });
+  } else if (typeof window.gtag === "function") {
+    window.gtag("event", eventName, params);
   } else {
     console.log("GA event:", eventName, params);
   }
@@ -19,12 +29,12 @@ function gtag(event: string, eventName: string, params: Record<string, unknown>)
 export function useGA4(funnel: FunnelId) {
   return {
     trackFunnelStart: () =>
-      gtag("event", "funnel_start", { funnel }),
+      trackEvent("funnel_start", { funnel }),
     trackStepCompleted: (step_number: number, step_name: string) =>
-      gtag("event", "funnel_step_completed", { funnel, step_number, step_name }),
+      trackEvent("funnel_step_completed", { funnel, step_number, step_name }),
     trackLead: () =>
-      gtag("event", "generate_lead", { funnel, currency: "USD", value: 0 }),
+      trackEvent("generate_lead", { funnel, currency: "USD", value: 0 }),
     trackWhatsnextClick: (option: WhatsnextOption) =>
-      gtag("event", "whats_next_clicked", { funnel, option }),
+      trackEvent("whats_next_clicked", { funnel, option }),
   };
 }
