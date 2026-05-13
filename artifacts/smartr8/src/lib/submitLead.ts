@@ -1,83 +1,91 @@
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/maqvlqrg";
-const LOAN_OFFICER_AI_WEBHOOK = "REPLACE_WITH_LOAN_OFFICER_AI_WEBHOOK_URL";
-
 export type FunnelId = "heloc" | "cashout" | "rate-reduction" | "purchase";
 
 export interface LeadPayload {
   funnel: FunnelId;
-  subjectLine: string;
-  loanPurpose: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
   homeValue?: string;
   mortgageBalance?: string;
-  creditScore: string;
-  dob: string;
-  additionalFields: Record<string, string | string[]>;
+  creditScore?: string;
+  dob?: string;
+  additionalFields?: Record<string, string | string[]>;
+  honeypot?: string;
+  pageLoadTime?: number;
 }
 
-export async function submitLead(payload: LeadPayload): Promise<void> {
-  const submittedAt = new Date().toISOString();
+export interface SubmitResult {
+  success: boolean;
+  fallback?: boolean;
+  leadId?: string;
+  error?: string;
+}
 
-  const fd = new FormData();
-  fd.append("_subject", payload.subjectLine);
-  fd.append("loan_purpose", payload.loanPurpose);
-  fd.append("firstName", payload.firstName);
-  fd.append("lastName", payload.lastName);
-  fd.append("email", payload.email);
-  fd.append("phone", payload.phone);
-  fd.append("address", payload.address);
-  fd.append("city", payload.city);
-  fd.append("property_state", payload.state);
-  fd.append("zip", payload.zip);
-  if (payload.homeValue) fd.append("homeValue", payload.homeValue);
-  if (payload.mortgageBalance) fd.append("mortgageBalance", payload.mortgageBalance);
-  fd.append("creditScore", payload.creditScore);
-  fd.append("dob", payload.dob);
-  fd.append("consent", "true");
-  Object.entries(payload.additionalFields).forEach(([k, v]) => {
-    fd.append(k, Array.isArray(v) ? v.join(", ") : v);
-  });
+function getOrCreateTrackingId(): string {
+  try {
+    const key = "smartr8_tid";
+    let id = sessionStorage.getItem(key);
+    if (!id) {
+      id = crypto.randomUUID();
+      sessionStorage.setItem(key, id);
+    }
+    return id;
+  } catch {
+    return crypto.randomUUID();
+  }
+}
 
-  const webhookBody = JSON.stringify({
-    source: "smartr8.com",
-    funnel: payload.funnel,
+function getParam(name: string): string {
+  try {
+    return new URLSearchParams(window.location.search).get(name) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function formatDob(raw: string): string {
+  const parts = raw.split("-");
+  return parts.length === 3 ? `${parts[1]}/${parts[2]}/${parts[0]}` : raw;
+}
+
+export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
+  const body = {
     firstName: payload.firstName,
     lastName: payload.lastName,
     email: payload.email,
     phone: payload.phone,
-    address: payload.address,
-    city: payload.city,
-    state: payload.state,
-    zip: payload.zip,
-    homeValue: payload.homeValue,
-    mortgageBalance: payload.mortgageBalance,
-    creditScore: payload.creditScore,
-    dob: payload.dob,
-    loanPurpose: payload.loanPurpose,
-    additionalFields: payload.additionalFields,
-    submittedAt,
-  });
+    address: payload.address ?? "",
+    city: payload.city ?? "",
+    state: payload.state ?? "",
+    zip: payload.zip ?? "",
+    homeValue: payload.homeValue ?? "",
+    mortgageBalance: payload.mortgageBalance ?? "",
+    creditScore: payload.creditScore ?? "",
+    dob: formatDob(payload.dob ?? ""),
+    funnelType: payload.funnel,
+    additionalFields: payload.additionalFields ?? {},
+    honeypot: payload.honeypot ?? "",
+    pageLoadTime: payload.pageLoadTime ?? 0,
+    submittedAt: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    utmSource: getParam("utm_source"),
+    utmMedium: getParam("utm_medium"),
+    utmCampaign: getParam("utm_campaign"),
+    utmContent: getParam("utm_content"),
+    referer: document.referrer,
+    trackingId: getOrCreateTrackingId(),
+  };
 
-  const formspreeP = fetch(FORMSPREE_ENDPOINT, {
-    method: "POST",
-    body: fd,
-    headers: { Accept: "application/json" },
-  }).catch((err) => console.error("Formspree error:", err));
-
-  const webhookP = fetch(LOAN_OFFICER_AI_WEBHOOK, {
+  const res = await fetch("/api/submit-lead", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: webhookBody,
-  }).catch((err) => console.error("LoanOfficer.ai webhook error:", err));
+    body: JSON.stringify(body),
+  });
 
-  const timeout = new Promise<void>((resolve) => setTimeout(resolve, 5000));
-
-  await Promise.race([Promise.allSettled([formspreeP, webhookP]), timeout]);
+  return res.json() as Promise<SubmitResult>;
 }

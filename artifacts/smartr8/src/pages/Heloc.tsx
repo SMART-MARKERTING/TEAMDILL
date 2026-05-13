@@ -27,8 +27,9 @@ type FS = {
   mortgageBalance: string; mortgageBalanceDraft: string;
   helocPurposes: string[]; timeline: string; creditScore: string;
   dob: string; email: string; phone: string; consent: boolean;
+  honeypot: string; pageLoadTime: number;
 };
-const DEFAULT: FS = { step:1,firstName:"",lastName:"",address:"",city:"",stateCode:"",zip:"",homeValue:"",homeValueDraft:"",mortgageBalance:"",mortgageBalanceDraft:"",helocPurposes:[],timeline:"",creditScore:"",dob:"",email:"",phone:"",consent:false };
+const DEFAULT: FS = { step:1,firstName:"",lastName:"",address:"",city:"",stateCode:"",zip:"",homeValue:"",homeValueDraft:"",mortgageBalance:"",mortgageBalanceDraft:"",helocPurposes:[],timeline:"",creditScore:"",dob:"",email:"",phone:"",consent:false,honeypot:"",pageLoadTime:0 };
 
 export default function HelocFunnel() {
   const [, setLocation] = useLocation();
@@ -36,8 +37,8 @@ export default function HelocFunnel() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [st, setSt] = useState<FS>(() => {
-    try { const s = sessionStorage.getItem(SESSION_KEY); return s ? (JSON.parse(s) as FS) : DEFAULT; }
-    catch { return DEFAULT; }
+    try { const s = sessionStorage.getItem(SESSION_KEY); return s ? (JSON.parse(s) as FS) : { ...DEFAULT, pageLoadTime: Date.now() }; }
+    catch { return { ...DEFAULT, pageLoadTime: Date.now() }; }
   });
 
   useEffect(() => { sessionStorage.setItem(SESSION_KEY, JSON.stringify(st)); }, [st]);
@@ -53,15 +54,16 @@ export default function HelocFunnel() {
   const advanceWithPatch = (patch: Partial<FS>) => setSt((prev) => { ga4.trackStepCompleted(prev.step, STEP_NAMES[prev.step-1]); return { ...prev, ...patch, step: prev.step+1 }; });
   const togglePurpose = (val: string) => p({ helocPurposes: st.helocPurposes.includes(val) ? st.helocPurposes.filter((x) => x !== val) : [...st.helocPurposes, val] });
 
+  const SUBMIT_ERR = "Something went wrong with your submission. Please text or call Myke directly at (949) 418-5486 and he will get back to you within minutes.";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!st.email || !st.phone || !st.consent) { setSubmitError("Please fill out all fields and accept the consent."); return; }
     setIsSubmitting(true); setSubmitError("");
     try {
-      await submitLead({ funnel:"heloc", subjectLine:"New HELOC lead from smartr8.com", loanPurpose:"HELOC", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, homeValue:st.homeValue, mortgageBalance:st.mortgageBalance, creditScore:st.creditScore, dob:st.dob, additionalFields:{ helocPurposes:st.helocPurposes, timeline:st.timeline } });
-      ga4.trackLead(); sessionStorage.removeItem(SESSION_KEY);
-      setLocation(`/heloc/whats-next?name=${encodeURIComponent(st.firstName)}`);
-    } catch { setSubmitError("Something went wrong. Please try again."); setIsSubmitting(false); }
+      const result = await submitLead({ funnel:"heloc", firstName:st.firstName, lastName:st.lastName, email:st.email, phone:st.phone, address:st.address, city:st.city, state:st.stateCode, zip:st.zip, homeValue:st.homeValue, mortgageBalance:st.mortgageBalance, creditScore:st.creditScore, dob:st.dob, honeypot:st.honeypot, pageLoadTime:st.pageLoadTime, additionalFields:{ helocPurposes:st.helocPurposes, timeline:st.timeline } });
+      if (result.success) { ga4.trackLead(); sessionStorage.removeItem(SESSION_KEY); setLocation(`/heloc/whats-next?name=${encodeURIComponent(st.firstName)}`); }
+      else { setSubmitError(result.error || SUBMIT_ERR); setIsSubmitting(false); }
+    } catch { setSubmitError(SUBMIT_ERR); setIsSubmitting(false); }
   };
 
   return (
@@ -169,6 +171,7 @@ export default function HelocFunnel() {
           <h2 className="text-3xl font-bold text-primary mb-2">How can we reach you?</h2>
           <p className="text-muted-foreground mb-8">No spam. No credit pull. Real options within hours.</p>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <input type="text" name="website" value={st.honeypot} onChange={(e) => p({ honeypot:e.target.value })} tabIndex={-1} aria-hidden="true" autoComplete="off" style={{ position:"absolute", left:"-9999px", opacity:0, height:0, width:0 }} />
             <div className="space-y-1.5"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="jane@example.com" value={st.email} onChange={(e) => p({ email:e.target.value })} className="text-base py-5" required /></div>
             <div className="space-y-1.5"><Label htmlFor="phone">Mobile Phone</Label><Input id="phone" type="tel" placeholder="(555) 555-5555" value={st.phone} onChange={(e) => p({ phone:e.target.value })} className="text-base py-5" required /></div>
             <div className="flex items-start gap-3 bg-secondary/50 p-4 rounded-xl mt-1">

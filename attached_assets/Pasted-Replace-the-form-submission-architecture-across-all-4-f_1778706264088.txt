@@ -1,0 +1,286 @@
+Replace the form submission architecture across all 4 funnels (HELOC, Cash-Out, Rate Reduction, Purchase). Remove Formspree completely. Replace with a Cloudflare Worker that proxies submissions to LeadMailbox.
+
+═══════════════════════════════════════════════════════
+PART 1: ARCHITECTURE OVERVIEW
+═══════════════════════════════════════════════════════
+
+NEW FLOW:
+
+Form on smartr8.com
+       ↓
+POST to /api/submit-lead (Cloudflare Worker, same domain)
+       ↓
+Worker validates, reformats fields, adds metadata
+       ↓
+Worker POSTs to LeadMailbox endpoint
+       ↓
+LeadMailbox routes to LoanOfficer.ai (per existing campaign rules)
+       ↓
+User redirected to /[funnel]/whats-next page
+
+LeadMailbox endpoint (HARDCODED in Worker, NOT in client code):
+https://api.leadmailbox.com/v2/leads/add/adax01/DeshazosWebsite
+
+No API key required — the URL itself authenticates the campaign.
+
+═══════════════════════════════════════════════════════
+PART 2: BUILD THE CLOUDFLARE WORKER
+═══════════════════════════════════════════════════════
+
+Create a new Cloudflare Worker file in the repo. Use the naming convention the existing site uses (e.g., functions/api/submit-lead.ts for Next.js on Cloudflare Pages, or workers/submit-lead.js for standalone Workers).
+
+REQUIREMENTS:
+
+1. ENDPOINT: POST /api/submit-lead
+
+2. ACCEPTS: JSON body with all form fields
+
+3. VALIDATES:
+   - Required fields present: firstName, lastName, email, phone
+   - Email format valid
+   - Phone is 10 digits (strip formatting before validation)
+   - Returns 400 with error message if validation fails
+
+4. RATE LIMITS (basic spam protection):
+   - Max 5 submissions per IP per minute
+   - Use Cloudflare's built-in KV or Durable Objects for IP tracking
+   - If limit exceeded, return 429 with "Too many requests, please try again later"
+
+5. MAPS FIELDS to LeadMailbox's expected schema (see Part 3)
+
+6. POSTS to LeadMailbox endpoint as JSON
+
+7. ON LEADMAILBOX SUCCESS (code: 0):
+   - Return 200 to the client with { success: true, leadId: <leadid from LeadMailbox response> }
+
+8. ON LEADMAILBOX FAILURE:
+   - Log the error to console
+   - Send a fallback notification email to mykoal@smartr8.com using Cloudflare's email Workers API (or MailChannels)
+   - STILL return 200 to the client (don't fail the user-facing experience)
+   - Include { success: true, fallback: true } so client knows to log analytics differently
+
+9. CORS:
+   - Allow POST from smartr8.com, www.smartr8.com, *.pages.dev
+   - Block all other origins
+
+10. METHOD HANDLING:
+    - Accept POST only
+    - Return 405 for any other method
+
+═══════════════════════════════════════════════════════
+PART 3: FIELD MAPPING (your form → LeadMailbox)
+═══════════════════════════════════════════════════════
+
+The Worker must map our funnel data to LeadMailbox's expected field names. Use this mapping table:
+
+YOUR FORM FIELD → LEADMAILBOX FIELD
+
+firstName → FirstName
+lastName → LastName
+email → Email
+phone → MobilePhone
+dob → DOB (format: MM/DD/YYYY)
+addressLine1 → Phys_Address
+city → Phys_City
+state → Phys_State
+zip → Phys_Zip
+creditScore → Credit_Rating
+loanAmount → Loan_Amount
+homeValue → Prop_Value
+mortgageBalance → Existing_Loan_Amount
+
+LOAN PURPOSE MAPPING:
+funnelType === 'heloc' → Loan_Request: "HELOC"
+funnelType === 'cashout' → Loan_Request: "Cash-Out Refinance"
+funnelType === 'rate-reduction' → Loan_Request: "Rate & Term Refinance"
+funnelType === 'purchase' → Loan_Request: "Purchase"
+
+ADDITIONAL FIELDS:
+
+Tracking → Use UUID generated client-side at form start, so we can match leads to GA4 sessions later
+
+Notes → Build a structured string with everything else we collected that doesn't map to a standard field. Format:
+
+"Funnel: [funnelType]
+Submitted: [ISO timestamp]
+Source: smartr8.com
+Page URL: [referer]
+
+ANSWERS:
+- Home value range: [range selected]
+- Mortgage balance range: [range selected]
+- Use of funds: [comma-separated]
+- Timeline: [value]
+- Cash needed: [range]
+- Current rate: [range]
+- Property type: [value]
+- Loan type interest: [value]
+- Down payment: [range]
+- Purchase price: [range]
+[only include fields that were actually captured for that funnel]
+
+UTM:
+- Source: [utm_source if present]
+- Medium: [utm_medium]
+- Campaign: [utm_campaign]
+- Content: [utm_content]"
+
+ADD CO-BORROWER fields ONLY if borrower added one in the form:
+Co_FirstName, Co_LastName, Co_Email, Co_MobilePhone, Co_DOB
+
+═══════════════════════════════════════════════════════
+PART 4: UPDATE FORM SUBMISSION LOGIC ON ALL 4 FUNNELS
+═══════════════════════════════════════════════════════
+
+For each funnel (HELOC, Cash-Out, Rate Reduction, Purchase), update the final step's submit handler:
+
+REMOVE:
+- Formspree endpoint POSTs
+- Any reference to https://formspree.io/f/maqvlqrg
+- Hidden _subject and _next inputs (not needed)
+
+REPLACE WITH:
+
+```javascript
+async function handleSubmit(formData) {
+  // Show loading state on submit button
+  setSubmitting(true);
+
+  try {
+    const response = await fetch('/api/submit-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...formData,
+        funnelType: '[heloc|cashout|rate-reduction|purchase]',
+        submittedAt: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        utmSource: getUrlParam('utm_source'),
+        utmMedium: getUrlParam('utm_medium'),
+        utmCampaign: getUrlParam('utm_campaign'),
+        utmContent: getUrlParam('utm_content'),
+        referer: document.referrer,
+        trackingId: getOrCreateTrackingId() // UUID stored in sessionStorage
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      // GA4 conversion event
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'generate_lead', {
+          funnel: '[funnel name]',
+          fallback_used: result.fallback || false
+        });
+      }
+      
+      // Redirect to whats-next page with first name
+      window.location.href = `/[funnel-path]/whats-next?name=${encodeURIComponent(formData.firstName)}`;
+    } else {
+      // Show inline error
+      setError(result.error || 'Something went wrong. Please text (949) 418-5486.');
+      setSubmitting(false);
+    }
+  } catch (err) {
+    console.error('Submission error:', err);
+    setError('Connection error. Please text (949) 418-5486 and we will follow up immediately.');
+    setSubmitting(false);
+  }
+}
+```
+
+ERROR MESSAGE WHEN SUBMIT FAILS:
+
+"Something went wrong with your submission. Please text or call Myke directly at (949) 418-5486 and he will get back to you within minutes."
+
+Make this error visually prominent (red banner above the form) but not panic-inducing.
+
+═══════════════════════════════════════════════════════
+PART 5: SECURITY HARDENING
+═══════════════════════════════════════════════════════
+
+1. HONEYPOT FIELD
+Add a hidden field named "website" to every form. Bots fill it in, humans don't. If the Worker receives a submission with anything in this field, silently return 200 (don't tell the bot it was rejected) but DON'T forward to LeadMailbox.
+
+2. SUBMISSION TIME CHECK
+Track when the user landed on page 1 of the funnel (sessionStorage timestamp). If submission happens in under 8 seconds, flag as likely bot and reject (return 200 silently, don't forward to LeadMailbox).
+
+3. DUPLICATE PROTECTION
+If the same email or phone has submitted within the last 60 minutes (track in Worker KV), still forward to LeadMailbox but add "DUPLICATE_RECENT" prefix to the Notes field so Mykoal can see it.
+
+═══════════════════════════════════════════════════════
+PART 6: ENVIRONMENT VARIABLES
+═══════════════════════════════════════════════════════
+
+NO LeadMailbox API key required. The endpoint URL is the auth.
+
+Required environment variables for the Worker:
+- FALLBACK_NOTIFICATION_EMAIL = mykoal@smartr8.com (where to email if LeadMailbox fails)
+- CF_KV_NAMESPACE (for rate limiting and duplicate detection) — Replit will provision this
+
+═══════════════════════════════════════════════════════
+PART 7: TESTING
+═══════════════════════════════════════════════════════
+
+Before opening the PR, verify:
+
+1. ✅ Each of the 4 funnels submits successfully
+2. ✅ Successful submission redirects to correct /whats-next page with name parameter
+3. ✅ Failed submission shows the error message with phone number
+4. ✅ Rate limiting works (try submitting 6 times rapidly from same IP)
+5. ✅ Honeypot rejects submissions with the hidden field populated
+6. ✅ Under-8-second submissions are silently rejected
+7. ✅ GA4 generate_lead event fires on success
+8. ✅ Worker code is in the repo with clear file path
+9. ✅ No Formspree references remain anywhere in the codebase
+
+═══════════════════════════════════════════════════════
+PART 8: WHAT TO REMOVE COMPLETELY
+═══════════════════════════════════════════════════════
+
+Find and delete:
+- All Formspree endpoint URLs (https://formspree.io/f/...)
+- All Formspree hidden inputs (_subject, _next)
+- Any Formspree-specific documentation in README files
+- The previous Formspree comments/placeholders in the codebase
+
+Search the codebase for "formspree" (case-insensitive) and either remove or replace each instance.
+
+═══════════════════════════════════════════════════════
+PART 9: WHAT NOT TO TOUCH
+═══════════════════════════════════════════════════════
+
+- Do NOT modify the funnel UI/UX (questions, ranges, "Other" pattern, auto-advance)
+- Do NOT modify the homepage
+- Do NOT modify the /heloc/instant-options page
+- Do NOT modify the /whats-next pages
+- Do NOT modify GA4 setup
+- ONLY change form submission logic + add the Worker
+
+═══════════════════════════════════════════════════════
+PART 10: DEPLOYMENT
+═══════════════════════════════════════════════════════
+
+Branch: feature/leadmailbox-worker-migration
+
+PR description should include:
+- Confirmation Formspree is completely removed
+- The new Worker file location
+- A test submission proof (screenshot or log)
+- The expected lead flow path
+
+Open PR to main. Do NOT auto-merge.
+
+═══════════════════════════════════════════════════════
+PART 11: POST-DEPLOY VERIFICATION
+═══════════════════════════════════════════════════════
+
+After merge, Mykoal will:
+1. Submit a test lead from each of the 4 funnels
+2. Verify lead appears in LeadMailbox dashboard
+3. Verify lead flows through to LoanOfficer.ai (his existing routing)
+4. Verify GA4 events fire correctly
+5. Verify error handling by simulating a network failure (Worker should still return success and email fallback)
+
+If any of these fail, open a hotfix.

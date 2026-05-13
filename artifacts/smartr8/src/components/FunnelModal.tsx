@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { submitLead, type FunnelId } from "@/lib/submitLead";
 
 const HOME_VALUE_RANGES = [
   "Under $300,000",
@@ -51,6 +52,7 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  const [pageLoadTime] = useState(() => Date.now());
   const [answers, setAnswers] = useState({
     goal: initialGoal || "",
     home_value: "",
@@ -63,6 +65,7 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
     phone: "",
     email: "",
     consent: false,
+    honeypot: "",
   });
 
   useEffect(() => {
@@ -103,51 +106,45 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
     if (step > 1) setStep(prev => prev - 1);
   };
 
+  const SUBMIT_ERR = "Something went wrong with your submission. Please text or call Myke directly at (949) 418-5486 and he will get back to you within minutes.";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!answers.full_name || !answers.phone || !answers.email || !answers.consent) {
       setError("Please fill out all fields and check the consent box.");
       return;
     }
-
     setIsSubmitting(true);
     setError("");
-
     try {
-      const formData = new FormData();
-      const submitAnswers = {
-        goal: answers.goal,
-        home_value: answers.home_value,
-        mortgage_balance: answers.mortgage_balance,
-        credit_range: answers.credit_range,
-        property_zip: answers.property_zip,
-        full_name: answers.full_name,
-        phone: answers.phone,
+      const [firstName, ...lastParts] = answers.full_name.trim().split(" ");
+      const lastName = lastParts.join(" ") || "—";
+      const funnelType: FunnelId =
+        answers.goal.toLowerCase().includes("cash out") || answers.goal.toLowerCase().includes("pull") ? "cashout" :
+        answers.goal.toLowerCase().includes("lower") ? "rate-reduction" :
+        answers.goal.toLowerCase().includes("buy") ? "purchase" : "heloc";
+      const result = await submitLead({
+        funnel: funnelType,
+        firstName,
+        lastName,
         email: answers.email,
-        consent: String(answers.consent),
-      };
-      Object.entries(submitAnswers).forEach(([key, value]) => {
-        formData.append(key, value);
+        phone: answers.phone,
+        homeValue: answers.home_value,
+        mortgageBalance: answers.mortgage_balance,
+        creditScore: answers.credit_range,
+        zip: answers.property_zip,
+        honeypot: answers.honeypot,
+        pageLoadTime,
+        additionalFields: { goal: answers.goal },
       });
-      formData.append("_subject", `New SMARTR8 lead — ${answers.goal || "General"}`);
-
-      const response = await fetch("https://formspree.io/f/meennekb", {
-        method: "POST",
-        body: formData,
-        headers: { Accept: "application/json" },
-      });
-
-      if (response.ok) {
-        const firstName = answers.full_name.split(" ")[0] || "";
+      if (result.success) {
         onClose();
         setLocation(`/apply/cash-out/whats-next?name=${encodeURIComponent(firstName)}`);
       } else {
-        const data = await response.json();
-        setError(data.error || "There was a problem submitting your form. Please try again.");
+        setError(result.error || SUBMIT_ERR);
+        setIsSubmitting(false);
       }
     } catch {
-      setError("Network error. Please check your connection and try again.");
-    } finally {
+      setError(SUBMIT_ERR);
       setIsSubmitting(false);
     }
   };
@@ -357,6 +354,7 @@ export function FunnelModal({ isOpen, onClose, initialGoal }: FunnelModalProps) 
                 <p className="text-muted-foreground mb-6">No spam. No credit pull. Real options sent within hours.</p>
 
                 <div className="flex flex-col gap-4 flex-1">
+                  <input type="text" name="website" value={answers.honeypot} onChange={(e) => updateAnswer("honeypot", e.target.value)} tabIndex={-1} aria-hidden="true" autoComplete="off" style={{ position:"absolute", left:"-9999px", opacity:0, height:0, width:0 }} />
                   <div className="space-y-2">
                     <Label htmlFor="full_name">Full Name</Label>
                     <Input
