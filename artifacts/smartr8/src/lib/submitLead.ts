@@ -92,43 +92,15 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
   const result = (await res.json()) as SubmitResult & { lmPayload?: Record<string, string> };
 
   if (result.success && result.lmPayload) {
-    let lmSuccess = false;
-    try {
-      const lmRes = await fetch(LM_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.lmPayload),
-      });
-      if (lmRes.ok) {
-        try {
-          const lmData = await lmRes.json();
-          lmSuccess = lmData.code === 0;
-        } catch {
-          lmSuccess = true;
-        }
-      }
-    } catch {
-      lmSuccess = false;
-    }
-
-    if (!lmSuccess) {
-      fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          _subject: `New Lead — ${payload.funnel} — ${payload.firstName} ${payload.lastName}`,
-          firstName: payload.firstName,
-          lastName: payload.lastName,
-          email: payload.email,
-          phone: payload.phone,
-          funnel: payload.funnel,
-          homeValue: payload.homeValue ?? "",
-          mortgageBalance: payload.mortgageBalance ?? "",
-          creditScore: payload.creditScore ?? "",
-          zip: payload.zip ?? "",
-        }),
-      }).catch(() => {});
-    }
+    // Use text/plain + no-cors to send as a "simple request" (no CORS preflight).
+    // application/json would trigger a preflight OPTIONS which LeadMailbox blocks.
+    // The response is opaque but the POST reaches LeadMailbox from the user's real IP.
+    fetch(LM_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(result.lmPayload),
+    }).catch(() => {});
   }
 
   return { success: result.success, leadId: result.leadId, error: result.error };

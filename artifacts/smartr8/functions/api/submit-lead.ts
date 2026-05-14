@@ -188,6 +188,26 @@ export async function onRequest(context) {
   // Return the validated LeadMailbox payload so the browser can submit it from the user's real IP
   const lmPayload = buildLeadMailboxPayload(body, isDuplicate);
 
+  // Email notification via Formspree — always fires so Mykoal gets every lead
+  const FORMSPREE = "https://formspree.io/f/meennekb";
+  fetch(FORMSPREE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      _subject: `New Lead — ${body.funnelType ?? body.funnel ?? "unknown"} — ${body.firstName} ${body.lastName}`,
+      firstName: body.firstName,
+      lastName: body.lastName,
+      email: body.email,
+      phone: body.phone,
+      funnel: body.funnelType ?? body.funnel ?? "",
+      homeValue: body.homeValue ?? "",
+      mortgageBalance: body.mortgageBalance ?? "",
+      creditScore: body.creditScore ?? "",
+      state: body.state ?? "",
+      zip: body.zip ?? "",
+    }),
+  }).catch((e) => console.error("[smartr8] Formspree error:", e));
+
   console.log(`[smartr8] validated lead — ${body.funnelType} — ${body.firstName} ${body.lastName}`);
   return jsonResponse({ success: true, lmPayload }, 200, cors);
 }
