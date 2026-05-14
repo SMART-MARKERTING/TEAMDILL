@@ -1,0 +1,127 @@
+{
+  "wallTime": 1236,
+  "cpuTime": 10,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "8c791e12-25d3-48b0-a28d-5636e98aebeb"
+  },
+  "scriptName": "pages-worker--13720464-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [
+    {
+      "message": [
+        "[smartr8] LeadMailbox error:",
+        "code=-1 msg=foreign ip address: 2a06:98c0:3600127.0.0.103 contact LeadMailbox to whitelist"
+      ],
+      "level": "error",
+      "timestamp": 1778717260971
+    }
+  ],
+  "eventTimestamp": 1778717259971,
+  "event": {
+    "request": {
+      "url": "https://smartr8.com/api/submit-lead",
+      "method": "POST",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "en-US,en;q=0.9",
+        "cf-connecting-ip": "174.70.76.49",
+        "cf-connecting-o2o": "1",
+        "cf-ipcountry": "US",
+        "cf-ray": "9fb5a9faba4a566d-LAX",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "content-length": "684",
+        "content-type": "application/json",
+        "cookie": "REDACTED",
+        "host": "smartr8.com",
+        "origin": "https://smartr8.com",
+        "priority": "u=1, i",
+        "referer": "https://smartr8.com/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Microsoft Edge\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+        "x-forwarded-for": "174.70.76.49",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "174.70.76.49"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": {},
+        "clientTcpRtt": 0,
+        "clientQuicRtt": 0,
+        "colo": "LAX",
+        "asn": 22773,
+        "asOrganization": "Cox Communications Inc.",
+        "country": "US",
+        "isEUCountry": false,
+        "city": "Phoenix",
+        "continent": "NA",
+        "region": "Arizona",
+        "regionCode": "AZ",
+        "timezone": "America/Phoenix",
+        "longitude": "-112.07404",
+        "latitude": "33.44838",
+        "postalCode": "85001",
+        "metroCode": "753",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "",
+        "tlsClientExtensionsSha1Le": "",
+        "tlsClientHelloLength": "0",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": "",
+          "certRFC9440": "",
+          "certRFC9440TooLarge": false,
+          "certChainRFC9440": "",
+          "certChainRFC9440TooLarge": false
+        },
+        "verifiedBotCategory": "",
+        "pagesHostName": "smartr8.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 200
+    }
+  },
+  "id": 0
+}
