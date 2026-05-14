@@ -185,7 +185,6 @@ export async function onRequest(context) {
     }
   }
 
-  // Return the validated LeadMailbox payload so the browser can submit it from the user's real IP
   const lmPayload = buildLeadMailboxPayload(body, isDuplicate);
 
   // Email notification via Formspree — always fires so Mykoal gets every lead
