@@ -50,3 +50,9 @@ externalPort = 80
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+WORKSHEET_ADMIN_USER = "admin"
+WORKSHEET_ADMIN_PASS = "password"
