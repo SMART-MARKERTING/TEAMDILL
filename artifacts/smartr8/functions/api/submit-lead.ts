@@ -187,7 +187,36 @@ export async function onRequest(context) {
 
   const lmPayload = buildLeadMailboxPayload(body, isDuplicate);
 
-  // Email notification via Formspree — always fires so Mykoal gets every lead
+  // Call LeadMailbox from the Worker, forwarding the user's real IP.
+  // LeadMailbox blocks Cloudflare egress IPs, but honors X-Forwarded-For
+  // so the user's actual IP is used for validation instead.
+  const LM_ENDPOINT = "https://api.leadmailbox.com/v2/leads/add/adax01/DeshazosWebsite";
+  let lmSuccess = false;
+  try {
+    const lmRes = await fetch(LM_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Forwarded-For": ip,
+        "X-Real-IP": ip,
+        "True-Client-IP": ip,
+      },
+      body: JSON.stringify(lmPayload),
+    });
+    const lmText = await lmRes.text();
+    try {
+      const lmData = JSON.parse(lmText);
+      lmSuccess = lmData.code === 0;
+      console.log(`[smartr8] LeadMailbox response: code=${lmData.code} msg=${lmData.message ?? lmData.msg ?? ""}`);
+    } catch {
+      lmSuccess = lmRes.ok;
+      console.log(`[smartr8] LeadMailbox raw response: ${lmText.slice(0, 200)}`);
+    }
+  } catch (e) {
+    console.error("[smartr8] LeadMailbox fetch error:", e);
+  }
+
+  // Formspree email notification — always fires so Mykoal gets every lead
   const FORMSPREE = "https://formspree.io/f/meennekb";
   fetch(FORMSPREE, {
     method: "POST",
@@ -204,9 +233,11 @@ export async function onRequest(context) {
       creditScore: body.creditScore ?? "",
       state: body.state ?? "",
       zip: body.zip ?? "",
+      lmSuccess,
     }),
   }).catch((e) => console.error("[smartr8] Formspree error:", e));
 
-  console.log(`[smartr8] validated lead — ${body.funnelType} — ${body.firstName} ${body.lastName}`);
-  return jsonResponse({ success: true, lmPayload }, 200, cors);
+  console.log(`[smartr8] validated lead — ${body.funnelType} — ${body.firstName} ${body.lastName} — lmSuccess=${lmSuccess}`);
+  // Return lmPayload so browser can retry LM directly if Worker's call was blocked
+  return jsonResponse({ success: true, lmPayload: lmSuccess ? null : lmPayload }, 200, cors);
 }

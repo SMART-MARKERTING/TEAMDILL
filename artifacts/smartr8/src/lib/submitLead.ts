@@ -91,15 +91,8 @@ function buildLmPayload(payload: LeadPayload): Record<string, string> {
 }
 
 export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
-  // Fire LeadMailbox immediately from the browser using the user's real IP.
-  // text/plain avoids a CORS preflight — the POST goes straight through.
+  // Pre-build LM payload client-side for browser fallback (used only if Worker's LM call fails)
   const lmPayload = buildLmPayload(payload);
-  fetch(LM_ENDPOINT, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify(lmPayload),
-  }).catch(() => {});
 
   const body = {
     firstName: payload.firstName,
@@ -128,17 +121,37 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
     trackingId: getOrCreateTrackingId(),
   };
 
-  // Also call the Worker for Formspree email notification + KV dedup.
+  // Call the Worker — it tries LM server-side (with user IP forwarding) + Formspree + KV dedup.
+  // If the Worker's LM call was blocked by IP filtering, it returns lmPayload so the browser
+  // can fire LM directly as a fallback from the user's real IP.
   try {
     const res = await fetch("/api/submit-lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    const result = (await res.json()) as SubmitResult;
+    const result = (await res.json()) as SubmitResult & { lmPayload?: Record<string, string> | null };
+
+    // Browser fallback: only fires if Worker's LM call failed (lmPayload will be non-null)
+    if (result.lmPayload) {
+      fetch(LM_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(result.lmPayload),
+      }).catch(() => {});
+    }
+
     return { success: result.success, leadId: result.leadId, error: result.error };
   } catch {
-    // Worker failed but LM already received the lead — still show success
+    // Worker failed — fire LM from browser as last resort
+    fetch(LM_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(lmPayload),
+    }).catch(() => {});
+    // Still show success
     return { success: true };
   }
 }
