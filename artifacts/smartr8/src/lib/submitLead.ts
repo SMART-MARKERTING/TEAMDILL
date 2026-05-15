@@ -132,14 +132,21 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
     });
     const result = (await res.json()) as SubmitResult & { lmPayload?: Record<string, string> | null };
 
-    // Browser fallback: only fires if Worker's LM call failed (lmPayload will be non-null)
+    // Browser fallback: fires if Worker's LM call was IP-blocked (lmPayload non-null).
+    // sendBeacon is used instead of fetch — it survives page navigation, cannot be
+    // cancelled, and is less likely to be blocked by browser tracking prevention.
     if (result.lmPayload) {
-      fetch(LM_ENDPOINT, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify(result.lmPayload),
-      }).catch(() => {});
+      const blob = new Blob([JSON.stringify(result.lmPayload)], { type: "text/plain" });
+      const sent = navigator.sendBeacon(LM_ENDPOINT, blob);
+      if (!sent) {
+        // sendBeacon queue full — fall back to no-cors fetch
+        fetch(LM_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(result.lmPayload),
+        }).catch(() => {});
+      }
     }
 
     return { success: result.success, leadId: result.leadId, error: result.error };

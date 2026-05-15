@@ -98,7 +98,7 @@ function jsonResponse(data, status, cors) {
 }
 
 export async function onRequest(context) {
-  const { request, env } = context;
+  const { request, env, waitUntil } = context;
   const origin = request.headers.get("Origin") ?? "";
   const cors = corsHeaders(origin);
 
@@ -216,26 +216,28 @@ export async function onRequest(context) {
     console.error("[smartr8] LeadMailbox fetch error:", e);
   }
 
-  // Formspree email notification — always fires so Mykoal gets every lead
+  // Formspree email notification — use waitUntil so CF doesn't cancel it before it fires
   const FORMSPREE = "https://formspree.io/f/meennekb";
-  fetch(FORMSPREE, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      _subject: `New Lead — ${body.funnelType ?? body.funnel ?? "unknown"} — ${body.firstName} ${body.lastName}`,
-      firstName: body.firstName,
-      lastName: body.lastName,
-      email: body.email,
-      phone: body.phone,
-      funnel: body.funnelType ?? body.funnel ?? "",
-      homeValue: body.homeValue ?? "",
-      mortgageBalance: body.mortgageBalance ?? "",
-      creditScore: body.creditScore ?? "",
-      state: body.state ?? "",
-      zip: body.zip ?? "",
-      lmSuccess,
-    }),
-  }).catch((e) => console.error("[smartr8] Formspree error:", e));
+  waitUntil(
+    fetch(FORMSPREE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        _subject: `New Lead — ${body.funnelType ?? body.funnel ?? "unknown"} — ${body.firstName} ${body.lastName}`,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        phone: body.phone,
+        funnel: body.funnelType ?? body.funnel ?? "",
+        homeValue: body.homeValue ?? "",
+        mortgageBalance: body.mortgageBalance ?? "",
+        creditScore: body.creditScore ?? "",
+        state: body.state ?? "",
+        zip: body.zip ?? "",
+        lmSuccess,
+      }),
+    }).catch((e) => console.error("[smartr8] Formspree error:", e))
+  );
 
   console.log(`[smartr8] validated lead — ${body.funnelType} — ${body.firstName} ${body.lastName} — lmSuccess=${lmSuccess}`);
   // Return lmPayload so browser can retry LM directly if Worker's call was blocked
