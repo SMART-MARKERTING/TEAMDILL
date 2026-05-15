@@ -42,17 +42,20 @@ export default function Worksheet() {
   const [inputs, setInputs] = useState<WorksheetInputs>(DEFAULT_INPUTS);
   const [gateOpen, setGateOpen] = useState(true);
   const [unlocked, setUnlocked] = useState(false);
-  const [lead, setLead] = useState<{ firstName: string } | null>(null);
+  const [lead, setLead] = useState<{ firstName: string; lastName: string } | null>(null);
   const [emailSelfOpen, setEmailSelfOpen] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
 
   const results = useMemo(() => computeScenarios(inputs), [inputs]);
 
-  function handleLeadSuccess(leadData: { firstName: string }) {
+  function handleLeadSuccess(leadData: { firstName: string; lastName: string }) {
     setLead(leadData);
     setUnlocked(true);
     setGateOpen(false);
-    setInputs((prev) => ({ ...prev, clientName: leadData.firstName }));
+    setInputs((prev) => ({
+      ...prev,
+      clientName: `${leadData.firstName} ${leadData.lastName}`,
+    }));
   }
 
   function handlePrint() {
@@ -62,7 +65,7 @@ export default function Worksheet() {
   async function handleDownloadPdf() {
     setPdfLoading(true);
     try {
-      const name = lead?.firstName ?? "Client";
+      const name = lead ? `${lead.firstName}-${lead.lastName}` : "Client";
       await downloadWorksheetPdf(inputs, results, `Loan-Benefits-Worksheet-${name}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);

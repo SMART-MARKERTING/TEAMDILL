@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 
 interface LeadCaptureModalProps {
   open: boolean;
-  onSuccess: (lead: { firstName: string }) => void;
+  onSuccess: (lead: { firstName: string; lastName: string }) => void;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -22,16 +22,20 @@ export default function LeadCaptureModal({
   onOpenChange,
 }: LeadCaptureModalProps) {
   const [firstName, setFirstName] = useState("");
-  const [error, setError] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string }>({});
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!firstName.trim()) {
-      setError("Please enter your first name.");
+    const newErrors: typeof errors = {};
+    if (!firstName.trim()) newErrors.firstName = "First name is required.";
+    if (!lastName.trim()) newErrors.lastName = "Last name is required.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
-    setError("");
-    onSuccess({ firstName: firstName.trim() });
+    setErrors({});
+    onSuccess({ firstName: firstName.trim(), lastName: lastName.trim() });
   }
 
   return (
@@ -46,23 +50,44 @@ export default function LeadCaptureModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 pt-1">
-          <div className="space-y-1.5">
-            <Label htmlFor="firstName" className="text-sm font-medium">
-              What's your first name?
-            </Label>
-            <Input
-              id="firstName"
-              placeholder="Jane"
-              value={firstName}
-              autoFocus
-              className="text-base h-11"
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                setError("");
-              }}
-              onKeyDown={(e) => e.key === "Enter" && handleSubmit(e as unknown as React.FormEvent)}
-            />
-            {error && <p className="text-destructive text-xs">{error}</p>}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="firstName" className="text-sm font-medium">
+                First Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="firstName"
+                placeholder="Jane"
+                value={firstName}
+                autoFocus
+                className="h-11"
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                  if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: undefined }));
+                }}
+              />
+              {errors.firstName && (
+                <p className="text-destructive text-xs">{errors.firstName}</p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="lastName" className="text-sm font-medium">
+                Last Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="lastName"
+                placeholder="Smith"
+                value={lastName}
+                className="h-11"
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                  if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: undefined }));
+                }}
+              />
+              {errors.lastName && (
+                <p className="text-destructive text-xs">{errors.lastName}</p>
+              )}
+            </div>
           </div>
 
           <Button
