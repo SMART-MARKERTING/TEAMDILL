@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { PageMeta } from "@/components/PageMeta";
+import { JsonLd } from "@/components/JsonLd";
 import { Loader2 } from "lucide-react";
 import { FunnelLayout, ChoiceCard, MultiChoiceCard } from "@/components/FunnelLayout";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
@@ -70,6 +72,21 @@ export default function CashOutFunnel() {
 
   return (
     <FunnelLayout step={st.step} totalSteps={TOTAL} onBack={st.step > 1 ? back : undefined}>
+      <PageMeta
+        title="Cash-Out Refinance | Mykoal DeShazo at Adaxa Home"
+        description="Turn your home equity into cash with a cash-out refinance from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. Access to 99+ lenders. NMLS #1912347."
+        canonical="/apply/cash-out"
+      />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Cash-Out Refinance",
+        "serviceType": "Cash-Out Refinance",
+        "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
+        "description": "Turn your home equity into cash with a cash-out refinance from Mykoal DeShazo at Adaxa Home. Access to 99+ lenders. NMLS #1912347.",
+        "areaServed": { "@type": "State", "name": "Arizona" },
+        "url": "https://smartr8.com/apply/cash-out"
+      }} />
 
       {st.step === 1 && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">

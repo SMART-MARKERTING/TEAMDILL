@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { PageMeta } from "@/components/PageMeta";
+import { JsonLd } from "@/components/JsonLd";
 import { Loader2 } from "lucide-react";
 import { FunnelLayout, ChoiceCard } from "@/components/FunnelLayout";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
@@ -68,6 +70,21 @@ export default function PurchaseFunnel() {
 
   return (
     <FunnelLayout step={st.step} totalSteps={TOTAL} onBack={st.step > 1 ? back : undefined}>
+      <PageMeta
+        title="Purchase Mortgage | Mykoal DeShazo at Adaxa Home"
+        description="Conventional, FHA, VA, and Jumbo purchase loans from Mykoal DeShazo at Adaxa Home. Fast pre-approval, 99+ wholesale lenders. NMLS #1912347."
+        canonical="/apply/purchase"
+      />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Home Purchase Loan",
+        "serviceType": "Home Purchase Loan",
+        "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
+        "description": "Conventional, FHA, VA, and Jumbo purchase loans from Mykoal DeShazo at Adaxa Home. Fast pre-approval, access to 99+ wholesale lenders. NMLS #1912347.",
+        "areaServed": { "@type": "State", "name": "Arizona" },
+        "url": "https://smartr8.com/apply/purchase"
+      }} />
 
       {st.step === 1 && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">

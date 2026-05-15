@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { PageMeta } from "@/components/PageMeta";
+import { JsonLd } from "@/components/JsonLd";
 import { Loader2 } from "lucide-react";
 import { FunnelLayout, ChoiceCard, MultiChoiceCard } from "@/components/FunnelLayout";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
@@ -69,6 +71,21 @@ export default function HelocFunnel() {
 
   return (
     <FunnelLayout step={st.step} totalSteps={TOTAL} onBack={st.step > 1 ? back : undefined}>
+      <PageMeta
+        title="HELOC Options | Mykoal DeShazo at Adaxa Home"
+        description="Access your home equity with a HELOC from Mykoal DeShazo, Senior Loan Officer at Adaxa Home in Scottsdale. No credit pull to explore options. NMLS #1912347."
+        canonical="/heloc"
+      />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "HELOC — Home Equity Line of Credit",
+        "serviceType": "Home Equity Line of Credit",
+        "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
+        "description": "Access your home equity with a flexible HELOC from Mykoal DeShazo at Adaxa Home. No credit pull required to explore your options. NMLS #1912347.",
+        "areaServed": { "@type": "State", "name": "Arizona" },
+        "url": "https://smartr8.com/heloc"
+      }} />
 
       {st.step === 1 && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">

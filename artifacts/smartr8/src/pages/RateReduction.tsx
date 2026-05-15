@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { PageMeta } from "@/components/PageMeta";
+import { JsonLd } from "@/components/JsonLd";
 import { Loader2 } from "lucide-react";
 import { FunnelLayout, ChoiceCard } from "@/components/FunnelLayout";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
@@ -69,6 +71,21 @@ export default function RateReductionFunnel() {
 
   return (
     <FunnelLayout step={st.step} totalSteps={TOTAL} onBack={st.step > 1 ? back : undefined}>
+      <PageMeta
+        title="Rate Reduction Refinance | Mykoal DeShazo at Adaxa Home"
+        description="Lower your mortgage rate and monthly payment. Refinancing options from Mykoal DeShazo at Adaxa Home in Scottsdale, AZ. No credit pull required. NMLS #1912347."
+        canonical="/apply/rate-reduction"
+      />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Rate-and-Term Refinance",
+        "serviceType": "Rate-and-Term Refinance",
+        "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
+        "description": "Lower your mortgage rate and monthly payment with rate-and-term refinancing from Mykoal DeShazo at Adaxa Home in Scottsdale, AZ. NMLS #1912347.",
+        "areaServed": { "@type": "State", "name": "Arizona" },
+        "url": "https://smartr8.com/apply/rate-reduction"
+      }} />
 
       {st.step === 1 && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">

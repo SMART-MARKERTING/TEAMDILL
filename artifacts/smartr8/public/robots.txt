@@ -1,2 +1,31 @@
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 User-agent: *
 Allow: /
+Disallow: /thank-you
+Disallow: /heloc/whats-next
+Disallow: /heloc/next-steps
+Disallow: /apply/cash-out/whats-next
+Disallow: /apply/rate-reduction/whats-next
+Disallow: /apply/purchase/whats-next
+
+Sitemap: https://smartr8.com/sitemap.xml

@@ -1,0 +1,289 @@
+Update smartr8.com to add AI search optimization and schema 
+markup. This site is intentionally a lean funnel, so we are 
+NOT adding blog, about, or content pages. We ARE adding the 
+structured data and crawler permissions that establish entity 
+authority and link this site to mykoal.com as the same 
+person/business.
+
+============================================
+PART 1: VERIFY AND UPDATE robots.txt
+============================================
+
+Open /public/robots.txt (or wherever the current robots.txt 
+lives). Confirm or add the following AI crawler permissions:
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: *
+Allow: /
+Disallow: /thank-you
+Disallow: /whats-next
+Disallow: /heloc/whats-next
+Disallow: /cash-out/whats-next
+Disallow: /rate-reduction/whats-next
+Disallow: /purchase/whats-next
+
+Sitemap: https://smartr8.com/sitemap.xml
+
+Reasoning: we want AI crawlers reading the funnel landing pages 
+to verify entity legitimacy, but we do NOT want them indexing 
+the thank-you pages (those are post-conversion and contain 
+Cal.com embeds we do not need surfaced).
+
+============================================
+PART 2: ADD SCHEMA MARKUP TO HOMEPAGE
+============================================
+
+Add the following JSON-LD blocks to the <head> of the homepage 
+(/). This establishes who runs smartr8 and ties it to mykoal.com.
+
+BLOCK 1 — Person schema:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Mykoal DeShazo",
+  "jobTitle": "Vice President, Senior Loan Officer",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Adaxa Home LLC",
+    "identifier": "NMLS #2380533"
+  },
+  "identifier": "NMLS #1912347",
+  "telephone": "+19494185486",
+  "email": "mykoal@adaxahome.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "16767 N Perimeter Dr, Ste 150",
+    "addressLocality": "Scottsdale",
+    "addressRegion": "AZ",
+    "postalCode": "85260",
+    "addressCountry": "US"
+  },
+  "url": "https://mykoal.com",
+  "sameAs": [
+    "https://mykoal.com",
+    "https://www.adaxahome.com"
+  ]
+}
+</script>
+
+BLOCK 2 — FinancialService schema:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FinancialService",
+  "name": "Mykoal DeShazo Mortgage Services",
+  "description": "Mortgage refinance, HELOC, cash-out, and purchase loans from a Senior Loan Officer at Adaxa Home in Scottsdale, AZ. Access to 99+ wholesale lenders.",
+  "url": "https://smartr8.com",
+  "image": "https://smartr8.com/og-image.jpg",
+  "telephone": "+19494185486",
+  "email": "mykoal@adaxahome.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "16767 N Perimeter Dr, Ste 150",
+    "addressLocality": "Scottsdale",
+    "addressRegion": "AZ",
+    "postalCode": "85260",
+    "addressCountry": "US"
+  },
+  "areaServed": "Arizona",
+  "priceRange": "$$",
+  "provider": {
+    "@type": "Person",
+    "name": "Mykoal DeShazo",
+    "identifier": "NMLS #1912347",
+    "url": "https://mykoal.com"
+  },
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Adaxa Home LLC",
+    "identifier": "NMLS #2380533"
+  }
+}
+</script>
+
+BLOCK 3 — WebSite schema:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Smartr8",
+  "url": "https://smartr8.com",
+  "publisher": {
+    "@type": "Person",
+    "name": "Mykoal DeShazo",
+    "url": "https://mykoal.com"
+  }
+}
+</script>
+
+============================================
+PART 3: ADD SERVICE SCHEMA TO EACH FUNNEL PAGE
+============================================
+
+Add a Service schema block to each product funnel page. Use 
+the appropriate one based on the URL.
+
+ON /heloc OR /heloc/instant-options:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Home Equity Line of Credit (HELOC)",
+  "name": "HELOC from Mykoal DeShazo",
+  "description": "Access your home equity without refinancing your first mortgage. HELOC options from a Senior Loan Officer with access to 99+ wholesale lenders.",
+  "provider": {
+    "@type": "Person",
+    "name": "Mykoal DeShazo",
+    "identifier": "NMLS #1912347",
+    "url": "https://mykoal.com"
+  },
+  "areaServed": "Arizona"
+}
+</script>
+
+ON /cash-out OR /apply/cash-out:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Cash-Out Refinance",
+  "name": "Cash-Out Refinance from Mykoal DeShazo",
+  "description": "Replace your current mortgage with a larger loan and pocket the difference. Cash-out refi strategy from a Senior Loan Officer at Adaxa Home.",
+  "provider": {
+    "@type": "Person",
+    "name": "Mykoal DeShazo",
+    "identifier": "NMLS #1912347",
+    "url": "https://mykoal.com"
+  },
+  "areaServed": "Arizona"
+}
+</script>
+
+ON /rate-reduction OR /apply/rate-reduction:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Rate and Term Refinance",
+  "name": "Rate Reduction Refinance from Mykoal DeShazo",
+  "description": "Lower your monthly payment by reducing your interest rate. Refinance options from a Senior Loan Officer with access to 99+ wholesale lenders.",
+  "provider": {
+    "@type": "Person",
+    "name": "Mykoal DeShazo",
+    "identifier": "NMLS #1912347",
+    "url": "https://mykoal.com"
+  },
+  "areaServed": "Arizona"
+}
+</script>
+
+ON /purchase OR /apply/purchase:
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Home Purchase Loan",
+  "name": "Purchase Mortgage from Mykoal DeShazo",
+  "description": "Conventional, FHA, VA, and Jumbo purchase loans. Pre-approval guidance from a Senior Loan Officer at Adaxa Home.",
+  "provider": {
+    "@type": "Person",
+    "name": "Mykoal DeShazo",
+    "identifier": "NMLS #1912347",
+    "url": "https://mykoal.com"
+  },
+  "areaServed": "Arizona"
+}
+</script>
+
+============================================
+PART 4: META TAG AUDIT
+============================================
+
+For every public funnel page (not /thank-you or /whats-next), 
+confirm the <head> has:
+
+- Unique <title> tag
+- Unique meta description (150-160 characters)
+- Canonical URL pointing to the page itself
+- Open Graph tags: og:title, og:description, og:image, og:url, 
+  og:type ("website")
+- Twitter Card: summary_large_image
+- og:image should be a branded card showing headshot, name, 
+  title, and NMLS
+
+If any of these are missing or generic, generate them per page.
+
+============================================
+PART 5: SITEMAP UPDATE
+============================================
+
+Confirm /sitemap.xml exists and includes only public funnel 
+pages:
+- / (homepage)
+- /heloc (or /heloc/instant-options)
+- /cash-out
+- /rate-reduction
+- /purchase
+
+Exclude all /thank-you and /whats-next routes (they should have 
+noindex,nofollow meta tags already, per existing setup).
+
+============================================
+PART 6: noindex CONFIRMATION
+============================================
+
+Verify these pages have <meta name="robots" content="noindex, 
+nofollow"> in the <head>:
+- /thank-you
+- /whats-next (all variants)
+- Any post-submission pages
+
+============================================
+DO NOT CHANGE
+============================================
+
+- The funnel flow, form steps, or conversion logic
+- Cal.com embed setup
+- LeadMailbox / Formspree integration
+- Meta Pixel + Conversions API setup
+- GA4 events
+- Honeypot, rate limiting, or any security features
+- The visual design or color palette
+
+============================================
+WHEN DONE
+============================================
+
+Run npm run build to confirm no errors. Send me:
+1. Preview URL
+2. List of every page where schema was added
+3. Confirmation that robots.txt now allows AI crawlers
+4. A copy of the final robots.txt content

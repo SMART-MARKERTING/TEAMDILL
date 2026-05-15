@@ -1,4 +1,5 @@
 import { useSearch } from "wouter";
+import { PageMeta } from "@/components/PageMeta";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,12 @@ export default function RateReductionWhatsnext() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
+      <PageMeta
+        title="What Happens Next | Adaxa Home"
+        description="Your rate reduction inquiry has been received. Mykoal DeShazo will be in touch shortly."
+        canonical="/apply/rate-reduction/whats-next"
+        noIndex
+      />
       <Header />
 
       <main className="flex-1 py-16 md:py-24 px-4">

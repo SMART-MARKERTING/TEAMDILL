@@ -1,4 +1,5 @@
 import { useSearch } from "wouter";
+import { PageMeta } from "@/components/PageMeta";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,12 @@ export default function HelocNextSteps() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
+      <PageMeta
+        title="Next Steps | Adaxa Home"
+        description="Your HELOC application is underway. Mykoal DeShazo will be in touch shortly with your next steps."
+        canonical="/heloc/next-steps"
+        noIndex
+      />
       <Header />
 
       <main className="flex-1 py-16 md:py-24 px-4">

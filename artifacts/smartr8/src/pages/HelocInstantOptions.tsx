@@ -1,10 +1,27 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ArrowRight, Zap, Layers, CheckCircle2, Clock, Shield, TrendingUp } from "lucide-react";
+import { PageMeta } from "@/components/PageMeta";
+import { JsonLd } from "@/components/JsonLd";
 
 export default function HelocInstantOptions() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
+      <PageMeta
+        title="HELOC Instant Options | Mykoal DeShazo at Adaxa Home"
+        description="Two fast digital HELOC paths from Mykoal DeShazo at Adaxa Home. Flexible financing for homeowners in Arizona. No credit pull required. NMLS #1912347."
+        canonical="/heloc/instant-options"
+      />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "HELOC Instant Options",
+        "serviceType": "Home Equity Line of Credit",
+        "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
+        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast options for Arizona homeowners. NMLS #1912347.",
+        "areaServed": { "@type": "State", "name": "Arizona" },
+        "url": "https://smartr8.com/heloc/instant-options"
+      }} />
       <Header />
 
       <main className="flex-1">
