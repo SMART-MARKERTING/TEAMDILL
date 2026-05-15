@@ -12,11 +12,7 @@ export function Footer() {
         </div>
 
         <p className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.6)" }}>
-          Licensed in multiple states. See{" "}
-          <a href="https://adaxahome.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-white" style={{ color: "rgba(255,255,255,0.6)" }}>
-            adaxahome.com
-          </a>{" "}
-          for full state licensing details.
+          Licensed in AZ, CO, TX, FL, OR, WA, MN, MI, PA.
         </p>
 
         <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.6)" }}>

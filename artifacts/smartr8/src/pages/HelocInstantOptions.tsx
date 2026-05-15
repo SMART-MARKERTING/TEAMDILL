@@ -9,7 +9,7 @@ export default function HelocInstantOptions() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="HELOC Instant Options | Mykoal DeShazo at Adaxa Home"
-        description="Two fast digital HELOC paths from Mykoal DeShazo at Adaxa Home. Flexible financing for homeowners in Arizona. No credit pull required. NMLS #1912347."
+        description="Two fast digital HELOC paths from Mykoal DeShazo at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CO, TX, FL, OR, WA, MN, MI &amp; PA. NMLS #1912347."
         canonical="/heloc/instant-options"
       />
       <JsonLd data={{
@@ -18,7 +18,7 @@ export default function HelocInstantOptions() {
         "name": "HELOC Instant Options",
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
-        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast options for Arizona homeowners. NMLS #1912347.",
+        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CO, TX, FL, OR, WA, MN, MI, and PA. NMLS #1912347.",
         "areaServed": [
           { "@type": "State", "name": "Arizona" },
           { "@type": "State", "name": "Colorado" },
