@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,7 @@ interface EmailSelfModalProps {
   inputs: WorksheetInputs;
   results: ScenarioResults;
   worksheetSummary: string;
+  defaultEmail?: string;
 }
 
 const LM_ENDPOINT = "https://api.leadmailbox.com/v2/leads/add/adax01/DeshazosWebsite";
@@ -29,10 +30,16 @@ export default function EmailSelfModal({
   inputs,
   results,
   worksheetSummary,
+  defaultEmail = "",
 }: EmailSelfModalProps) {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(defaultEmail);
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [errMsg, setErrMsg] = useState("");
+
+  // Keep email in sync if defaultEmail changes after mount (e.g. lead captured)
+  useEffect(() => {
+    if (defaultEmail) setEmail(defaultEmail);
+  }, [defaultEmail]);
 
   async function handleSend() {
     const trimmed = email.trim();
@@ -65,7 +72,7 @@ export default function EmailSelfModal({
       const data = (await res.json()) as { success: boolean; error?: string };
       if (data.success) {
         setStatus("done");
-        // Browser-side LeadMailbox fallback
+        // Browser-side LeadMailbox fallback (only fires if not already in LM from gate)
         fetch(LM_ENDPOINT, {
           method: "POST",
           mode: "no-cors",
@@ -97,8 +104,8 @@ export default function EmailSelfModal({
     if (!v) {
       setTimeout(() => {
         setStatus("idle");
-        setEmail("");
         setErrMsg("");
+        // Don't reset email — keep the prefilled value
       }, 300);
     }
   }
@@ -139,7 +146,7 @@ export default function EmailSelfModal({
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 disabled={status === "sending"}
-                autoFocus
+                autoFocus={!defaultEmail}
                 className="h-11"
               />
             </div>

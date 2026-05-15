@@ -42,13 +42,13 @@ export default function Worksheet() {
   const [inputs, setInputs] = useState<WorksheetInputs>(DEFAULT_INPUTS);
   const [gateOpen, setGateOpen] = useState(true);
   const [unlocked, setUnlocked] = useState(false);
-  const [lead, setLead] = useState<{ firstName: string; lastName: string } | null>(null);
+  const [lead, setLead] = useState<{ firstName: string; lastName: string; email: string } | null>(null);
   const [emailSelfOpen, setEmailSelfOpen] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
 
   const results = useMemo(() => computeScenarios(inputs), [inputs]);
 
-  function handleLeadSuccess(leadData: { firstName: string; lastName: string }) {
+  function handleLeadSuccess(leadData: { firstName: string; lastName: string; email: string }) {
     setLead(leadData);
     setUnlocked(true);
     setGateOpen(false);
@@ -161,6 +161,7 @@ export default function Worksheet() {
             if (!unlocked) setGateOpen(open);
           }}
           onSuccess={handleLeadSuccess}
+          worksheetSummary={worksheetSummary}
         />
 
         <EmailSelfModal
@@ -169,6 +170,7 @@ export default function Worksheet() {
           inputs={inputs}
           results={results}
           worksheetSummary={worksheetSummary}
+          defaultEmail={lead?.email ?? ""}
         />
       </div>
 
