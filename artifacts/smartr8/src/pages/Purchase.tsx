@@ -82,7 +82,17 @@ export default function PurchaseFunnel() {
         "serviceType": "Home Purchase Loan",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
         "description": "Conventional, FHA, VA, and Jumbo purchase loans from Mykoal DeShazo at Adaxa Home. Fast pre-approval, access to 99+ wholesale lenders. NMLS #1912347.",
-        "areaServed": { "@type": "State", "name": "Arizona" },
+        "areaServed": [
+          { "@type": "State", "name": "Arizona" },
+          { "@type": "State", "name": "Colorado" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Florida" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Washington" },
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Michigan" },
+          { "@type": "State", "name": "Pennsylvania" }
+        ],
         "url": "https://smartr8.com/apply/purchase"
       }} />
 

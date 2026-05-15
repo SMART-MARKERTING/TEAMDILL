@@ -84,7 +84,17 @@ export default function CashOutFunnel() {
         "serviceType": "Cash-Out Refinance",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
         "description": "Turn your home equity into cash with a cash-out refinance from Mykoal DeShazo at Adaxa Home. Access to 99+ lenders. NMLS #1912347.",
-        "areaServed": { "@type": "State", "name": "Arizona" },
+        "areaServed": [
+          { "@type": "State", "name": "Arizona" },
+          { "@type": "State", "name": "Colorado" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Florida" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Washington" },
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Michigan" },
+          { "@type": "State", "name": "Pennsylvania" }
+        ],
         "url": "https://smartr8.com/apply/cash-out"
       }} />
 

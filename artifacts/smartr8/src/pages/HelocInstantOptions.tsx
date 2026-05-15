@@ -19,7 +19,17 @@ export default function HelocInstantOptions() {
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
         "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast options for Arizona homeowners. NMLS #1912347.",
-        "areaServed": { "@type": "State", "name": "Arizona" },
+        "areaServed": [
+          { "@type": "State", "name": "Arizona" },
+          { "@type": "State", "name": "Colorado" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Florida" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Washington" },
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Michigan" },
+          { "@type": "State", "name": "Pennsylvania" }
+        ],
         "url": "https://smartr8.com/heloc/instant-options"
       }} />
       <Header />

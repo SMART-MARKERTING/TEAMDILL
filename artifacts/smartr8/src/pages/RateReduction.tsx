@@ -83,7 +83,17 @@ export default function RateReductionFunnel() {
         "serviceType": "Rate-and-Term Refinance",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
         "description": "Lower your mortgage rate and monthly payment with rate-and-term refinancing from Mykoal DeShazo at Adaxa Home in Scottsdale, AZ. NMLS #1912347.",
-        "areaServed": { "@type": "State", "name": "Arizona" },
+        "areaServed": [
+          { "@type": "State", "name": "Arizona" },
+          { "@type": "State", "name": "Colorado" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Florida" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Washington" },
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Michigan" },
+          { "@type": "State", "name": "Pennsylvania" }
+        ],
         "url": "https://smartr8.com/apply/rate-reduction"
       }} />
 

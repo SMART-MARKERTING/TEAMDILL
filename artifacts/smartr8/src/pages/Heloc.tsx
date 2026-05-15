@@ -83,7 +83,17 @@ export default function HelocFunnel() {
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
         "description": "Access your home equity with a flexible HELOC from Mykoal DeShazo at Adaxa Home. No credit pull required to explore your options. NMLS #1912347.",
-        "areaServed": { "@type": "State", "name": "Arizona" },
+        "areaServed": [
+          { "@type": "State", "name": "Arizona" },
+          { "@type": "State", "name": "Colorado" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Florida" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Washington" },
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Michigan" },
+          { "@type": "State", "name": "Pennsylvania" }
+        ],
         "url": "https://smartr8.com/heloc"
       }} />
 
