@@ -43,6 +43,9 @@ export default defineConfig({
         ]
       : []),
   ],
+  optimizeDeps: {
+    exclude: ["@react-pdf/renderer", "@react-pdf/pdfkit"],
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),

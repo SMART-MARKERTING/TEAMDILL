@@ -44,9 +44,21 @@ const s = StyleSheet.create({
     paddingVertical: 9,
   },
   headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerCompany: {
     color: WHITE,
     fontFamily: "Times-Bold",
     fontSize: 12,
+    marginRight: 8,
+  },
+  headerEhoLabel: {
+    color: WHITE,
+    fontSize: 6,
+    lineHeight: 1.3,
+    opacity: 0.9,
+    marginLeft: 4,
   },
   headerRight: {
     color: GOLD,
@@ -203,25 +215,54 @@ const s = StyleSheet.create({
     alignItems: "flex-start",
   },
   ehoBox: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     marginRight: 8,
     flexShrink: 0,
   },
   ehoLabel: {
-    fontSize: 6.5,
+    fontSize: 6,
     color: NAVY,
     fontFamily: "Times-Bold",
-    marginLeft: 4,
-    lineHeight: 1.4,
+    marginTop: 3,
+    textAlign: "center",
+    lineHeight: 1.3,
   },
   complianceText: {
-    fontSize: 6.5,
+    fontSize: 6,
     color: GRAY,
     lineHeight: 1.5,
     flex: 1,
   },
+  footnote: {
+    fontSize: 6.5,
+    color: GRAY,
+    paddingHorizontal: 5,
+    paddingTop: 3,
+  },
 });
+
+function EhoPdf({ color }: { color: string }) {
+  return (
+    <Svg width={22} height={22} viewBox="0 0 64 64">
+      <Rect x={0} y={0} width={64} height={64} fill="none" stroke={color} strokeWidth={2} />
+      <Path
+        d="M 12 34 L 32 18 L 52 34 L 52 52 L 12 52 Z"
+        fill="none"
+        stroke={color}
+        strokeWidth={2.5}
+      />
+      <Line x1={22} y1={40} x2={42} y2={40} stroke={color} strokeWidth={2.5} />
+      <Line x1={22} y1={46} x2={42} y2={46} stroke={color} strokeWidth={2.5} />
+    </Svg>
+  );
+}
+
+function rateAprStr(rate: number, apr: number, optional = false): string {
+  if (apr > 0) return `${pct(rate)} Rate / ${pct(apr)} APR`;
+  if (optional) return `${pct(rate)} Rate (APR not disclosed)`;
+  return pct(rate);
+}
 
 export interface WorksheetPDFProps {
   inputs: WorksheetInputs;
@@ -254,8 +295,21 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
     ? `Licensed to originate mortgage loans in ${inputs.licenseStates}.`
     : "";
 
+  const companyForEHO = inputs.companyName || "Adaxa Home LLC";
+
+  const complianceBody = [
+    licensingStr ? licensingStr + ". " : "",
+    stateStr ? stateStr + " " : "",
+    "Verify licensing at www.nmlsconsumeraccess.org.\n\n",
+    "This document is for informational and illustrative purposes only and does NOT constitute a commitment to lend, an offer to extend credit, a Loan Estimate as required under 12 CFR 1026.19, or a guarantee of any specific terms or rates. The interest rate and APR shown are hypothetical for illustration only. Actual rates, APR, fees, and terms depend on credit approval, property appraisal, income and asset verification, loan-to-value, occupancy, property type, debt-to-income ratio, and current market conditions, and are subject to change without notice. APR reflects estimated finance charges including interest, certain fees, and prepaid items, calculated over the life of the loan.\n\n",
+    `The \u201ceffective rate\u201d calculation illustrates how applying additional principal payments may reduce total interest paid over the life of the loan; it is NOT the loan\u2019s contractual interest rate, NOT the Annual Percentage Rate (APR) required under the Truth in Lending Act, and assumes consistent voluntary additional principal payments. Results depend on the borrower actually making those payments. Past payment behavior does not guarantee future performance.\n\n`,
+    "Consult a licensed loan originator for an official Loan Estimate disclosing actual loan terms, costs, and APR. All loans subject to underwriting approval. Programs, rates, terms, and conditions subject to change without notice.\n\n",
+    `Equal Housing Opportunity. ${companyForEHO} is an Equal Housing Lender. We do business in accordance with the Federal Fair Housing Law and the Equal Credit Opportunity Act. We do not discriminate on the basis of race, color, religion, national origin, sex, marital status, age (provided the applicant has the capacity to enter into a binding contract), because all or part of the applicant\u2019s income derives from any public assistance program, or because the applicant has in good faith exercised any right under the Consumer Credit Protection Act.\n\n`,
+    `Prepared ${dateStr}.`,
+  ].join("");
+
   const snapshotRows: [string, string][] = [
-    ["Existing Mortgage Balance", `${money(inputs.existBalance)} @ ${pct(inputs.existRate)}`],
+    ["Existing Mortgage Balance", `${money(inputs.existBalance)} @ ${rateAprStr(inputs.existRate, inputs.existAPR, true)}`],
     ["Existing Mortgage P&I", money(inputs.existPayment)],
     ["Monthly Escrow (taxes & ins.)", money(inputs.existEscrow)],
     ["Total Other Debt Balance", money(results.debtBalance)],
@@ -263,7 +317,7 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
   ];
 
   const snapshotExtra: [string, string, boolean?][] = [
-    ["New Loan Amount", `${money(inputs.loanAmount)} @ ${pct(inputs.loanRate)}`],
+    ["New Loan Amount", `${money(inputs.loanAmount)} @ ${rateAprStr(inputs.loanRate, inputs.loanAPR)}`],
     ["New Loan Monthly P&I", money(results.newLoanPmt)],
     ["Extra Monthly Contribution", money(inputs.extraMonthly)],
     ...(inputs.cashBack > 0
@@ -317,18 +371,30 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
     {
       label: "Effective Rate on New Loan",
       cur: "—",
-      con: pct(inputs.loanRate),
-      acc: pct(accelerated.effectiveRate ?? 0),
+      con: inputs.loanAPR > 0
+        ? `${pct(inputs.loanRate)} Rate / ${pct(inputs.loanAPR)} APR`
+        : pct(inputs.loanRate),
+      acc: pct(accelerated.effectiveRate ?? 0) + " eff.",
       boldCon: true,
       boldAcc: true,
     },
   ];
 
+  const bannerText = `By redirecting ${money(inputs.extraMonthly)}/month back onto your new loan's principal, your ${pct(inputs.loanRate)} Rate${inputs.loanAPR > 0 ? ` / ${pct(inputs.loanAPR)} APR` : ""} loan effectively costs you ${pct(accelerated.effectiveRate ?? 0)} (illustrated effective rate, not APR) — saving ${money(totalSaved)} and ${timeSaved.toFixed(1)} years vs. a standard refinance.`;
+
+  const explainer1 = `Today you pay a mortgage payment plus every other debt — ${money(results.currentTotalOutflow)} total each month. When the refi closes, the existing mortgage and all other debts are replaced by a single ${money(results.newLoanPmt)} payment — freeing up ${money(results.freedUp)} of monthly cash flow.`;
+
+  const explainer2 = `You then commit ${money(inputs.extraMonthly)} of that freed-up cash back to the new loan's principal each month. Every dollar of principal retired early never accrues interest again, which is why your stated ${inputs.loanAPR > 0 ? `${pct(inputs.loanRate)} Rate / ${pct(inputs.loanAPR)} APR` : pct(inputs.loanRate)} loan effectively costs you ${pct(accelerated.effectiveRate ?? 0)} in practice (illustrated effective rate, not APR).`;
+
+  const explainer3 = `Cash flow actually improves — you pay ${money(results.freedUp - inputs.extraMonthly)} less per month than you do today while still paying the loan off in ${accelerated.years.toFixed(1)} years instead of ${consolidated.years.toFixed(0)}.`;
+
   const keyNumbers: [string, string][] = [
+    ["Stated interest rate", pct(inputs.loanRate)],
+    ["APR", inputs.loanAPR > 0 ? pct(inputs.loanAPR) : "(not entered)"],
     ["Monthly amount applied to principal", money(inputs.extraMonthly)],
     ["Years shaved off", timeSaved.toFixed(1) + " years"],
     ["Total interest eliminated", money(totalSaved)],
-    ["Effective interest rate", pct(accelerated.effectiveRate ?? 0)],
+    ["Effective interest rate\u2020", pct(accelerated.effectiveRate ?? 0)],
     ...(inputs.cashBack > 0
       ? [["Cash back at closing", money(inputs.cashBack)] as [string, string]]
       : []),
@@ -337,9 +403,13 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
   return (
     <Document title="Loan Benefits Worksheet" author={inputs.preparedBy}>
       <Page size="LETTER" style={s.page}>
-        {/* Full-width navy header */}
+        {/* Full-width navy header with EHO */}
         <View style={s.headerBar}>
-          <Text style={s.headerLeft}>{inputs.companyName}</Text>
+          <View style={s.headerLeft}>
+            <Text style={s.headerCompany}>{inputs.companyName}</Text>
+            <EhoPdf color={WHITE} />
+            <Text style={s.headerEhoLabel}>{"Equal\nHousing\nOpportunity"}</Text>
+          </View>
           <Text style={s.headerRight}>LOAN BENEFITS WORKSHEET</Text>
         </View>
 
@@ -516,18 +586,15 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
                 </View>
               </View>
             ))}
-            <View style={{ paddingHorizontal: 5, paddingTop: 3 }}>
-              <Text style={{ fontSize: 6.5, color: GRAY }}>
-                * Includes {money(inputs.extraMonthly)}/mo extra principal payment
-              </Text>
-            </View>
+            <Text style={s.footnote}>
+              * Includes {money(inputs.extraMonthly)}/mo extra principal payment{"\n"}
+              {"\u2020"} Illustrated effective rate assumes extra principal payments; this is not the loan&apos;s APR.
+            </Text>
           </View>
 
           {/* ── Banner ── */}
           <View style={s.banner} wrap={false}>
-            <Text style={s.bannerText}>
-              {`By redirecting ${money(inputs.extraMonthly)}/month back onto your new loan's principal, your ${pct(inputs.loanRate)} loan effectively costs you ${pct(accelerated.effectiveRate ?? 0)} — saving ${money(totalSaved)} and ${timeSaved.toFixed(1)} years vs. a standard refinance.`}
-            </Text>
+            <Text style={s.bannerText}>{bannerText}</Text>
           </View>
 
           {/* ── Bottom two-column: explainer | key numbers ── */}
@@ -536,13 +603,13 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
             <View style={{ flex: 2, marginRight: 12 }}>
               <Text style={s.sectionHeading}>How This Strategy Works</Text>
               <Text style={{ fontSize: 8, lineHeight: 1.7, color: "#333333", marginBottom: 5 }}>
-                {`Today you pay a mortgage payment plus every other debt — ${money(results.currentTotalOutflow)} total each month. When the refi closes, the existing mortgage and all other debts are replaced by a single ${money(results.newLoanPmt)} payment — freeing up ${money(results.freedUp)} of monthly cash flow.`}
+                {explainer1}
               </Text>
               <Text style={{ fontSize: 8, lineHeight: 1.7, color: "#333333", marginBottom: 5 }}>
-                {`You then commit ${money(inputs.extraMonthly)} of that freed-up cash back to the new loan's principal each month. Every dollar of principal retired early never accrues interest again, which is why your stated ${pct(inputs.loanRate)} behaves like ${pct(accelerated.effectiveRate ?? 0)} in practice.`}
+                {explainer2}
               </Text>
               <Text style={{ fontSize: 8, lineHeight: 1.7, color: "#333333" }}>
-                {`Cash flow actually improves — you pay ${money(results.freedUp - inputs.extraMonthly)} less per month than you do today while still paying the loan off in ${accelerated.years.toFixed(1)} years instead of ${consolidated.years.toFixed(0)}.`}
+                {explainer3}
               </Text>
             </View>
 
@@ -583,37 +650,13 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
           </View>
         </View>
 
-        {/* ── Compliance footer ── */}
+        {/* ── Compliance footer (no page split) ── */}
         <View style={s.compliance} wrap={false}>
           <View style={s.ehoBox}>
-            <Svg width={24} height={24} viewBox="0 0 64 64">
-              <Rect
-                x={0}
-                y={0}
-                width={64}
-                height={64}
-                fill="none"
-                stroke={NAVY}
-                strokeWidth={2}
-              />
-              <Path
-                d="M 12 34 L 32 18 L 52 34 L 52 52 L 12 52 Z"
-                fill="none"
-                stroke={NAVY}
-                strokeWidth={2.5}
-              />
-              <Line x1={22} y1={40} x2={42} y2={40} stroke={NAVY} strokeWidth={2.5} />
-              <Line x1={22} y1={46} x2={42} y2={46} stroke={NAVY} strokeWidth={2.5} />
-            </Svg>
+            <EhoPdf color={NAVY} />
             <Text style={s.ehoLabel}>{"Equal\nHousing\nOpportunity"}</Text>
           </View>
-          <Text style={s.complianceText}>
-            {licensingStr ? licensingStr + ". " : ""}
-            {stateStr ? stateStr + " " : ""}
-            {"Verify licensing at www.nmlsconsumeraccess.org. This document is for informational and illustrative purposes only and does not constitute a commitment to lend, an offer to extend credit, a Loan Estimate, or a guarantee of any specific terms or rates. All loan applications are subject to credit approval, property appraisal, income and asset verification, and underwriting guidelines. Rates, terms, and program availability are subject to change without notice. The \u201ceffective rate\u201d calculation illustrates how applying additional principal payments may reduce total interest paid; it is not the loan\u2019s contractual or Annual Percentage Rate (APR). Consult a licensed loan originator for an official Loan Estimate. Prepared " +
-              dateStr +
-              "."}
-          </Text>
+          <Text style={s.complianceText}>{complianceBody}</Text>
         </View>
       </Page>
     </Document>

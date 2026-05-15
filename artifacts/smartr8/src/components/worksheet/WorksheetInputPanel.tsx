@@ -35,6 +35,8 @@ function NumInput({
   min = 0,
   prefix,
   suffix,
+  placeholder,
+  required,
 }: {
   label: string;
   value: number;
@@ -43,10 +45,15 @@ function NumInput({
   min?: number;
   prefix?: string;
   suffix?: string;
+  placeholder?: string;
+  required?: boolean;
 }) {
   return (
     <div className="space-y-1">
-      <Label className="text-xs font-medium text-muted-foreground">{label}</Label>
+      <Label className="text-xs font-medium text-muted-foreground">
+        {label}
+        {required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
       <div className="relative">
         {prefix && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
@@ -58,6 +65,7 @@ function NumInput({
           value={value || ""}
           step={step}
           min={min}
+          placeholder={placeholder}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
           className={prefix ? "pl-7" : suffix ? "pr-8" : ""}
         />
@@ -89,9 +97,11 @@ export default function WorksheetInputPanel({
   pdfLoading = false,
 }: WorksheetInputPanelProps) {
   const [advisorOpen, setAdvisorOpen] = useState(false);
+  const [showAprError, setShowAprError] = useState(false);
 
   function set<K extends keyof WorksheetInputs>(key: K, value: WorksheetInputs[K]) {
     onChange({ ...inputs, [key]: value });
+    if (key === "loanAPR" && (value as number) > 0) setShowAprError(false);
   }
 
   function updateDebt(i: number, field: keyof Debt, value: string | number) {
@@ -107,6 +117,15 @@ export default function WorksheetInputPanel({
 
   function removeDebt(i: number) {
     set("debts", inputs.debts.filter((_, idx) => idx !== i));
+  }
+
+  function guardApr(fn: () => void) {
+    if (!inputs.loanAPR || inputs.loanAPR <= 0) {
+      setShowAprError(true);
+      return;
+    }
+    setShowAprError(false);
+    fn();
   }
 
   return (
@@ -139,6 +158,16 @@ export default function WorksheetInputPanel({
             onChange={(v) => set("existRate", v)}
             step={0.125}
           />
+          <div className="col-span-2">
+            <NumInput
+              label="Existing Mortgage APR (optional)"
+              suffix="%"
+              value={inputs.existAPR}
+              onChange={(v) => set("existAPR", v)}
+              step={0.001}
+              placeholder="6.987"
+            />
+          </div>
           <NumInput
             label="P&I Payment"
             prefix="$"
@@ -174,6 +203,22 @@ export default function WorksheetInputPanel({
             onChange={(v) => set("loanRate", v)}
             step={0.125}
           />
+          <div className="col-span-2">
+            <NumInput
+              label="New Loan APR"
+              suffix="%"
+              value={inputs.loanAPR}
+              onChange={(v) => set("loanAPR", v)}
+              step={0.001}
+              placeholder="6.752"
+              required
+            />
+            {showAprError && (
+              <p className="text-destructive text-xs mt-1">
+                APR is required by federal law (TILA Reg Z) when displaying an interest rate.
+              </p>
+            )}
+          </div>
           <div className="space-y-1">
             <Label className="text-xs font-medium text-muted-foreground">Loan Term</Label>
             <Select
@@ -324,7 +369,7 @@ export default function WorksheetInputPanel({
         </Button>
         <Button
           className="w-full bg-primary hover:bg-primary/90 text-white"
-          onClick={onDownloadPdf}
+          onClick={() => guardApr(onDownloadPdf)}
           disabled={pdfLoading}
         >
           {pdfLoading ? "Generating PDF…" : "Download PDF"}
@@ -332,7 +377,7 @@ export default function WorksheetInputPanel({
         {isInternal && onEmailClient && (
           <Button
             className="w-full bg-accent hover:bg-accent/90 text-white"
-            onClick={onEmailClient}
+            onClick={() => guardApr(onEmailClient)}
           >
             Email to Client
           </Button>

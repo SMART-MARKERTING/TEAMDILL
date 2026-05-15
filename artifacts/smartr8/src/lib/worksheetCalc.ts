@@ -17,11 +17,13 @@ export interface WorksheetInputs {
   licenseStates: string;
   existBalance: number;
   existRate: number;
+  existAPR: number;
   existPayment: number;
   existEscrow: number;
   existYearsRemaining: number;
   loanAmount: number;
   loanRate: number;
+  loanAPR: number;
   termYears: number;
   extraMonthly: number;
   cashBack: number;

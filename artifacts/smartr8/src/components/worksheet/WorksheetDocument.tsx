@@ -43,6 +43,32 @@ const tdStyle: React.CSSProperties = {
 
 const tdNumStyle: React.CSSProperties = { ...tdStyle, textAlign: "right" };
 
+function rateAprStr(rate: number, apr: number, optional = false): string {
+  if (apr > 0) return `${pct(rate)} Rate / ${pct(apr)} APR`;
+  if (optional) return `${pct(rate)} Rate (APR not disclosed)`;
+  return pct(rate);
+}
+
+const EhoSvg = ({ color = NAVY, size = 32 }: { color?: string; size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 64 64"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x={0} y={0} width={64} height={64} fill="none" stroke={color} strokeWidth={2} />
+    <path
+      d="M 12 34 L 32 18 L 52 34 L 52 52 L 12 52 Z"
+      fill="none"
+      stroke={color}
+      strokeWidth={2.5}
+      strokeLinejoin="round"
+    />
+    <line x1={22} y1={40} x2={42} y2={40} stroke={color} strokeWidth={2.5} strokeLinecap="round" />
+    <line x1={22} y1={46} x2={42} y2={46} stroke={color} strokeWidth={2.5} strokeLinecap="round" />
+  </svg>
+);
+
 const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProps>(
   ({ id, inputs, results }, ref) => {
     const dateStr = new Date().toLocaleDateString("en-US", {
@@ -68,6 +94,25 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
     const stateStr = inputs.licenseStates
       ? `Licensed to originate mortgage loans in ${inputs.licenseStates}.`
       : "";
+
+    const existBalanceVal = `${money(inputs.existBalance)} @ ${rateAprStr(inputs.existRate, inputs.existAPR, true)}`;
+    const newLoanVal = `${money(inputs.loanAmount)} @ ${rateAprStr(inputs.loanRate, inputs.loanAPR)}`;
+
+    const complianceText = [
+      licensingStr ? licensingStr + ". " : "",
+      stateStr ? stateStr + " " : "",
+      "Verify licensing at www.nmlsconsumeraccess.org.",
+      "\n\n",
+      "This document is for informational and illustrative purposes only and does NOT constitute a commitment to lend, an offer to extend credit, a Loan Estimate as required under 12 CFR 1026.19, or a guarantee of any specific terms or rates. The interest rate and APR shown are hypothetical for illustration only. Actual rates, APR, fees, and terms depend on credit approval, property appraisal, income and asset verification, loan-to-value, occupancy, property type, debt-to-income ratio, and current market conditions, and are subject to change without notice. APR reflects estimated finance charges including interest, certain fees, and prepaid items, calculated over the life of the loan.",
+      "\n\n",
+      "The \u201ceffective rate\u201d calculation illustrates how applying additional principal payments may reduce total interest paid over the life of the loan; it is NOT the loan\u2019s contractual interest rate, NOT the Annual Percentage Rate (APR) required under the Truth in Lending Act, and assumes consistent voluntary additional principal payments. Results depend on the borrower actually making those payments. Past payment behavior does not guarantee future performance.",
+      "\n\n",
+      "Consult a licensed loan originator for an official Loan Estimate disclosing actual loan terms, costs, and APR. All loans subject to underwriting approval. Programs, rates, terms, and conditions subject to change without notice.",
+      "\n\n",
+      `Equal Housing Opportunity. ${inputs.companyName || "Adaxa Home LLC"} is an Equal Housing Lender. We do business in accordance with the Federal Fair Housing Law and the Equal Credit Opportunity Act. We do not discriminate on the basis of race, color, religion, national origin, sex, marital status, age (provided the applicant has the capacity to enter into a binding contract), because all or part of the applicant\u2019s income derives from any public assistance program, or because the applicant has in good faith exercised any right under the Consumer Credit Protection Act.`,
+      "\n\n",
+      `Prepared ${dateStr}.`,
+    ].join("");
 
     return (
       <div
@@ -95,8 +140,16 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
             alignItems: "center",
           }}
         >
-          <div style={{ fontWeight: 700, fontSize: 16, letterSpacing: 0.5 }}>
-            {inputs.companyName}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, letterSpacing: 0.5 }}>
+              {inputs.companyName}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, opacity: 0.85 }}>
+              <EhoSvg color="#ffffff" size={22} />
+              <span style={{ fontSize: 8, color: "#fff", lineHeight: 1.2 }}>
+                Equal Housing<br />Opportunity
+              </span>
+            </div>
           </div>
           <div
             style={{
@@ -156,7 +209,7 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
             <table style={tableStyle}>
               <tbody>
                 {[
-                  ["Existing Mortgage Balance", `${money(inputs.existBalance)} @ ${pct(inputs.existRate)}`],
+                  ["Existing Mortgage Balance", existBalanceVal],
                   ["Existing Mortgage P&I", money(inputs.existPayment)],
                   ["Monthly Escrow (taxes & ins.)", money(inputs.existEscrow)],
                   ["Total Other Debt Balance", money(results.debtBalance)],
@@ -177,9 +230,7 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
                 </tr>
                 <tr>
                   <td style={tdStyle}>New Loan Amount</td>
-                  <td style={tdNumStyle}>
-                    {money(inputs.loanAmount)} @ {pct(inputs.loanRate)}
-                  </td>
+                  <td style={tdNumStyle}>{newLoanVal}</td>
                 </tr>
                 <tr style={{ background: ROW_ALT }}>
                   <td style={tdStyle}>New Loan Monthly P&I</td>
@@ -326,8 +377,19 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
                 {
                   label: "Effective Rate on New Loan",
                   cur: "—",
-                  con: <strong>{pct(inputs.loanRate)}</strong>,
-                  acc: <strong>{pct(accelerated.effectiveRate ?? 0)}</strong>,
+                  con: (
+                    <strong>
+                      {inputs.loanAPR > 0
+                        ? `${pct(inputs.loanRate)} Rate / ${pct(inputs.loanAPR)} APR`
+                        : pct(inputs.loanRate)}
+                    </strong>
+                  ),
+                  acc: (
+                    <strong>
+                      {pct(accelerated.effectiveRate ?? 0)}
+                      <sup style={{ fontSize: 9 }}>†</sup>
+                    </strong>
+                  ),
                 },
               ].map((row, i) => (
                 <tr key={i} style={{ background: i % 2 === 1 ? ROW_ALT : "#fff" }}>
@@ -348,6 +410,9 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
               ))}
             </tbody>
           </table>
+          <div style={{ fontSize: 10, color: GRAY, marginTop: 4 }}>
+            † Illustrated effective rate assumes {money(inputs.extraMonthly)}/mo extra principal payment; this is not the loan&apos;s APR.
+          </div>
         </div>
 
         {/* Banner */}
@@ -362,9 +427,10 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
             lineHeight: 1.6,
           }}
         >
-          By redirecting {money(inputs.extraMonthly)}/month back onto your new loan's principal,
-          your {pct(inputs.loanRate)} loan effectively costs you{" "}
-          {pct(accelerated.effectiveRate ?? 0)} — saving {money(totalSaved)} and{" "}
+          By redirecting {money(inputs.extraMonthly)}/month back onto your new loan&apos;s principal,
+          your {pct(inputs.loanRate)} Rate{inputs.loanAPR > 0 ? ` / ${pct(inputs.loanAPR)} APR` : ""} loan
+          effectively costs you {pct(accelerated.effectiveRate ?? 0)}{" "}
+          (illustrated effective rate, not APR) — saving {money(totalSaved)} and{" "}
           {timeSaved.toFixed(1)} years vs. a standard refinance.
         </div>
 
@@ -399,10 +465,15 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
               </p>
               <p style={{ margin: "0 0 8px" }}>
                 You then commit {money(inputs.extraMonthly)} of that freed-up cash back to the new
-                loan's <strong>principal</strong> each month. Every dollar of principal retired
-                early <strong>never accrues interest again</strong>, which is why your stated{" "}
-                {pct(inputs.loanRate)} behaves like{" "}
-                <strong>{pct(accelerated.effectiveRate ?? 0)}</strong> in practice.
+                loan&apos;s <strong>principal</strong> each month. Every dollar of principal retired
+                early <strong>never accrues interest again</strong>, which is why your{" "}
+                {inputs.loanAPR > 0
+                  ? <><strong>{pct(inputs.loanRate)} Rate / {pct(inputs.loanAPR)} APR</strong> loan</>
+                  : <><strong>{pct(inputs.loanRate)}</strong> loan</>
+                }{" "}
+                effectively costs you{" "}
+                <strong>{pct(accelerated.effectiveRate ?? 0)}</strong> in practice (illustrated
+                effective rate, not APR).
               </p>
               <p style={{ margin: 0 }}>
                 Cash flow actually improves — you pay{" "}
@@ -429,10 +500,12 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
             <table style={tableStyle}>
               <tbody>
                 {[
+                  ["Stated interest rate", pct(inputs.loanRate)],
+                  ["APR", inputs.loanAPR > 0 ? pct(inputs.loanAPR) : "(not entered)"],
                   ["Monthly amount applied to principal", money(inputs.extraMonthly)],
                   ["Years shaved off", timeSaved.toFixed(1) + " years"],
                   ["Total interest eliminated", money(totalSaved)],
-                  ["Effective interest rate", pct(accelerated.effectiveRate ?? 0)],
+                  ["Effective interest rate†", pct(accelerated.effectiveRate ?? 0)],
                   ...(inputs.cashBack > 0 ? [["Cash back at closing", money(inputs.cashBack)]] : []),
                 ].map(([label, val], i) => (
                   <tr key={i} style={{ background: i % 2 === 1 ? ROW_ALT : "#fff" }}>
@@ -489,45 +562,18 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
             display: "flex",
             gap: 16,
             alignItems: "flex-start",
+            pageBreakInside: "avoid",
           }}
         >
-          {/* EHO icon */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-            <svg
-              width={32}
-              height={32}
-              viewBox="0 0 64 64"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ color: NAVY }}
-            >
-              <rect x={0} y={0} width={64} height={64} fill="none" stroke="currentColor" strokeWidth={2} />
-              <path
-                d="M 12 34 L 32 18 L 52 34 L 52 52 L 12 52 Z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                strokeLinejoin="round"
-              />
-              <line x1={22} y1={40} x2={42} y2={40} stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" />
-              <line x1={22} y1={46} x2={42} y2={46} stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" />
-            </svg>
-            <div style={{ fontSize: 9, color: NAVY, lineHeight: 1.3, maxWidth: 60 }}>
-              <strong>Equal Housing Opportunity</strong>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
+            <EhoSvg color={NAVY} size={32} />
+            <div style={{ fontSize: 8, color: NAVY, lineHeight: 1.3, textAlign: "center", maxWidth: 60 }}>
+              <strong>Equal Housing<br />Opportunity</strong>
             </div>
           </div>
 
-          <div style={{ fontSize: 9, color: GRAY, lineHeight: 1.5 }}>
-            {licensingStr && <span>{licensingStr}. </span>}
-            {stateStr && <span>{stateStr} </span>}
-            Verify licensing at <strong>www.nmlsconsumeraccess.org</strong>. This document is for
-            informational and illustrative purposes only and does <strong>not</strong> constitute a
-            commitment to lend, an offer to extend credit, a Loan Estimate, or a guarantee of any
-            specific terms or rates. All loan applications are subject to credit approval, property
-            appraisal, income and asset verification, and underwriting guidelines. Rates, terms,
-            and program availability are subject to change without notice. The "effective rate"
-            calculation illustrates how applying additional principal payments may reduce total
-            interest paid; it is not the loan's contractual or Annual Percentage Rate (APR).
-            Consult a licensed loan originator for an official Loan Estimate. Prepared {dateStr}.
+          <div style={{ fontSize: 8.5, color: GRAY, lineHeight: 1.55, whiteSpace: "pre-line" }}>
+            {complianceText}
           </div>
         </div>
       </div>
