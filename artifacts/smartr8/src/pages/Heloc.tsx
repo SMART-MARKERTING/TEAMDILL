@@ -86,13 +86,15 @@ export default function HelocFunnel() {
         "areaServed": [
           { "@type": "State", "name": "Arizona" },
           { "@type": "State", "name": "Colorado" },
-          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Connecticut" },
           { "@type": "State", "name": "Florida" },
-          { "@type": "State", "name": "Oregon" },
-          { "@type": "State", "name": "Washington" },
-          { "@type": "State", "name": "Minnesota" },
           { "@type": "State", "name": "Michigan" },
-          { "@type": "State", "name": "Pennsylvania" }
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Pennsylvania" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Virginia" },
+          { "@type": "State", "name": "Washington" }
         ],
         "url": "https://smartr8.com/heloc"
       }} />

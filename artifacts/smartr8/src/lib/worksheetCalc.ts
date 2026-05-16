@@ -171,7 +171,7 @@ export const DEFAULT_ADVISOR = {
   contactEmail: "mykoal@adaxahome.com",
   contactNMLS: "1912347",
   companyNMLS: "2380533",
-  licenseStates: "AZ, CO, TX, FL, OR, WA, MN, MI, PA",
+  licenseStates: "AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA",
 };
 
 export const DEFAULT_DEBTS: Debt[] = [

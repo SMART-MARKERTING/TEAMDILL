@@ -3,9 +3,24 @@ import { Link } from "wouter";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FunnelModal } from "@/components/FunnelModal";
+import { JsonLd } from "@/components/JsonLd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CheckCircle2, Phone, Home as HomeIcon, Percent, HelpCircle, Droplets, TrendingDown, Key, BarChart2 } from "lucide-react";
+
+const STATES_11 = [
+  { "@type": "State", "name": "Arizona" },
+  { "@type": "State", "name": "Colorado" },
+  { "@type": "State", "name": "Connecticut" },
+  { "@type": "State", "name": "Florida" },
+  { "@type": "State", "name": "Michigan" },
+  { "@type": "State", "name": "Minnesota" },
+  { "@type": "State", "name": "Oregon" },
+  { "@type": "State", "name": "Pennsylvania" },
+  { "@type": "State", "name": "Texas" },
+  { "@type": "State", "name": "Virginia" },
+  { "@type": "State", "name": "Washington" },
+];
 
 export default function Home() {
   const [isFunnelOpen, setIsFunnelOpen] = useState(false);
@@ -18,6 +33,41 @@ export default function Home() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background selection:bg-primary/10">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mykoal DeShazo",
+        "jobTitle": "Vice President & Senior Loan Officer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Adaxa Home LLC",
+          "url": "https://smartr8.com/"
+        },
+        "telephone": "+19494185486",
+        "email": "mykoal@adaxahome.com",
+        "url": "https://smartr8.com/",
+        "sameAs": ["https://www.nmlsconsumeraccess.org/EntityDetails.aspx/INDIVIDUAL/1912347"],
+        "workLocation": STATES_11
+      }} />
+      <JsonLd id="financial-service-schema" data={{
+        "@context": "https://schema.org",
+        "@type": "FinancialService",
+        "name": "Adaxa Home LLC",
+        "url": "https://smartr8.com/",
+        "telephone": "+19494185486",
+        "description": "Mortgage broker offering HELOC, cash-out refinance, rate-and-term refinance, and purchase loans through 99+ wholesale lenders. NMLS #2380533.",
+        "areaServed": STATES_11,
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Mortgage Products",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "HELOC" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cash-Out Refinance" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rate-and-Term Refinance" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Home Purchase Loan" } }
+          ]
+        }
+      }} />
       <Header />
 
       <main className="flex-1">

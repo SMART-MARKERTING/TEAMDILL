@@ -1,0 +1,118 @@
+Update all licensing references throughout smartr8.com. I am 
+licensed as a Mortgage Loan Originator in 11 states (not 9 as 
+previously listed). Add Connecticut and Virginia to every 
+schema, footer, worksheet output, and metadata reference.
+
+============================================
+FULL LIST OF LICENSED STATES (11)
+============================================
+
+Arizona (AZ), Colorado (CO), Connecticut (CT), Florida (FL), 
+Michigan (MI), Minnesota (MN), Oregon (OR), Pennsylvania (PA), 
+Texas (TX), Virginia (VA), Washington (WA)
+
+============================================
+WHAT TO UPDATE
+============================================
+
+1. PERSON SCHEMA — homepage
+
+Add or update the "workLocation" property in the Person schema 
+to include all 11 states (use State objects, not strings):
+
+"workLocation": [
+  {"@type": "State", "name": "Arizona"},
+  {"@type": "State", "name": "Colorado"},
+  {"@type": "State", "name": "Connecticut"},
+  {"@type": "State", "name": "Florida"},
+  {"@type": "State", "name": "Michigan"},
+  {"@type": "State", "name": "Minnesota"},
+  {"@type": "State", "name": "Oregon"},
+  {"@type": "State", "name": "Pennsylvania"},
+  {"@type": "State", "name": "Texas"},
+  {"@type": "State", "name": "Virginia"},
+  {"@type": "State", "name": "Washington"}
+]
+
+2. FINANCIALSERVICE SCHEMA — homepage
+
+Replace any single-state "areaServed": "Arizona" with the full 
+11-state array:
+
+"areaServed": [
+  {"@type": "State", "name": "Arizona"},
+  {"@type": "State", "name": "Colorado"},
+  {"@type": "State", "name": "Connecticut"},
+  {"@type": "State", "name": "Florida"},
+  {"@type": "State", "name": "Michigan"},
+  {"@type": "State", "name": "Minnesota"},
+  {"@type": "State", "name": "Oregon"},
+  {"@type": "State", "name": "Pennsylvania"},
+  {"@type": "State", "name": "Texas"},
+  {"@type": "State", "name": "Virginia"},
+  {"@type": "State", "name": "Washington"}
+]
+
+3. SERVICE SCHEMAS — every funnel page
+
+On /heloc, /cash-out, /rate-reduction, /purchase (and their 
+instant-options variants), update each Service schema's 
+"areaServed" property to the same 11-state array. Currently 
+they may only have "Arizona" or 9 states.
+
+4. WORKSHEET TOOL DEFAULTS
+
+In the Loan Benefits Worksheet (/worksheet and 
+/worksheet/internal), the advisor pre-fill for "licenseStates" 
+field needs updating:
+
+Currently: "AZ, CO, TX, FL, OR, WA, MN, MI, PA"
+
+Update to: "AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA"
+
+This appears in:
+- The default value in the advisor input panel
+- The generated PDF compliance footer
+- Any email templates that include the state list
+
+5. FOOTER COMPLIANCE TEXT — every page
+
+Update any footer or trust section that says "Licensed in AZ, 
+CO, TX, FL, OR, WA, MN, MI, PA" or similar.
+
+Replace with: "Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, 
+TX, VA, WA"
+
+6. META DESCRIPTIONS AND OG TAGS
+
+If any meta descriptions mention "licensed in 9 states" or 
+list specific states, update to reflect 11 states.
+
+============================================
+DOUBLE-CHECK FOR LEFTOVERS
+============================================
+
+Search the entire codebase for these strings and update each 
+one to the new 11-state list:
+
+- "9 states"
+- "AZ, CO, TX, FL, OR, WA, MN, MI, PA"
+- "AZ and additional states"
+- "Arizona and additional states"
+- Hardcoded state lists in compliance text
+- Hardcoded state lists in Service schemas
+
+============================================
+WHEN DONE
+============================================
+
+Push to GitHub. Cloudflare will auto-deploy. Send me 
+confirmation that all 11 states are reflected in:
+
+1. JSON-LD schema (Person, FinancialService, and all 4 
+   Service schemas on the funnel pages)
+2. Worksheet advisor defaults
+3. Worksheet PDF compliance footer
+4. Worksheet email template footer
+5. Site-wide footer compliance text
+6. Any meta descriptions that mention states

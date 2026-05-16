@@ -9,7 +9,7 @@ export default function HelocInstantOptions() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="HELOC Instant Options | Mykoal DeShazo at Adaxa Home"
-        description="Two fast digital HELOC paths from Mykoal DeShazo at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CO, TX, FL, OR, WA, MN, MI &amp; PA. NMLS #1912347."
+        description="Two fast digital HELOC paths from Mykoal DeShazo at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA &amp; WA. NMLS #1912347."
         canonical="/heloc/instant-options"
       />
       <JsonLd data={{
@@ -18,17 +18,19 @@ export default function HelocInstantOptions() {
         "name": "HELOC Instant Options",
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
-        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CO, TX, FL, OR, WA, MN, MI, and PA. NMLS #1912347.",
+        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, and WA. NMLS #1912347.",
         "areaServed": [
           { "@type": "State", "name": "Arizona" },
           { "@type": "State", "name": "Colorado" },
-          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Connecticut" },
           { "@type": "State", "name": "Florida" },
-          { "@type": "State", "name": "Oregon" },
-          { "@type": "State", "name": "Washington" },
-          { "@type": "State", "name": "Minnesota" },
           { "@type": "State", "name": "Michigan" },
-          { "@type": "State", "name": "Pennsylvania" }
+          { "@type": "State", "name": "Minnesota" },
+          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Pennsylvania" },
+          { "@type": "State", "name": "Texas" },
+          { "@type": "State", "name": "Virginia" },
+          { "@type": "State", "name": "Washington" }
         ],
         "url": "https://smartr8.com/heloc/instant-options"
       }} />
