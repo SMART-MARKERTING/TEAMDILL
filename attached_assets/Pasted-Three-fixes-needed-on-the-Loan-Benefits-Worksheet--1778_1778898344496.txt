@@ -1,0 +1,137 @@
+Three fixes needed on the Loan Benefits Worksheet:
+
+============================================
+FIX 1: REMOVE THE LEAD CAPTURE WALL FROM PAGE LOAD
+============================================
+
+CURRENT BROKEN FLOW:
+Visitor lands on /worksheet → sees "Unlock Your Free 
+Worksheet" lead capture form FIRST → can't see the worksheet 
+tool until they submit info.
+
+NEW CORRECT FLOW:
+Visitor lands on /worksheet → sees the worksheet calculator 
+IMMEDIATELY → fills in their loan numbers → plays with the 
+math → ONLY when they click "Download PDF" or "Email to 
+Myself" does the lead capture modal appear.
+
+CHANGES:
+1. Remove the lead capture wall that currently blocks page 
+   load on /worksheet (public mode only)
+2. The worksheet calculator and all input fields should be 
+   immediately visible and functional without ANY lead 
+   capture required
+3. Users can adjust numbers, see results update in real time, 
+   with zero friction
+4. Lead capture only triggers on intent-to-export actions
+
+============================================
+FIX 2: NEW LEAD CAPTURE MODAL WITH TWO BUTTONS
+============================================
+
+When the user clicks "Download PDF" OR "Email to Myself" on 
+the public worksheet, show this lead capture modal:
+
+Modal title: "Get your personalized worksheet"
+Subtitle: "Enter your info to download or email your results"
+
+Form fields:
+- First Name (required)
+- Last Name (required)  
+- Email (required, validated)
+- Phone (required, formatted)
+- State dropdown (required, default Arizona, options: AZ, CO, 
+  CT, FL, MI, MN, OR, PA, TX, VA, WA)
+- TCPA consent checkbox (required)
+
+TCPA consent label:
+"By checking this box I agree to be contacted by Mykoal 
+DeShazo / Adaxa Home LLC via phone, email, or text (including 
+automated means) regarding mortgage products. I understand 
+consent is not required to obtain services. Message and data 
+rates may apply."
+
+TWO ACTION BUTTONS AT THE BOTTOM:
+
+Button 1 (left, amber gold filled): "Download PDF"
+- On click: validates form → submits lead to LeadMailbox → 
+  generates PDF → triggers browser download of PDF file
+- No email sent
+- Modal closes after download starts
+
+Button 2 (right, amber gold filled): "Email to Myself"
+- On click: validates form → submits lead to LeadMailbox → 
+  generates PDF → emails PDF to the email address they entered
+- Shows success message: "Check your inbox. I'll be in touch 
+  shortly. — Mykoal"
+- Modal closes
+
+Both buttons require all form fields filled and consent 
+checkbox checked. Disabled state if not.
+
+Cancel link at the bottom: "Not ready yet" — closes modal, 
+returns to worksheet view.
+
+============================================
+FIX 3: INTERNAL MODE STAYS UNCHANGED — ADD "EMAIL TO CLIENT"
+============================================
+
+The /worksheet/internal (private mode behind admin auth) 
+should NOT have any of these changes. Internal mode currently 
+lets Mykoal use the tool freely with no lead capture, which 
+is correct.
+
+ADD to internal mode only: a small "Send to Client" form in 
+a sidebar or top panel:
+
+Title: "Email Worksheet to a Client"
+
+Fields:
+- Client First Name
+- Client Last Name (optional)
+- Client Email
+- Button: "Send to Client"
+
+On click:
+- Generates PDF using whatever numbers are currently in the 
+  worksheet inputs
+- Emails the PDF to the client's email address
+- Uses the same email template/branding as public-mode emails
+- Logs to LeadMailbox as source "worksheet-internal" with tag 
+  "manual send by Mykoal"
+- Shows success message: "Sent to [client name]."
+
+This lets Mykoal use the worksheet on a call with a client, 
+adjust the numbers in real time with them, and email it 
+directly without going through the public lead capture flow.
+
+============================================
+WHILE YOU'RE IN THERE — DIAGNOSE EMAIL DELIVERY
+============================================
+
+The user reports they're not receiving worksheet emails when 
+the form is submitted. Audit and confirm:
+
+1. What "to:" address is the worksheet PDF being sent to? 
+   Print the destination email address.
+2. Is RESEND_API_KEY accessible at runtime from Cloudflare 
+   Pages env variables?
+3. Is the "from:" address using a verified Resend domain 
+   (should be @smartr8.com)
+4. Add error logging to the API endpoint — log the Resend API 
+   response (success or failure with reason) so we can see in 
+   Cloudflare logs why emails aren't being delivered
+
+Send me the diagnosis findings before pushing the UI changes.
+
+============================================
+WHEN DONE
+============================================
+
+Push to GitHub. Cloudflare will auto-deploy. Send me:
+1. Confirmation lead capture is gone from page load on /worksheet
+2. Screenshot of new modal with two buttons (Download PDF / 
+   Email to Myself)
+3. Confirmation internal mode is unchanged + has new "Send to 
+   Client" form
+4. Diagnosis of why emails aren't being delivered + the fix
