@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSearch, Link } from "wouter";
 import { PageMeta } from "@/components/PageMeta";
 import { Header } from "@/components/Header";
@@ -5,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CalendarDays, FileText, Zap } from "lucide-react";
+import { trackFbEvent } from "@/lib/fbq";
 
 const CAL_URL = "https://cal.com/mykoal-deshazo/consult";
 const LENDINGPAD_URL =
@@ -15,6 +17,14 @@ export default function WhatsNext() {
   const params = new URLSearchParams(search);
   const firstName = params.get("name") || "";
   const source = params.get("source") || "worksheet";
+
+  useEffect(() => {
+    trackFbEvent("CompleteRegistration", {
+      content_name: "Whats Next",
+      content_category: source,
+      status: true,
+    });
+  }, [source]);
 
   const headline =
     source === "worksheet"

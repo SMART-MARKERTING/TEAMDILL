@@ -1,3 +1,5 @@
+import { trackFbEvent } from "@/lib/fbq";
+
 export type FunnelId = "heloc" | "cashout" | "rate-reduction" | "purchase";
 
 const LM_ENDPOINT = "https://api.leadmailbox.com/v2/leads/add/adax01/DeshazosWebsite";
@@ -145,6 +147,12 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
       }).catch(() => {});
     }
 
+    if (result.success) {
+      trackFbEvent("Lead", {
+        content_name: loanRequest(payload.funnel),
+        content_category: payload.funnel,
+      });
+    }
     return { success: result.success, leadId: result.leadId, error: result.error };
   } catch {
     // Worker failed — fire LM from browser as last resort
@@ -154,6 +162,11 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(lmPayload),
     }).catch(() => {});
+    // Browser fallback fired — count it as a Lead too
+    trackFbEvent("Lead", {
+      content_name: loanRequest(payload.funnel),
+      content_category: payload.funnel,
+    });
     // Still show success
     return { success: true };
   }

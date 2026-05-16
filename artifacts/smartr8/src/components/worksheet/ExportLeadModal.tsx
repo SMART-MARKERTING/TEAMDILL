@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle2, Mail } from "lucide-react";
 import { getWorksheetPdfBase64 } from "@/lib/generatePdf";
 import { computeScenarios, type WorksheetInputs } from "@/lib/worksheetCalc";
+import { trackFbEvent } from "@/lib/fbq";
 
 interface ExportLeadModalProps {
   open: boolean;
@@ -98,6 +99,10 @@ export default function ExportLeadModal({
       const data = (await res.json()) as { success: boolean; emailOk?: boolean; error?: string };
       if (data.success) {
         setStatus("done");
+        trackFbEvent("Lead", {
+          content_name: "Worksheet Funnel",
+          content_category: "worksheet",
+        });
         // 2-second redirect to /whats-next
         const redirect =
           redirectTo ??
