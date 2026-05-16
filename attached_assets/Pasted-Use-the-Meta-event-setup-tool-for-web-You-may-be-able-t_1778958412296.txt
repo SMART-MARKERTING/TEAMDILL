@@ -1,0 +1,71 @@
+Use the Meta event setup tool for web
+
+You may be able to speak with a Meta Technical Pro for step-by-step guidance to set up web events. Learn how to schedule a call with a Meta Pro.
+After you add Meta Pixel base code to your website, you can use the event setup tool to set up standard events and parameters without the need to code. Only standard events are available now, and not custom events.
+
+Before you begin
+Check that your website has the Meta Pixel installed.
+Make sure you have admin permissions for the pixel.
+Turn off ad blockers in your browser.
+To set up content ID and content type parameters, a unique product identifier should be available either in your webpage text or webpage URL. For example, a product SKU or UPC. Content ID and content type parameters are only available for view content, add to cart, initiate checkout, purchase, search, add to wishlist and lead events.
+How to use the event setup tool
+ Go to Meta Events Manager.
+ Click Datasets in the left menu of the page.
+ Select the name and ID of your data.
+ Click the Settings tab at the top of the page.
+Select Open event setup tool under Event setup.
+Enter your URL and click Open website. The event setup tool will launch in your website browser.
+Click Review by each suggested event then select Confirm or Dismiss.
+To add events that don't show up in your suggested list, navigate your website as usual to find the buttons or webpages you want. Select Track new button or Track a URL and follow the onscreen instructions.
+Note: When you set up an event on a button, you're adding the event to all buttons with the same or similar text on your website.
+Select an event.
+Set up parameters for your event.
+
+Set up value and currency parameters.
+
+Set up content ID and content type parameters.
+Click Finish setup in the event setup tool when you're done.
+To view your events, go to Meta Events Manager, select your pixel and view your event graph and table. To test that your events are firing correctly, go to Events Manager, select your pixel, click the Test events tab and follow the instructions. Learn how to use the test events tool.
+
+Learn more
+About the event setup tool for web
+Specifications for Meta Pixel standard events
+Troubleshoot the event setup tool for web in Meta Events Manager
+Required Meta Pixel events and parameters for Advantage+ catalog ads
+
+Common support topics
+About advertising restrictions
+Business Help Center
+
+Troubleshoot a disabled or restricted account
+Business Help Center
+
+About Meta Business Support Home
+Business Help Center
+
+Fix a failed payment issue on Meta
+Business Help Center
+
+
+PermalinkShare
+More in this section: Events
+
+Basics
+Create
+Set Up Events
+Use the Facebook event setup tool for web
+Best practices for Meta Pixel standard event setup
+Set up automatic events in Meta Events Manager
+Set the value and currency of your Meta Pixel standard events
+About Meta Pixel events and parameters for Advantage+ catalog ads
+Required Meta Pixel events and parameters for Advantage+ catalog ads
+Industry specifications for Meta Pixel and app SDK setup for ads
+About deduplication for Meta Pixel and Conversions API events
+Custom Conversions
+Manage
+Results
+Specifications
+Troubleshoot
+Get the latest updates from Meta for Business.
+Provide your email address to receive the latest updates from Meta for Business, including news, events and product updates.
+
