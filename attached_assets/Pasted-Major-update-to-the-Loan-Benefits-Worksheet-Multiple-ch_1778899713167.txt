@@ -1,0 +1,416 @@
+Major update to the Loan Benefits Worksheet. Multiple changes 
+to inputs, calculations, UI, and PDF output. Apply to BOTH 
+/worksheet (public) and /worksheet/internal where noted.
+
+============================================
+PART 1: PUBLIC WORKSHEET BUTTON SIMPLIFICATION
+============================================
+
+REMOVE these buttons from public /worksheet:
+- "Print / Save as PDF"
+- "Download PDF"
+
+KEEP only one button:
+- Label: "Email to Myself or Print/Download"
+- Style: same red filled button as currently shown
+- On click: opens lead capture modal (same flow as before)
+- After modal submission: sends PDF to entered email AND 
+  triggers immediate browser download of PDF
+
+In internal mode /worksheet/internal: keep all three buttons 
+exactly as they currently are (Print/Save, Download, Email).
+
+============================================
+PART 2: LEAD CAPTURE MODAL — REMOVE PHONE REQUIREMENT
+============================================
+
+Find the lead capture modal that pops up on the "Email" 
+button click. Remove phone number from REQUIRED fields:
+
+Required fields (only):
+- First Name
+- Last Name
+- Email
+- State dropdown (AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA)
+- TCPA consent checkbox
+
+Phone field: REMOVE entirely. Do not ask for it.
+
+============================================
+PART 3: ADVISOR PANEL CHANGES
+============================================
+
+In the advisor info section (visible in both internal and 
+public modes, but in public mode hidden behind "Customize" 
+toggle):
+
+REMOVE:
+- "Licensed States" input field entirely (this stays 
+  hardcoded in the compliance footer, not user-editable)
+
+ADD:
+- Advisor Headshot Upload field
+  - Label: "Advisor Photo"
+  - Type: file upload (accept image/* — jpg, png, webp)
+  - Per-session upload only (no persistent storage required)
+  - Once uploaded, displays a thumbnail preview
+  - Falls back to a default placeholder if no upload
+  - The uploaded image appears in the worksheet signature 
+    block and PDF output as a small circular thumbnail next 
+    to the advisor name
+  - For INTERNAL mode: pre-load a default headshot (use any 
+    placeholder for now — Mykoal will upload his own)
+
+KEEP unchanged:
+- Prepared By, Title, Company Name, Phone, Email, NMLS, 
+  Company NMLS
+
+============================================
+PART 4: PRODUCT TYPE DROPDOWN
+============================================
+
+ADD a new dropdown at the TOP of the worksheet inputs (above 
+the current mortgage section):
+
+Label: "Loan Product Type"
+Required field
+Options:
+1. Cash-Out Refinance (First Mortgage)
+2. Rate Reduction Refinance (First Mortgage)
+3. Home Equity Loan (Second Mortgage / HELOAN)
+4. HELOC (Home Equity Line of Credit, Second Mortgage)
+
+This selection drives multiple display and copy changes 
+throughout the worksheet:
+
+WHEN "Rate Reduction Refinance" is selected:
+- Worksheet title remains "Loan Benefits Worksheet"
+- Banner copy changes from "By redirecting freed-up cash..." 
+  to: "By refinancing to a lower rate AND redirecting your 
+  monthly savings of $XXX/month back to principal, your 
+  X.XXX% loan effectively costs you X.XXX% — saving 
+  $XXX,XXX and X.X years vs. just lowering your rate alone."
+- "How This Strategy Works" explainer uses rate-reduction 
+  language (no debt consolidation talk):
+  "By refinancing your existing mortgage from X.XXX% to 
+  X.XXX%, your monthly payment drops by $XXX. By committing 
+  that monthly savings back to the new loan's principal each 
+  month, you accelerate payoff and reduce total interest. 
+  Every dollar of principal retired early never accrues 
+  interest again, which is why your stated X.XXX% behaves 
+  like X.XXX% in practice."
+- Hide the "Debts to Consolidate" section entirely (no debts 
+  involved in a rate reduction refi)
+
+WHEN "Cash-Out Refinance" is selected:
+- Use existing copy and logic (debt consolidation flow)
+- Show "Debts to Consolidate" section
+
+WHEN "Home Equity Loan" or "HELOC" is selected:
+- Worksheet title remains "Loan Benefits Worksheet"
+- "Current Mortgage" section becomes "Existing First Mortgage" 
+  (kept in place, not paid off)
+- New loan section becomes "New Second Mortgage" or "New HELOC"
+- Calculations need to reflect that the first mortgage stays 
+  AND a second loan is added on top
+- Banner copy: "By using a [Home Equity Loan / HELOC] of 
+  $XXX,XXX to consolidate $XXX,XXX in higher-interest debt at 
+  an average rate of XX.XX%, you free up $XXX/month while 
+  keeping your low-rate first mortgage intact. Redirecting 
+  that savings back to the second mortgage principal pays it 
+  off in X.X years at an effective rate of X.XXX%."
+- Show "Debts to Consolidate" section
+- Add an additional row in the snapshot: "First Mortgage 
+  (unchanged) — $XXX,XXX @ X.XXX%"
+
+============================================
+PART 5: ARM / INTEREST-ONLY DROPDOWN
+============================================
+
+ADD a new dropdown in the "New Loan" input section:
+
+Label: "Loan Structure"
+Default: "Fixed Rate"
+Options:
+- Fixed Rate (default — current behavior)
+- 5/6 ARM
+- 7/1 ARM
+- 10/1 ARM
+- Interest Only
+
+Display-only behavior:
+- The selected loan structure appears in the snapshot table 
+  near the new loan info: "New Loan: $380,000 @ 6.500% Rate / 
+  X.XXX% APR (10/1 ARM)"
+- Math/amortization assumes the entered rate stays constant 
+  (no future rate prediction)
+- If ARM or Interest Only is selected, ADD a small disclaimer 
+  to the compliance footer:
+
+  "ARM rates may adjust after the initial fixed period. 
+  Interest-only loans defer principal payment for an initial 
+  period after which principal is required. This illustration 
+  assumes the initial rate remains constant for the entire 
+  loan term and does not account for rate adjustments or 
+  principal recapture. Consult your Loan Estimate for actual 
+  payment schedules under variable-rate or interest-only 
+  programs."
+
+============================================
+PART 6: EXISTING MORTGAGE — REMOVE APR FIELD
+============================================
+
+In the "Current Mortgage" input section:
+
+REMOVE:
+- "Existing Mortgage APR (optional)" field entirely
+
+KEEP:
+- Balance
+- Interest Rate
+- P&I Payment
+- Monthly Escrow
+
+The existing mortgage snapshot row should only show rate, 
+not APR. Update text to: "Existing Mortgage Balance: $XXX,XXX 
+@ X.XXX% Rate" (no APR mention).
+
+============================================
+PART 7: NEW LOAN — AUTO-CALCULATE APR FROM CLOSING COSTS
+============================================
+
+In the "New Loan" input section:
+
+REMOVE:
+- Manual "New Loan APR" input field
+
+ADD:
+- "Total Closing Costs" input
+  - Label: "Total Closing Costs"
+  - Type: number, step 100, placeholder "5500"
+  - Required field
+  - Help text below: "Enter total estimated closing costs 
+    (origination, title, recording, prepaids, etc.)"
+
+CALCULATION:
+The APR is now AUTO-CALCULATED based on:
+- Loan amount
+- Interest rate
+- Term (years)
+- Total closing costs (treated as prepaid finance charges)
+
+Formula: Find the APR (annual rate) that, when applied to the 
+net loan proceeds (loan amount minus closing costs), produces 
+the same monthly payment as the stated rate on the full loan 
+amount over the term.
+
+Pseudocode:
+- monthlyPayment = PMT(rate/12, term*12, loanAmount)
+- netProceeds = loanAmount - closingCosts
+- APR = solve for rate where PMT(apr/12, term*12, netProceeds) 
+  equals monthlyPayment
+- Use iterative bisection or Newton-Raphson to solve
+
+Display the auto-calculated APR next to the rate in all 
+snapshot and comparison tables:
+"New Loan: $380,000 @ 6.500% Rate / 6.752% APR"
+
+The APR field shown on the worksheet output should be 
+READ-ONLY display, computed from the closing costs input.
+
+============================================
+PART 8: EXTRA MONTHLY PRINCIPAL — AUTO-CALCULATED AND LOCKED
+============================================
+
+The "Extra Monthly Contribution / Principal" field is now 
+LOCKED (read-only, auto-calculated from the savings created).
+
+CALCULATION LOGIC:
+
+For Cash-Out Refinance and Rate Reduction:
+- currentTotalOutflow = existingMortgageP&I + existingEscrow + 
+  sum(debt min payments)
+- newLoanPmt = monthly payment on new loan at stated rate
+- newTotalOutflow = newLoanPmt + existingEscrow (if escrow 
+  carries over, which it usually does on a refi)
+- monthlySavings = currentTotalOutflow - newTotalOutflow
+- extraMonthlyPrincipal = monthlySavings (auto-filled into 
+  the calc engine)
+
+For Home Equity Loan / HELOC:
+- currentTotalOutflow = existingMortgageP&I + existingEscrow + 
+  sum(debt min payments)
+- newSecondLoanPmt = monthly payment on the new HELOAN/HELOC
+- newTotalOutflow = existingMortgageP&I + existingEscrow + 
+  newSecondLoanPmt
+- monthlySavings = currentTotalOutflow - newTotalOutflow
+- extraMonthlyPrincipal = monthlySavings (applied to the 
+  SECOND mortgage / HELOC, not the first)
+
+For Rate Reduction (no debt consolidation):
+- currentTotalOutflow = existingMortgageP&I (no debts factored)
+- newTotalOutflow = newLoanPmt
+- monthlySavings = currentTotalOutflow - newTotalOutflow
+- extraMonthlyPrincipal = monthlySavings
+
+DISPLAY:
+- The "Extra Monthly Principal" value still appears prominently 
+  on the worksheet output
+- Label changes to: "Auto-Applied Monthly Savings"
+- Display copy: "$XXX/month — your calculated monthly savings, 
+  automatically redirected to principal"
+- This number cannot be edited by the user (locked field, 
+  grayed out, or removed from the input panel entirely since 
+  it's now derived)
+
+If monthly savings is NEGATIVE (new payment is higher than 
+current), display a warning instead:
+"Note: With these inputs, the new loan does not produce 
+monthly savings. This program may not be a fit — please 
+adjust the inputs or consult Mykoal directly."
+
+============================================
+PART 9: DEBTS TO CONSOLIDATE — REMOVE RATE COLUMN
+============================================
+
+In the "Debts to Consolidate" / "Debts Rolled Into New 
+Mortgage" table:
+
+REMOVE COLUMN:
+- "Rate" column entirely
+
+KEEP COLUMNS:
+- Debt Name (text input)
+- Balance ($)
+- Minimum Payment ($)
+
+The rate column is unnecessary since the calc only uses the 
+min payment to determine current outflow. Remove the input 
+field AND the display column in the output table.
+
+Update the totals row to reflect only the two columns 
+(Balance total, Min Pmt total).
+
+============================================
+PART 10: HOW THIS STRATEGY WORKS — REWRITE FOR ACCURACY
+============================================
+
+The explainer paragraph in "How This Strategy Works" must 
+match the new auto-calculated logic. Rewrite based on the 
+selected product type:
+
+FOR CASH-OUT REFINANCE:
+"Today you pay $XXX,XXX/month total — your existing mortgage 
+payment of $XXX, escrow of $XXX, and $XXX in minimum payments 
+across your other debts.
+
+By refinancing your mortgage to $XXX,XXX at X.XXX% (X.XXX% 
+APR), all of those higher-interest debts get rolled into a 
+single lower-rate first mortgage. Your new total monthly 
+outflow drops to $XXX, freeing up $XXX/month in cash flow.
+
+That $XXX/month savings is automatically redirected to the 
+new loan's principal each month. Every dollar of principal 
+retired early never accrues interest again. This is why your 
+stated X.XXX% rate behaves like X.XXX% in practice — saving 
+$XXX,XXX in interest and paying off the loan in X.X years 
+instead of XX."
+
+FOR RATE REDUCTION:
+"Your current mortgage costs you $XXX/month at X.XXX%. By 
+refinancing to X.XXX% (X.XXX% APR), your new payment drops 
+to $XXX — a monthly savings of $XXX.
+
+That $XXX/month savings is automatically redirected to the 
+new loan's principal each month. Every dollar of principal 
+retired early never accrues interest again, which is why your 
+stated X.XXX% behaves like X.XXX% in practice — saving 
+$XXX,XXX in interest and shaving X.X years off your payoff 
+timeline."
+
+FOR HOME EQUITY LOAN / HELOC:
+"Today you pay $XXX/month total — your existing first 
+mortgage at X.XXX% ($XXX), escrow ($XXX), and $XXX in 
+minimum payments across your other debts.
+
+A new [Home Equity Loan / HELOC] of $XXX,XXX at X.XXX% lets 
+you consolidate those higher-interest debts WITHOUT touching 
+your low-rate first mortgage. Your new total monthly outflow 
+becomes $XXX — your first mortgage P&I + escrow + the new 
+second-mortgage payment — freeing up $XXX/month in cash flow.
+
+That $XXX/month savings is automatically redirected to the 
+SECOND mortgage's principal each month. The second mortgage 
+gets paid off in X.X years at an effective rate of X.XXX%, 
+saving $XXX,XXX in interest — all while keeping your 
+low-rate first mortgage exactly as it is."
+
+============================================
+PART 11: PDF PAGE BREAK FIXES
+============================================
+
+The current PDF cuts off words and content mid-page. Fix by:
+
+1. Apply page-break-inside: avoid to these elements:
+   - Every table
+   - The banner callout
+   - The signature block
+   - The compliance footer
+   - "How This Strategy Works" paragraph block
+   - "Key Numbers at a Glance" table
+
+2. Add explicit page-break-before to:
+   - Signature block (if total content exceeds one page)
+   - Compliance footer (always starts on a new page if needed)
+
+3. Force the compliance footer to be its own self-contained 
+   block — never split. If it doesn't fit on the current page, 
+   it bumps entirely to a new page.
+
+4. Multi-page output is acceptable if content requires it (e.g. 
+   10+ debt rows). The rule is: NEVER split mid-word, 
+   mid-sentence, mid-row, or mid-section header.
+
+============================================
+PART 12: COMPLIANCE FOOTER UPDATES
+============================================
+
+Hardcode the licensed states in the compliance footer (no 
+longer user-editable):
+
+"Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA"
+
+Add the ARM/IO disclaimer (only when ARM or Interest Only is 
+selected) as described in Part 5.
+
+Add the APR estimation disclaimer:
+"APR shown is estimated based on entered closing costs and is 
+for illustration only. Actual APR on your Loan Estimate may 
+vary based on actual finance charges, prepaids, and other 
+factors."
+
+============================================
+WHEN DONE
+============================================
+
+Push to GitHub. Cloudflare auto-deploys. Send me:
+1. Confirmation public worksheet now has single "Email to 
+   Myself or Print/Download" button
+2. Screenshot of new lead capture modal (no phone field)
+3. Confirmation advisor panel has headshot upload, no license 
+   states field
+4. Screenshot of new "Loan Product Type" dropdown and how 
+   each option changes the worksheet
+5. Screenshot of new "Loan Structure" dropdown (ARM/IO)
+6. Confirmation existing mortgage no longer has APR field
+7. Confirmation new loan has closing costs input and 
+   auto-calculated APR
+8. Confirmation Extra Monthly Principal is locked and 
+   auto-calculated from monthly savings
+9. Confirmation debts table no longer has Rate column
+10. Test PDFs:
+    - Cash-Out Refinance scenario
+    - Rate Reduction scenario
+    - HELOC scenario
+    All should have clean page breaks and correct "How This 
+    Strategy Works" copy.
