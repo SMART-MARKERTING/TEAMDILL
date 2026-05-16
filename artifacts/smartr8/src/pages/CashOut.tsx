@@ -197,7 +197,7 @@ export default function CashOutFunnel() {
       {st.step === 7 && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
           <h2 className="text-3xl font-bold text-primary mb-2">What's your estimated credit score?</h2>
-          <p className="text-muted-foreground mb-8">No credit pull required to see your options.</p>
+          <p className="text-muted-foreground mb-8">See your options without affecting your credit. A full credit review only happens when you decide to move forward.</p>
           <div className="flex flex-col gap-2.5">{CREDIT_RANGES.map((opt) => <ChoiceCard key={opt} label={opt} selected={st.creditScore === opt} onClick={() => autoAdvance({ creditScore:opt })} />)}</div>
         </div>
       )}
