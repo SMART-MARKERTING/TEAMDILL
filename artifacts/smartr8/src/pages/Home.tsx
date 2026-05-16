@@ -79,7 +79,7 @@ export default function Home() {
                 Real mortgage options from a loan officer who actually picks up the phone.
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                I'm Mykoal at Adaxa Home in Scottsdale. Whether you want to pull cash from your home, lower your monthly payment, or just see what's possible, I'll show you real options from 99+ lenders. No credit pull required to see your options. We only pull credit when you give the OK.
+                I'm Mykoal at Adaxa Home in Scottsdale. Whether you want to pull cash from your home, lower your monthly payment, or just see what's possible, I'll show you real options from 99+ lenders. See your options without affecting your credit. A full credit review only happens when you decide to move forward.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
