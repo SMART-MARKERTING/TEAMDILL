@@ -7,6 +7,7 @@ declare global {
 type StandardEvent =
   | "Lead"
   | "CompleteRegistration"
+  | "ViewContent"
   | "Contact"
   | "SubmitApplication"
   | "Schedule";

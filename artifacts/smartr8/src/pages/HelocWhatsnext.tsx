@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSearch } from "wouter";
 import { PageMeta } from "@/components/PageMeta";
 import { Header } from "@/components/Header";
@@ -7,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, BarChart2, CalendarDays, FileText, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { useGA4 } from "@/hooks/useGA4";
+import { trackFbEvent } from "@/lib/fbq";
 const CAL_URL = "https://cal.com/mykoal-deshazo/consult";
 const LENDINGPAD_URL = "https://prod.lendingpad.com/adaxa-home/pos#/?loid=dabbfd28-9b5f-46b8-9029-aa478433a995";
 
@@ -14,6 +16,10 @@ export default function HelocWhatsnext() {
   const search = useSearch();
   const firstName = new URLSearchParams(search).get("name") || "";
   const ga4 = useGA4("heloc");
+
+  useEffect(() => {
+    trackFbEvent("Lead", { content_name: "HELOC", content_category: "Mortgage" });
+  }, []);
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">

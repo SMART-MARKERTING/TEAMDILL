@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSearch, Link } from "wouter";
 import { PageMeta } from "@/components/PageMeta";
 import { Header } from "@/components/Header";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, BarChart2, CalendarDays, FileText } from "lucide-react";
 import { useGA4 } from "@/hooks/useGA4";
+import { trackFbEvent } from "@/lib/fbq";
 const CAL_URL = "https://cal.com/mykoal-deshazo/consult";
 const LENDINGPAD_URL = "https://prod.lendingpad.com/adaxa-home/pos#/?loid=dabbfd28-9b5f-46b8-9029-aa478433a995";
 
@@ -13,6 +15,10 @@ export default function RateReductionWhatsnext() {
   const search = useSearch();
   const firstName = new URLSearchParams(search).get("name") || "";
   const ga4 = useGA4("rate-reduction");
+
+  useEffect(() => {
+    trackFbEvent("Lead", { content_name: "Rate Reduction", content_category: "Mortgage" });
+  }, []);
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">

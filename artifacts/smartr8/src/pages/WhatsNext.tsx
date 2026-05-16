@@ -19,12 +19,18 @@ export default function WhatsNext() {
   const source = params.get("source") || "worksheet";
 
   useEffect(() => {
+    // Single source of truth for Lead conversion event for the worksheet funnel.
+    // No PII (name/credit/email) is passed — only static content metadata.
+    trackFbEvent("Lead", {
+      content_name: "Worksheet Funnel",
+      content_category: "Mortgage",
+    });
     trackFbEvent("CompleteRegistration", {
       content_name: "Whats Next",
-      content_category: source,
+      content_category: "Mortgage",
       status: true,
     });
-  }, [source]);
+  }, []);
 
   const headline =
     source === "worksheet"

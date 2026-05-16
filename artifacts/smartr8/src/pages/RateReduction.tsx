@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { submitLead } from "@/lib/submitLead";
 import { saveRateContext } from "@/lib/rateEstimate";
 import { useGA4 } from "@/hooks/useGA4";
+import { trackFbEvent } from "@/lib/fbq";
 
 const SESSION_KEY = "funnel_ratereduction";
 const TOTAL = 9;
@@ -38,6 +39,10 @@ const DEFAULT: FS = { step:1,firstName:"",lastName:"",address:"",city:"",stateCo
 export default function RateReductionFunnel() {
   const [, setLocation] = useLocation();
   const ga4 = useGA4("rate-reduction");
+
+  useEffect(() => {
+    trackFbEvent("ViewContent", { content_name: "Rate Reduction", content_category: "Mortgage" });
+  }, []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [st, setSt] = useState<FS>(() => {
