@@ -73,8 +73,15 @@ function saveStep(step: FunnelStep) {
 
 // ── Tiny field helper: numeric input ─────────────────────────────────────────
 function NumberField({
-  label, value, onChange, prefix = "$", step = 1, optional = false, hint,
-  min = 0,
+  label,
+  value,
+  onChange,
+  prefix,
+  step,
+  optional,
+  hint,
+  min,
+  placeholder,
 }: {
   label: string;
   value: number;
@@ -84,6 +91,7 @@ function NumberField({
   optional?: boolean;
   hint?: string;
   min?: number;
+  placeholder?: string;
 }) {
   return (
     <div className="space-y-1.5">
@@ -100,7 +108,8 @@ function NumberField({
           type="number"
           step={step}
           min={min}
-          value={value === 0 && optional ? "" : value || (value === 0 ? 0 : "")}
+          placeholder={placeholder}
+          value={value ? value : ""}
           onChange={(e) => {
             const v = e.target.value;
             onChange(v === "" ? 0 : Number(v));
@@ -633,14 +642,39 @@ export default function Worksheet() {
           <Stat label="Years shaved off" value={(results.consolidated.years - results.accelerated.years).toFixed(1) + " yrs"} positive />
         </div>
 
-        <div className="border rounded-lg shadow-sm overflow-hidden bg-white">
-          <WorksheetDocument inputs={inputs} results={results} />
-        </div>
-
-        <div className="text-center pt-2">
-          <Button size="lg" className="bg-accent hover:bg-accent/90 text-white" onClick={() => setExportOpen(true)}>
-            <Mail className="h-4 w-4 mr-2" /> Email My Worksheet
-          </Button>
+        {/* Blurred worksheet preview teaser with email-gate overlay */}
+        <div className="relative border rounded-lg shadow-sm overflow-hidden bg-white">
+          <div
+            className="select-none pointer-events-none"
+            style={{ filter: "blur(8px)", WebkitFilter: "blur(8px)" }}
+            aria-hidden="true"
+          >
+            <WorksheetDocument inputs={inputs} results={results} />
+          </div>
+          {/* Frosted overlay with CTA */}
+          <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-[2px]">
+            <div className="max-w-md mx-4 text-center bg-white/95 border rounded-xl shadow-lg p-6 sm:p-8">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-3">
+                <Mail className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="text-lg font-bold text-primary mb-2">
+                Your full worksheet is ready
+              </h3>
+              <p className="text-sm text-muted-foreground mb-5">
+                Enter your info to get the complete breakdown emailed to you.
+              </p>
+              <Button
+                size="lg"
+                className="bg-accent hover:bg-accent/90 text-white w-full"
+                onClick={() => setExportOpen(true)}
+              >
+                <Mail className="h-4 w-4 mr-2" /> Email My Worksheet
+              </Button>
+              <p className="text-[11px] text-muted-foreground mt-3">
+                Free · No obligation · No credit pull
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );

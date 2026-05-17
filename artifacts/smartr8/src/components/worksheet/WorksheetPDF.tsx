@@ -31,48 +31,51 @@ const BORDER = "#E5E5E5";
 const ROW_ALT = "#FAFAFA";
 const WHITE = "#FFFFFF";
 
+// 0.5in = 36pt margins. Slightly larger fonts and more whitespace for readability.
 const s = StyleSheet.create({
-  page: { backgroundColor: WHITE, fontFamily: "Times-Roman", fontSize: 8.5, color: "#333333" },
-  headerBar: { backgroundColor: NAVY, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 22, paddingVertical: 9 },
+  page: { backgroundColor: WHITE, fontFamily: "Times-Roman", fontSize: 9.5, color: "#333333" },
+  headerBar: { backgroundColor: NAVY, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 36, paddingVertical: 10 },
   headerLeft: { flexDirection: "row", alignItems: "center" },
-  headerCompany: { color: WHITE, fontFamily: "Times-Bold", fontSize: 12, marginRight: 8 },
+  headerCompany: { color: WHITE, fontFamily: "Times-Bold", fontSize: 13, marginRight: 8 },
   headerEhoLabel: { color: WHITE, fontSize: 6, lineHeight: 1.3, opacity: 0.9, marginLeft: 4 },
-  headerRight: { color: GOLD, fontFamily: "Times-Bold", fontSize: 8, letterSpacing: 1.5 },
-  body: { paddingHorizontal: 22, paddingBottom: 12 },
-  titleH1: { fontFamily: "Times-Bold", fontSize: 16, color: NAVY, marginTop: 10, marginBottom: 2 },
-  titleSub: { fontSize: 8, color: GRAY, marginBottom: 1 },
-  titleStruct: { fontSize: 7.5, color: GRAY, marginBottom: 8 },
-  warning: { borderWidth: 1, borderColor: RED, backgroundColor: "#FEF2F2", paddingHorizontal: 10, paddingVertical: 6, borderRadius: 3, marginBottom: 8, color: RED, fontSize: 8 },
-  sectionHeading: { fontFamily: "Times-Bold", fontSize: 9, color: NAVY, borderBottomWidth: 1.5, borderBottomColor: GOLD, paddingBottom: 2.5, marginBottom: 4 },
-  twoCol: { flexDirection: "row", marginBottom: 8 },
-  th: { backgroundColor: NAVY, paddingHorizontal: 5, paddingVertical: 3.5 },
-  thText: { color: WHITE, fontFamily: "Times-Bold", fontSize: 7.5 },
-  thTextRight: { color: WHITE, fontFamily: "Times-Bold", fontSize: 7.5, textAlign: "right" },
-  thGold: { backgroundColor: GOLD, paddingHorizontal: 5, paddingVertical: 3.5 },
-  thGoldText: { color: NAVY, fontFamily: "Times-Bold", fontSize: 7.5, textAlign: "right" },
+  headerRight: { color: GOLD, fontFamily: "Times-Bold", fontSize: 9, letterSpacing: 1.5 },
+  body: { paddingHorizontal: 36, paddingBottom: 14 },
+  titleH1: { fontFamily: "Times-Bold", fontSize: 18, color: NAVY, marginTop: 14, marginBottom: 3 },
+  titleSub: { fontSize: 9, color: GRAY, marginBottom: 2 },
+  titleStruct: { fontSize: 8.5, color: GRAY, marginBottom: 12 },
+  warning: { borderWidth: 1, borderColor: RED, backgroundColor: "#FEF2F2", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 3, marginBottom: 12, color: RED, fontSize: 9 },
+  sectionHeading: { fontFamily: "Times-Bold", fontSize: 11, color: NAVY, borderBottomWidth: 1.5, borderBottomColor: GOLD, paddingBottom: 3, marginBottom: 6 },
+  twoCol: { flexDirection: "row", marginBottom: 12 },
+  fullSection: { marginBottom: 14 },
+  th: { backgroundColor: NAVY, paddingHorizontal: 7, paddingVertical: 5 },
+  thText: { color: WHITE, fontFamily: "Times-Bold", fontSize: 8.5 },
+  thTextRight: { color: WHITE, fontFamily: "Times-Bold", fontSize: 8.5, textAlign: "right" },
+  thGold: { backgroundColor: GOLD, paddingHorizontal: 7, paddingVertical: 5 },
+  thGoldText: { color: NAVY, fontFamily: "Times-Bold", fontSize: 8.5, textAlign: "right" },
   tableRow: { flexDirection: "row" },
-  td: { paddingHorizontal: 5, paddingVertical: 3, borderBottomWidth: 0.5, borderBottomColor: BORDER },
-  tdText: { fontSize: 8, color: "#333333" },
-  tdNum: { fontSize: 8, color: "#333333", textAlign: "right" },
-  tdGold: { backgroundColor: "#FDF5E0", paddingHorizontal: 5, paddingVertical: 3, borderBottomWidth: 0.5, borderBottomColor: BORDER },
+  td: { paddingHorizontal: 7, paddingVertical: 4.5, borderBottomWidth: 0.5, borderBottomColor: BORDER },
+  tdText: { fontSize: 9, color: "#333333" },
+  tdNum: { fontSize: 9, color: "#333333", textAlign: "right" },
+  tdGold: { backgroundColor: "#FDF5E0", paddingHorizontal: 7, paddingVertical: 4.5, borderBottomWidth: 0.5, borderBottomColor: BORDER },
   totalsRow: { backgroundColor: LIGHT, flexDirection: "row" },
-  totalsLabel: { fontFamily: "Times-Bold", fontSize: 8, color: NAVY },
-  totalsNum: { fontFamily: "Times-Bold", fontSize: 8, color: NAVY, textAlign: "right" },
-  savingsLabel: { fontFamily: "Times-Bold", fontSize: 8, color: GREEN },
-  savingsNum: { fontFamily: "Times-Bold", fontSize: 8, color: GREEN, textAlign: "right" },
-  banner: { backgroundColor: NAVY, borderRadius: 3, paddingHorizontal: 12, paddingVertical: 8, marginTop: 2, marginBottom: 8 },
-  bannerText: { color: WHITE, fontSize: 8, lineHeight: 1.6 },
-  highlightNum: { color: GREEN, fontFamily: "Times-Bold", fontSize: 8, textAlign: "right" },
-  sigBlock: { flexDirection: "row", alignItems: "center", borderTopWidth: 2, borderTopColor: GOLD, paddingTop: 8, marginTop: 6 },
-  sigHeadshot: { width: 48, height: 48, borderRadius: 24, marginRight: 10 },
-  sigPlaceholder: { width: 48, height: 48, borderRadius: 24, marginRight: 10, backgroundColor: LIGHT, borderWidth: 1.5, borderColor: GOLD },
-  sigName: { fontFamily: "Times-Bold", fontSize: 10, color: NAVY, marginBottom: 1 },
-  sigDetail: { fontSize: 7.5, color: GRAY },
-  compliance: { backgroundColor: LIGHT, borderTopWidth: 0.5, borderTopColor: BORDER, paddingHorizontal: 22, paddingVertical: 8, flexDirection: "row", alignItems: "flex-start" },
-  ehoBox: { flexDirection: "column", alignItems: "center", marginRight: 8, flexShrink: 0 },
+  totalsLabel: { fontFamily: "Times-Bold", fontSize: 9, color: NAVY },
+  totalsNum: { fontFamily: "Times-Bold", fontSize: 9, color: NAVY, textAlign: "right" },
+  savingsLabel: { fontFamily: "Times-Bold", fontSize: 9, color: GREEN },
+  savingsNum: { fontFamily: "Times-Bold", fontSize: 9, color: GREEN, textAlign: "right" },
+  banner: { backgroundColor: NAVY, borderRadius: 3, paddingHorizontal: 14, paddingVertical: 10, marginTop: 2, marginBottom: 12 },
+  bannerText: { color: WHITE, fontSize: 9, lineHeight: 1.65 },
+  highlightNum: { color: GREEN, fontFamily: "Times-Bold", fontSize: 9, textAlign: "right" },
+  explainerPara: { fontSize: 9.5, lineHeight: 1.7, color: "#333333", marginBottom: 7 },
+  sigBlock: { flexDirection: "row", alignItems: "center", borderTopWidth: 2, borderTopColor: GOLD, paddingTop: 10, marginTop: 8 },
+  sigHeadshot: { width: 54, height: 54, borderRadius: 27, marginRight: 12 },
+  sigPlaceholder: { width: 54, height: 54, borderRadius: 27, marginRight: 12, backgroundColor: LIGHT, borderWidth: 1.5, borderColor: GOLD },
+  sigName: { fontFamily: "Times-Bold", fontSize: 11, color: NAVY, marginBottom: 1 },
+  sigDetail: { fontSize: 8.5, color: GRAY },
+  compliance: { backgroundColor: LIGHT, borderTopWidth: 0.5, borderTopColor: BORDER, paddingHorizontal: 36, paddingVertical: 10, flexDirection: "row", alignItems: "flex-start" },
+  ehoBox: { flexDirection: "column", alignItems: "center", marginRight: 10, flexShrink: 0 },
   ehoLabel: { fontSize: 6, color: NAVY, fontFamily: "Times-Bold", marginTop: 3, textAlign: "center", lineHeight: 1.3 },
-  complianceText: { fontSize: 6, color: GRAY, lineHeight: 1.5, flex: 1 },
-  footnote: { fontSize: 6.5, color: GRAY, paddingHorizontal: 5, paddingTop: 3 },
+  complianceText: { fontSize: 7, color: GRAY, lineHeight: 1.5, flex: 1 },
+  footnote: { fontSize: 7.5, color: GRAY, paddingHorizontal: 5, paddingTop: 4 },
 });
 
 function EhoPdf({ color }: { color: string }) {
@@ -323,29 +326,38 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
             </View>
           )}
 
-          {/* Bottom two-col: explainer + key numbers */}
-          <View style={s.twoCol}>
-            <View style={{ flex: 2, marginRight: 12 }} wrap={false}>
-              <Text style={s.sectionHeading}>How This Strategy Works</Text>
-              {explainer.paragraphs.map((p, i) => (
-                <Text
-                  key={`p${i}`}
+          {/* Full-width explainer paragraph block */}
+          <View style={s.fullSection} wrap={false}>
+            <Text style={s.sectionHeading}>How This Strategy Works</Text>
+            {explainer.paragraphs.map((p, i) => (
+              <Text
+                key={`p${i}`}
+                style={[
+                  s.explainerPara,
+                  i === explainer.paragraphs.length - 1 ? { marginBottom: 0 } : {},
+                ]}
+              >
+                {p}
+              </Text>
+            ))}
+          </View>
+
+          {/* Full-width Key Numbers as a two-column compact table */}
+          <View style={s.fullSection} wrap={false}>
+            <Text style={s.sectionHeading}>Key Numbers at a Glance</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              {keyNumbers.map(([label, val], i) => (
+                <View
+                  key={`k${i}`}
                   style={{
-                    fontSize: 8,
-                    lineHeight: 1.7,
-                    color: "#333333",
-                    marginBottom: i < explainer.paragraphs.length - 1 ? 5 : 0,
+                    width: "50%",
+                    flexDirection: "row",
+                    backgroundColor: Math.floor(i / 2) % 2 === 1 ? ROW_ALT : WHITE,
                   }}
                 >
-                  {p}
-                </Text>
-              ))}
-            </View>
-            <View style={{ flex: 1 }} wrap={false}>
-              <Text style={s.sectionHeading}>Key Numbers at a Glance</Text>
-              {keyNumbers.map(([label, val], i) => (
-                <View key={`k${i}`} style={[s.tableRow, { backgroundColor: i % 2 === 1 ? ROW_ALT : WHITE }]}>
-                  <View style={[s.td, { flex: 1 }]}><Text style={s.tdText}>{label}</Text></View>
+                  <View style={[s.td, { flex: 1.5 }]}>
+                    <Text style={s.tdText}>{label}</Text>
+                  </View>
                   <View style={[s.td, { flex: 1 }]}>
                     <Text style={[s.tdNum, { color: GREEN, fontFamily: "Times-Bold" }]}>{val}</Text>
                   </View>

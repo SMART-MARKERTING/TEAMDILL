@@ -1,0 +1,408 @@
+Skip to content
+
+AI
+
+SMARTR8
+
+
+
+Republish
+
+
+
+
+Main version
+SMARTR8
+
+New task
+
+Filters
+
+Plans
+
+Tasks
+
+ME
+Created by me
+
+
+Open task board
+Library
+
+File tree
+Search
+
+New
+Apps
+SMARTR8 Mobile — Adaxa Home Lead Funnel
+SMARTR8 Mobile — Adaxa Home Lead Funnel
+Mobile
+
+SMARTR8 — Adaxa Home Lead Funnel
+SMARTR8 — Adaxa Home Lead Funnel
+Website
+
+Images
+generated_image
+generated_image
+Image
+
+
+Agent
+4
+Commands
+Search for tools & files…
+Fix worksheet bugs and unify main page buttons to a single funnel
+
+
+
+Show previous messages
+
+7 messages & 31 actions
+
+Checkpoint made
+15 hours ago
+
+Worked for 3 minutes
+Two fixes on the Meta Pixel for smartr8:
+
+Add ViewContent on the four product landing pages. It is currently missing. On mount of each page component, fire ViewContent with the matching content_name:
+/heloc (Heloc.tsx): trackPixel('ViewContent', { content_name: 'HELOC', content_category: 'Mortgage' })
+/apply/cash-out (CashOut.tsx): content_name: 'Cash-Out Refinance'
+/apply/rate-reduction (RateReduction.tsx): content_name: 'Rate Reduction'
+/apply/purchase (Purchase.tsx): content_name: 'Purchase'
+All with content_category: 'Mortgage'. Use a useEffect with empty dependency array so it fires once on mount.
+
+Fix the event URL on SPA route changes. The Lead event is reporting the URL as the homepage (https://smartr8.com/) instead of the actual page it fired from. Because this is a wouter SPA, fbq is reading a stale document.location. When firing any pixel event after a route change, make sure the event reflects the current route URL, not the initial page-load URL. Pass the correct current URL/path or ensure fbq picks up the updated location after wouter navigation.
+Confirm back: ViewContent now fires on all four product pages, and Lead/events report the correct current-page URL.
+
+Show more
+14 hours ago
+
+6 messages & 15 actions
+
+Checkpoint made
+14 hours ago
+
+Worked for 2 minutes
+All right well if you did
+
+Replit — homepage reword
+On the smartr8.com homepage hero section, find this line:
+"No credit pull required to see your options. We only pull credit when you give the OK."
+Replace it with:
+"See your options without affecting your credit. A full credit review only happens when you decide to move forward."
+Keep all other copy, layout, and styling exactly the same. Only that one line changes. After deploying, confirm the new wording is live on smartr8.com.
+
+10 hours ago
+
+3 messages & 8 actions
+
+Checkpoint made
+10 hours ago
+
+Worked for 41 seconds
+PUSH THIS LIVE THROUGH GET OVER TO THE LIVE WEBSITE
+
+10 hours ago
+pUSH THIS LIVE THROUGH git OVER TO THE LIVE WEBSITE
+
+10 hours ago
+
+3 messages & 6 actions
+
+Worked for 30 seconds
+yes
+
+8 hours ago
+
+3 messages & 7 actions
+
+Checkpoint made
+8 hours ago
+
+Worked for 45 seconds
+<!-- Meta Pixel Code --> <script> !function(f,b,e,v,n,t,s) {if(f.fbq)return;n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)}; if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0'; n.queue=[];t=b.createElement(e);t.async=!0; t.src=v;s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s)}(window, document,'script', 'https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '723066527555884'); fbq('track', 'PageView'); </script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=723066527555884&ev=PageView&noscript=1" /></noscript>
+
+<!-- End Meta Pixel Code -->. Paste base code to website
+Paste the Meta Pixel code between the <head> and </head> tags of your web page. You may already have other existing code between the head tags, so just place the pixel code underneath that, but above </head>. Install the base code on every page of your website.See more detailed instructions
+​
+Example code
+Your website code will look something like this with the Meta Pixel code installed:
+
+
+Show more
+8 hours ago
+
+2 messages & 2 actions
+
+Worked for 21 seconds
+
+Pasted-Use-the-Meta-event-setup-tool-for-web-You-may-be-able-t_1778958412296.txt
+
+Pasted--You-may-be-able-to-speak-with-a-Meta-Technical-Pro-for_1778958426232.txt
+not working set up for all pages speciffically /heloc
+
+7 hours ago
+
+2 messages & 4 actions
+
+Checkpoint made
+7 hours ago
+
+Worked for 38 seconds
+
+Pasted-Standard-Events-You-can-use-the-Meta-Pixel-s-fbq-track-_1778959686156.txt
+BETTER TO USE developers.facebook.co? OR TELL ME
+
+7 hours ago
+
+1 message & 1 action
+
+Checkpoint made
+7 hours ago
+
+Attached Image
+WHAT SHOULD I PUT FOR ALL THESE
+
+7 hours ago
+
+1 message & 1 action
+
+Checkpoint made
+7 hours ago
+AD CREDIT CODE FOR FB
+
+6 hours ago
+
+1 message & 1 action
+
+Pasted--Mykoal-DeShazo-sent-you-instructions-for-installing-th_1778979078566.txt
+2 hours ago
+
+1 message & 1 action
+
+Checkpoint made
+2 hours ago
+
+Pasted-Specifications-for-Meta-Pixel-standard-events-You-may-b_1778979224529.txt
+this?
+
+2 hours ago
+
+1 message & 1 action
+
+Checkpoint made
+2 hours ago
+yes
+
+2 hours ago
+
+5 messages & 12 actions
+
+Checkpoint made
+2 hours ago
+
+Worked for 1 minute
+LARGE BUILD: Fix worksheet bugs + make every main-page button
+launch a unified funnel. Read all sections before starting.
+
+============================================
+PART 1: FIX EXISTING WORKSHEET BUGS FIRST
+BUG 1 — Stuck "0" placeholder in number inputs:
+Every number input across the entire site (worksheet, all
+funnels, all forms) currently shows a pre-filled "0" that the
+user cannot delete. When they type, the 0 stays.
+
+Fix: number inputs must be EMPTY by default with a gray
+placeholder (e.g. placeholder="350000"). The placeholder
+disappears when the user types. No pre-filled "0" values
+anywhere. Audit every <input type="number"> site-wide.
+
+For fields with smart defaults (like the 5.125% rate or
+$3,999 closing costs in step 4), those defaults should​​​​​​​​​​​​​​​​
+
+18 minutes ago
+
+1 message & 1 action
+
+Pasted-LARGE-BUILD-Fix-worksheet-bugs-make-every-main-page-but_1778984451675.txt
+13 minutes ago
+
+Planning project bug fixes and funnel (7 seconds)
+Got the full brief. Before I dive in I need to confirm one thing and check the current state. Let me explore what's actually in place:
+
+
+3 actions
+OK — this is a 8-15 hour build. LeadMailbox is already wired (good — submitLead.ts posts to api.leadmailbox.com), so no blocker there. Let me be upfront and pragmatic about scope:
+
+How I'll execute this
+I'm going to ship in two phases so we can validate halfway through rather than risk hours of work going sideways:
+
+Phase 1 (this turn): PART 1 — all three bugs. These are independent, ship fast, give you visible wins. ~1-2 hour build.
+
+Phase 2 (next turn after you confirm Phase 1): PARTS 2-7 unified funnel + fork. Bigger architectural lift, and there's one decision worth aligning on before I commit (see end of this message).
+
+Let me start Phase 1 now. Reading the affected files in parallel:
+
+
+9 actions
+I have all the context I need. Now executing Phase 1 — all three bugs in parallel. Let me find all NumberField usages first so I can add helpful placeholders:
+
+
+2 actions
+
+Checkpoint made
+11 minutes ago
+
+Worked for 1 minute
+Time worked
+1 minute
+Work done
+10 actions
+Items read
+777 lines
+Agent Usage
+$1.80
+General work
+$1.80
+
+Scroll to latest
+
+Make, test, iterate…
+
+
+Power
+
+
+
+Pasted-LARGE-BUILD-Fix-worksheet-bugs-make-every-main-page-but_1778984451675.txt
+LARGE BUILD: Fix worksheet bugs + make every main-page button 
+launch a unified funnel. Read all sections before starting.
+
+============================================
+PART 1: FIX EXISTING WORKSHEET BUGS FIRST
+============================================
+
+BUG 1 — Stuck "0" placeholder in number inputs:
+Every number input across the entire site (worksheet, all 
+funnels, all forms) currently shows a pre-filled "0" that the 
+user cannot delete. When they type, the 0 stays.
+
+Fix: number inputs must be EMPTY by default with a gray 
+placeholder (e.g. placeholder="350000"). The placeholder 
+disappears when the user types. No pre-filled "0" values 
+anywhere. Audit every <input type="number"> site-wide.
+
+For fields with smart defaults (like the 5.125% rate or 
+$3,999 closing costs in step 4), those defaults should be 
+actual editable values the user can fully clear and retype, 
+NOT stuck placeholders.
+
+BUG 2 — Results screen shows full worksheet before lead 
+capture:
+On the public worksheet results screen, the full worksheet 
+PDF preview is currently visible. We want the value teased 
+but not fully readable.
+
+Fix: on the results screen, show the THREE big summary 
+numbers fully visible and clear (Monthly Savings, Interest 
+Saved, Years Shaved Off). Below that, show the detailed 
+worksheet preview with a blur/frosted-glass overlay on top 
+of it — the user can see there's a full document there, but 
+can't read the details. Over the blurred area, a centered 
+message: "Your full worksheet is ready. Enter your info to 
+get the complete breakdown emailed to you." with the "Email 
+My Worksheet" button.
+
+BUG 3 — Emailed PDF layout is broken/funky:
+The current PDF has cramped columns, awkward text wrapping, 
+and poor spacing (see the narrow squished tables). 
+
+Fix: rebuild the PDF layout to be clean and professional:
+- Full-width tables that use the available page width
+- Proper padding and spacing between sections
+- Text never squished into narrow columns
+- The "How This Strategy Works" section should be a normal 
+  readable paragraph block, NOT a narrow sidebar column
+- Letter size, proper margins (0.5in)
+- Clean page breaks (page-break-inside: avoid on tables, 
+  banner, signature, compliance footer)
+- It should look like a polished professional one-to-two 
+  page document
+
+============================================
+PART 2: UNIFIED FUNNEL FOR ALL MAIN-PAGE BUTTONS
+============================================
+
+Every product button on the smartr8.com main page must 
+launch the SAME unified funnel. Buttons covered:
+- Cash-Out Refinance
+- Rate Reduction Refinance
+- Home Equity / 2nd Mortgage
+- HELOC
+- Purchase
+
+The button the user clicks pre-sets the "product type" 
+context but the funnel structure is identical for all.
+
+FUNNEL = the same multi-step guided flow already built for 
+the worksheet (4-step style: product, current situation, 
+goals, new loan details). Required fields stay required, 
+optional fields stay optional. Reuse the worksheet funnel 
+components — do NOT build separate funnels per button. One 
+shared funnel component, product type passed in as a prop.
+
+GLOBAL FUNNEL UI (every step):
+- Progress indicator at top
+- Persistent "Start Over" button (clears sessionStorage, 
+  returns to step 1) — on EVERY step and the results screen
+- Back button (except step 1)
+- Mobile-first, each step fits one screen where possible
+- Capture every answer into sessionStorage as the user 
+  progresses
+
+============================================
+PART 3: THE FORK SCREEN (CRITICAL NEW FEATURE)
+============================================
+
+After the user completes the essential funnel questions, 
+BEFORE they reach the /whats-next page, show a fork screen.
+
+Fork screen header: "How would you like your quote?"
+Subtitle: "Both options are 100% free — no cost either way."
+
+TWO large choice cards:
+
+CARD 1 — "Create My Own Quote"
+- Icon: calculator or sliders
+- Headline: "Build It Yourself"
+- Body: "Take the wheel. Enter your own numbers, add your 
+  debts, and instantly see your personalized savings and 
+  payoff strategy. Perfect if you like to explore the 
+  numbers on your own."
+- Button: "Create My Quote"
+
+CARD 2 — "Have a Licensed Professional Build It"
+- Icon: person/handshake
+- Headline: "Done For You"
+- Body: "Let Mykoal, a licensed loan officer, build your 
+  personalized quote and walk you through your best options. 
+  Perfect if you'd rather have an expert handle the details."
+- Button: "Get My Professional Quote"
+
+Both cards clearly display: "No cost. No obligation. No 
+credit pull."
+
+============================================
+PART 4: FORK PATH LOGIC
+============================================
+
+WHEN USER COMPLETES THE ESSENTIAL FUNNEL (before fork):
+- Send ALL collected answers to LeadMailbox as ONE complete 
+  payload. Source: "smartr8-funnel". Include which button 
+  they started from, all their answers, timestamp, UTM 
+  params.
+- This happens ONCE, on funnel completion, before the fork 
+  screen shows. One clean lead...
