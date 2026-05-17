@@ -1,0 +1,245 @@
+LARGE BUILD: Fix worksheet bugs + make every main-page button 
+launch a unified funnel. Read all sections before starting.
+
+============================================
+PART 1: FIX EXISTING WORKSHEET BUGS FIRST
+============================================
+
+BUG 1 — Stuck "0" placeholder in number inputs:
+Every number input across the entire site (worksheet, all 
+funnels, all forms) currently shows a pre-filled "0" that the 
+user cannot delete. When they type, the 0 stays.
+
+Fix: number inputs must be EMPTY by default with a gray 
+placeholder (e.g. placeholder="350000"). The placeholder 
+disappears when the user types. No pre-filled "0" values 
+anywhere. Audit every <input type="number"> site-wide.
+
+For fields with smart defaults (like the 5.125% rate or 
+$3,999 closing costs in step 4), those defaults should be 
+actual editable values the user can fully clear and retype, 
+NOT stuck placeholders.
+
+BUG 2 — Results screen shows full worksheet before lead 
+capture:
+On the public worksheet results screen, the full worksheet 
+PDF preview is currently visible. We want the value teased 
+but not fully readable.
+
+Fix: on the results screen, show the THREE big summary 
+numbers fully visible and clear (Monthly Savings, Interest 
+Saved, Years Shaved Off). Below that, show the detailed 
+worksheet preview with a blur/frosted-glass overlay on top 
+of it — the user can see there's a full document there, but 
+can't read the details. Over the blurred area, a centered 
+message: "Your full worksheet is ready. Enter your info to 
+get the complete breakdown emailed to you." with the "Email 
+My Worksheet" button.
+
+BUG 3 — Emailed PDF layout is broken/funky:
+The current PDF has cramped columns, awkward text wrapping, 
+and poor spacing (see the narrow squished tables). 
+
+Fix: rebuild the PDF layout to be clean and professional:
+- Full-width tables that use the available page width
+- Proper padding and spacing between sections
+- Text never squished into narrow columns
+- The "How This Strategy Works" section should be a normal 
+  readable paragraph block, NOT a narrow sidebar column
+- Letter size, proper margins (0.5in)
+- Clean page breaks (page-break-inside: avoid on tables, 
+  banner, signature, compliance footer)
+- It should look like a polished professional one-to-two 
+  page document
+
+============================================
+PART 2: UNIFIED FUNNEL FOR ALL MAIN-PAGE BUTTONS
+============================================
+
+Every product button on the smartr8.com main page must 
+launch the SAME unified funnel. Buttons covered:
+- Cash-Out Refinance
+- Rate Reduction Refinance
+- Home Equity / 2nd Mortgage
+- HELOC
+- Purchase
+
+The button the user clicks pre-sets the "product type" 
+context but the funnel structure is identical for all.
+
+FUNNEL = the same multi-step guided flow already built for 
+the worksheet (4-step style: product, current situation, 
+goals, new loan details). Required fields stay required, 
+optional fields stay optional. Reuse the worksheet funnel 
+components — do NOT build separate funnels per button. One 
+shared funnel component, product type passed in as a prop.
+
+GLOBAL FUNNEL UI (every step):
+- Progress indicator at top
+- Persistent "Start Over" button (clears sessionStorage, 
+  returns to step 1) — on EVERY step and the results screen
+- Back button (except step 1)
+- Mobile-first, each step fits one screen where possible
+- Capture every answer into sessionStorage as the user 
+  progresses
+
+============================================
+PART 3: THE FORK SCREEN (CRITICAL NEW FEATURE)
+============================================
+
+After the user completes the essential funnel questions, 
+BEFORE they reach the /whats-next page, show a fork screen.
+
+Fork screen header: "How would you like your quote?"
+Subtitle: "Both options are 100% free — no cost either way."
+
+TWO large choice cards:
+
+CARD 1 — "Create My Own Quote"
+- Icon: calculator or sliders
+- Headline: "Build It Yourself"
+- Body: "Take the wheel. Enter your own numbers, add your 
+  debts, and instantly see your personalized savings and 
+  payoff strategy. Perfect if you like to explore the 
+  numbers on your own."
+- Button: "Create My Quote"
+
+CARD 2 — "Have a Licensed Professional Build It"
+- Icon: person/handshake
+- Headline: "Done For You"
+- Body: "Let Mykoal, a licensed loan officer, build your 
+  personalized quote and walk you through your best options. 
+  Perfect if you'd rather have an expert handle the details."
+- Button: "Get My Professional Quote"
+
+Both cards clearly display: "No cost. No obligation. No 
+credit pull."
+
+============================================
+PART 4: FORK PATH LOGIC
+============================================
+
+WHEN USER COMPLETES THE ESSENTIAL FUNNEL (before fork):
+- Send ALL collected answers to LeadMailbox as ONE complete 
+  payload. Source: "smartr8-funnel". Include which button 
+  they started from, all their answers, timestamp, UTM 
+  params.
+- This happens ONCE, on funnel completion, before the fork 
+  screen shows. One clean lead record.
+
+IF USER PICKS "Create My Own Quote":
+- Route them into the worksheet workflow
+- PRE-FILL every worksheet field that was already answered 
+  in the essential funnel (loan amount, mortgage balance, 
+  total payment, product type, goals, debts, etc.)
+- ONLY ask the worksheet questions that are still missing 
+  (don't re-ask anything already answered)
+- They complete the worksheet, see results
+- At the results screen: "Email My Worksheet" button → 
+  name + email + TCPA modal → email PDF
+- After email sent: redirect to /whats-next
+
+IF USER PICKS "Have a Licensed Professional Build It":
+- Route directly to /whats-next
+- (Lead already captured in LeadMailbox from funnel 
+  completion, so Mykoal can follow up)
+
+============================================
+PART 5: WHAT'S NEXT PAGE
+============================================
+
+The /whats-next page keeps its existing options (Schedule a 
+Call via Cal.com, View Instant HELOC Options, full 
+application/apply).
+
+No changes to /whats-next options themselves. It's just now 
+reached either after the fork (professional path) or after 
+the self-directed worksheet completion.
+
+Make sure every button on /whats-next is tracked — when 
+clicked, fire an event and append to the lead record in 
+LeadMailbox noting which next-step action they chose.
+
+============================================
+PART 6: ESSENTIAL QUESTIONS = WORKSHEET REQUIRED FIELDS
+============================================
+
+The "essential" funnel questions are the same as the 
+worksheet funnel. Required fields stay required, optional 
+stay optional. Minimum required to complete the funnel and 
+reach the fork:
+
+- Product type (pre-set from button clicked)
+- Whether they have a mortgage (Y/N, except Rate Reduction 
+  which assumes yes)
+- Mortgage balance (required if they have a mortgage)
+- Total monthly payment (required if they have a mortgage)
+- Goal selection (debt consolidation / home improvement / 
+  both — for cash-out and home equity products)
+- New loan amount (auto-calculated, editable)
+
+Optional: interest rate, escrow, years remaining, etc. — 
+user can skip these and still complete.
+
+============================================
+PART 7: LEADMAILBOX PAYLOAD
+============================================
+
+When the funnel completes (before fork screen), POST to 
+LeadMailbox with the full picture:
+
+{
+  "source": "smartr8.com",
+  "funnel": "unified-funnel",
+  "entryButton": "[cash-out / rate-reduction / heloc / 
+    home-equity / purchase]",
+  "productType": "...",
+  "hasMortgage": true/false,
+  "mortgageBalance": "...",
+  "totalMonthlyPayment": "...",
+  "interestRate": "...",
+  "escrow": "...",
+  "yearsRemaining": "...",
+  "goal": "...",
+  "homeImprovementAmount": "...",
+  "debts": [...],
+  "newLoanAmount": "...",
+  "allAnswers": { full object of every captured answer },
+  "utmSource": "...",
+  "utmMedium": "...",
+  "utmCampaign": "...",
+  "completedAt": "ISO timestamp"
+}
+
+When the lead later submits name + email at the worksheet 
+email modal (self-directed path), UPDATE or append that 
+contact info to the same lead record (match on session ID).
+
+============================================
+PART 8: DO NOT CHANGE
+============================================
+
+- /worksheet/internal — leave the internal worksheet as-is 
+  (single-page, no funnel, no fork)
+- The calculation engine math
+- Cal.com integration
+- Existing /whats-next option destinations
+- The compliance footer content
+
+============================================
+WHEN DONE
+============================================
+
+Push to GitHub. Cloudflare auto-deploys. Send me:
+1. Confirmation the "0" placeholder bug is fixed site-wide
+2. Confirmation results screen now blurs the preview with 
+   the 3 summary numbers visible
+3. Screenshot of the rebuilt clean PDF
+4. Confirmation all 5 main-page buttons launch the unified 
+   funnel
+5. Screenshot of the fork screen (two cards)
+6. Confirmation both fork paths work (self-directed → 
+   worksheet pre-filled; professional → /whats-next)
+7. Confirmation LeadMailbox receives the full payload on 
+   funnel completion
+8. Confirmation "Start Over" is on every step
