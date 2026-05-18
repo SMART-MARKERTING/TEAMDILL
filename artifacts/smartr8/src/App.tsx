@@ -3,7 +3,7 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { trackFbEvent } from "@/lib/fbq";
+import { trackFbEvent, generateEventId } from "@/lib/fbq";
 import Home from "@/pages/Home";
 import ThankYou from "@/pages/ThankYou";
 import Heloc from "@/pages/Heloc";
@@ -44,7 +44,7 @@ function PixelRouteTracker() {
     try {
       const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
       if (typeof fbq === "function") {
-        fbq("track", "PageView");
+        fbq("track", "PageView", {}, { eventID: generateEventId() });
       }
     } catch {
       // Never let analytics break navigation
