@@ -45,7 +45,11 @@ function buildNotes(body, isDuplicate) {
   );
   if (body.homeValue) lines.push(`- Home value range: ${body.homeValue}`);
   if (body.mortgageBalance) lines.push(`- Mortgage balance range: ${body.mortgageBalance}`);
+
+  // Legacy HELOC/purchase keys with human-readable labels
+  const legacyKeys = new Set();
   const addF = (label, key) => {
+    legacyKeys.add(key);
     const v = af[key];
     if (v) lines.push(`- ${label}: ${Array.isArray(v) ? v.join(", ") : v}`);
   };
@@ -60,6 +64,14 @@ function buildNotes(body, isDuplicate) {
   addF("Down payment", "downPayment");
   addF("Purchase price", "purchasePrice");
   addF("Goal", "goal");
+
+  // Catch-all: render unified funnel fields + anything else not handled above
+  for (const [key, val] of Object.entries(af)) {
+    if (legacyKeys.has(key)) continue;
+    if (val === undefined || val === null || val === "") continue;
+    lines.push(`- ${key}: ${Array.isArray(val) ? val.join(", ") : val}`);
+  }
+
   if (body.trackingId) lines.push("", `Tracking ID: ${body.trackingId}`);
   if (body.utmSource || body.utmMedium || body.utmCampaign || body.utmContent) {
     lines.push("", "UTM:");
@@ -234,6 +246,8 @@ export async function onRequest(context) {
         creditScore: body.creditScore ?? "",
         state: body.state ?? "",
         zip: body.zip ?? "",
+        additionalFields: body.additionalFields ?? {},
+        trackingId: body.trackingId ?? "",
         lmSuccess,
       }),
     }).catch((e) => console.error("[smartr8] Formspree error:", e))

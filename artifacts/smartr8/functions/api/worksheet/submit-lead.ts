@@ -281,6 +281,7 @@ export async function onRequest(context) {
         "Funnel: worksheet-self",
         `Submitted: ${new Date().toISOString()}`,
         `Source: smartr8.com/worksheet`,
+        body.trackingId ? `Tracking ID: ${body.trackingId}` : "",
         body.worksheetSummary ? `\nWorksheet summary:\n${body.worksheetSummary}` : "",
       ].filter(Boolean).join("\n"),
     };

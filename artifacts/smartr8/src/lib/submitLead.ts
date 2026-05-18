@@ -27,7 +27,7 @@ export interface SubmitResult {
   error?: string;
 }
 
-function getOrCreateTrackingId(): string {
+export function getOrCreateTrackingId(): string {
   try {
     const key = "smartr8_tid";
     let id = sessionStorage.getItem(key);

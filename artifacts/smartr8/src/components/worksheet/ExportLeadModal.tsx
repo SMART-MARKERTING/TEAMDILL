@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle2, Mail } from "lucide-react";
 import { getWorksheetPdfBase64 } from "@/lib/generatePdf";
 import { computeScenarios, type WorksheetInputs } from "@/lib/worksheetCalc";
+import { getOrCreateTrackingId } from "@/lib/submitLead";
 
 interface ExportLeadModalProps {
   open: boolean;
@@ -41,11 +42,22 @@ export default function ExportLeadModal({
   worksheetSummary,
   redirectTo,
 }: ExportLeadModalProps) {
-  const [form, setForm] = useState<FormState>({
-    firstName: inputs.clientFirstName || "",
-    lastName: inputs.clientLastName || "",
-    email: "",
-    tcpa: false,
+  // Pre-fill from worksheet inputs OR funnel contact sessionStorage (if user
+  // already filled the unified funnel contact step before reaching the worksheet)
+  const [form, setForm] = useState<FormState>(() => {
+    let firstName = inputs.clientFirstName || "";
+    let lastName = inputs.clientLastName || "";
+    let email = "";
+    try {
+      const raw = sessionStorage.getItem("smartr8_funnel_contact_v1");
+      if (raw) {
+        const c = JSON.parse(raw);
+        if (!firstName && c.firstName) firstName = c.firstName;
+        if (!lastName && c.lastName) lastName = c.lastName;
+        if (c.email) email = c.email;
+      }
+    } catch {}
+    return { firstName, lastName, email, tcpa: false };
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<ActionStatus>("idle");
@@ -90,9 +102,11 @@ export default function ExportLeadModal({
           lastName: form.lastName.trim(),
           clientName,
           clientEmail: form.email.trim(),
+          phone: (() => { try { const c = sessionStorage.getItem("smartr8_funnel_contact_v1"); return c ? JSON.parse(c).mobile ?? "" : ""; } catch { return ""; } })(),
           pdfBase64,
           fileName: `Loan-Benefits-Worksheet-${clientName.replace(/\s+/g, "-")}.pdf`,
           worksheetSummary,
+          trackingId: getOrCreateTrackingId(),
         }),
       });
       const data = (await res.json()) as { success: boolean; emailOk?: boolean; error?: string };
