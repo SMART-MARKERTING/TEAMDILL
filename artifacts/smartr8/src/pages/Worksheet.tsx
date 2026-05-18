@@ -621,12 +621,14 @@ export default function Worksheet() {
               label="Current Mortgage Balance"
               value={inputs.existBalance}
               onChange={(v) => update("existBalance", v)}
+              placeholder="350000"
               hint="What you still owe."
             />
             <NumberField
               label="Total Monthly Payment (PITI)"
               value={inputs.existTotalPayment}
               onChange={(v) => update("existTotalPayment", v)}
+              placeholder="2400"
               hint="Full payment including taxes & insurance."
             />
             <NumberField
@@ -636,6 +638,7 @@ export default function Worksheet() {
               prefix=""
               step={0.001}
               optional
+              placeholder="6.5"
               hint="Leave blank if unknown."
             />
             <NumberField
@@ -643,6 +646,7 @@ export default function Worksheet() {
               value={inputs.existEscrow}
               onChange={(v) => update("existEscrow", v)}
               optional
+              placeholder="450"
               hint="Taxes & insurance portion. Optional."
             />
             <NumberField
@@ -651,6 +655,7 @@ export default function Worksheet() {
               onChange={(v) => update("existYearsRemaining", v)}
               prefix=""
               optional
+              placeholder="25"
               hint="Approximate years left on your mortgage."
             />
           </div>
@@ -774,6 +779,7 @@ export default function Worksheet() {
             label="Home improvement amount"
             value={inputs.homeImprovementAmount}
             onChange={(v) => update("homeImprovementAmount", v)}
+            placeholder="40000"
             hint="How much cash you'd like for projects."
           />
         )}
@@ -795,6 +801,7 @@ export default function Worksheet() {
             label="New loan amount"
             value={inputs.loanAmount}
             onChange={(v) => update("loanAmount", v)}
+            placeholder="400000"
             hint="Auto-filled from your existing balance + debts + closing costs."
           />
           <NumberField
@@ -977,7 +984,7 @@ export default function Worksheet() {
           <button
             type="button"
             onClick={handleForkSelfBuild}
-            className="text-left rounded-xl border-2 border-border hover:border-accent transition-all p-6 bg-card hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent"
+            className="text-left rounded-xl border-2 border-border hover:border-accent transition-all p-6 bg-card hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent flex flex-col"
             data-testid="fork-self-build"
           >
             <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mb-4">
@@ -988,14 +995,19 @@ export default function Worksheet() {
               See your full worksheet right now — monthly savings, interest saved, and years shaved
               off your loan. Email a copy to yourself when you're ready.
             </p>
-            <div className="text-xs text-muted-foreground font-medium">
-              No cost · No obligation · No credit pull
+            <div className="mt-auto">
+              <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm">
+                Create My Quote <ArrowRight className="h-4 w-4" />
+              </span>
+              <div className="text-xs text-muted-foreground font-medium text-center mt-3">
+                No cost · No obligation · No credit pull
+              </div>
             </div>
           </button>
           <button
             type="button"
             onClick={handleForkProfessional}
-            className="text-left rounded-xl border-2 border-primary bg-primary text-primary-foreground hover:bg-primary/90 transition-all p-6 shadow-md focus:outline-none focus:ring-2 focus:ring-accent"
+            className="text-left rounded-xl border-2 border-primary bg-primary text-primary-foreground hover:bg-primary/90 transition-all p-6 shadow-md focus:outline-none focus:ring-2 focus:ring-accent flex flex-col"
             data-testid="fork-professional"
           >
             <div className="flex items-center justify-between mb-4">
@@ -1006,13 +1018,18 @@ export default function Worksheet() {
                 Recommended
               </span>
             </div>
-            <h3 className="text-lg font-bold mb-2">Get My Professional Quote</h3>
+            <h3 className="text-lg font-bold mb-2">Done For You</h3>
             <p className="text-sm text-white/85 mb-4 leading-relaxed">
               Mykoal personally reviews your numbers and builds a tailored game plan — a real human
               looking at your situation, not a calculator.
             </p>
-            <div className="text-xs text-white/70 font-medium">
-              No cost · No obligation · No credit pull
+            <div className="mt-auto">
+              <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm">
+                Get My Professional Quote <ArrowRight className="h-4 w-4" />
+              </span>
+              <div className="text-xs text-white/70 font-medium text-center mt-3">
+                No cost · No obligation · No credit pull
+              </div>
             </div>
           </button>
         </div>
