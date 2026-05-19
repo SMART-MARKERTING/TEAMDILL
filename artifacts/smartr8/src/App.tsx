@@ -86,6 +86,10 @@ function PixelLinkTracker() {
         trackFbEvent("Contact", { method: "phone" });
         return;
       }
+      if (href.startsWith("sms:")) {
+        trackFbEvent("Contact", { method: "sms" });
+        return;
+      }
       if (href.startsWith("mailto:")) {
         trackFbEvent("Contact", { method: "email" });
         return;

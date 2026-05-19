@@ -90,7 +90,7 @@ export default function Home() {
                   asChild
                   data-testid="hero-secondary-cta"
                 >
-                  <a href="tel:9494185486">
+                  <a href="sms:9494185486">
                     <Phone className="mr-2 h-5 w-5" />
                     Text Me
                   </a>
@@ -367,7 +367,7 @@ export default function Home() {
               </Link>
             </Button>
             <p className="text-primary-foreground/70">
-              Or text me directly at <a href="tel:9494185486" className="font-semibold hover:underline">(949) 418-5486</a>
+              Or text me directly at <a href="sms:9494185486" className="font-semibold hover:underline">(949) 418-5486</a>
             </p>
           </div>
         </section>
