@@ -140,7 +140,10 @@ function loadStep(): FunnelStep {
   try {
     const raw = sessionStorage.getItem(STEP_KEY);
     const n = raw ? parseInt(raw, 10) : 1;
-    if (n >= 1 && n <= 7) return n as FunnelStep;
+    // Only steps 1-5 are resumable input steps. Steps 6 (fork) and 7 (results)
+    // are post-completion screens; a page load must never restore into them,
+    // or every re-entry to /worksheet lands the user on the results screen.
+    if (n >= 1 && n <= 5) return n as FunnelStep;
   } catch {}
   return 1;
 }
@@ -248,7 +251,11 @@ export default function Worksheet() {
   const search = useSearch();
   const [, setLocation] = useLocation();
   const [inputs, setInputs] = useState<WorksheetInputs>(loadInputs);
-  const [step, setStep] = useState<FunnelStep>(loadStep);
+  const [step, setStep] = useState<FunnelStep>(
+    // A ?product= entry param means the user is launching a funnel from a
+    // product button, so always start at Step 1. Otherwise resume the saved step.
+    () => (parseEntryFromUrl(search) ? 1 : loadStep()),
+  );
   const [exportOpen, setExportOpen] = useState(false);
   const [editing, setEditing] = useState(false); // when on results, allow inline edit of inputs for adjustment
   const [contact, setContact] = useState<ContactInfo>(loadContact);
@@ -402,6 +409,9 @@ export default function Worksheet() {
         toast({ title: "Enter the new rate", description: "Set the new interest rate to continue.", variant: "destructive" });
         return;
       }
+      // "Adjust numbers" round-trip: when adjusting from the results screen,
+      // Continue returns straight to results rather than re-collecting contact.
+      if (editing) { setEditing(false); setStep(7); return; }
       setStep(5);
       return;
     }
@@ -417,6 +427,16 @@ export default function Worksheet() {
     if (step === 4) { setStep(isRateReduction ? 2 : 3); return; }
     if (step === 3) { setStep(2); return; }
     if (step === 2) { setStep(1); return; }
+  }
+
+  /**
+   * "Adjust numbers" on the results screen: drop the user back into the
+   * loan-setup step (Step 4) with every value preserved. The "editing" flag
+   * makes Continue return straight to results instead of re-collecting contact.
+   */
+  function handleAdjustNumbers() {
+    setEditing(true);
+    setStep(4);
   }
 
   /**
@@ -1074,7 +1094,7 @@ export default function Worksheet() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={back}>
+            <Button variant="outline" onClick={handleAdjustNumbers}>
               <Pencil className="h-4 w-4 mr-1.5" /> Adjust numbers
             </Button>
             <Button className="bg-accent hover:bg-accent/90 text-white" onClick={() => setExportOpen(true)}>
@@ -1165,7 +1185,7 @@ export default function Worksheet() {
                   <ArrowLeft className="h-4 w-4 mr-1" /> Back
                 </Button>
                 <Button onClick={next} className="bg-accent hover:bg-accent/90 text-white">
-                  {step === 4 ? "Continue" : "Continue"} <ArrowRight className="h-4 w-4 ml-1" />
+                  {editing && step === 4 ? "Update Worksheet" : "Continue"} <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
             )}
