@@ -18,7 +18,7 @@ export default function HelocWhatsnext() {
   const ga4 = useGA4("heloc");
 
   useEffect(() => {
-    trackFbEvent("Lead", { content_name: "HELOC", content_category: "Mortgage" });
+    trackFbEvent("Lead", { content_name: "HELOC", content_category: "Mortgage", variant: "A" });
   }, []);
 
   return (

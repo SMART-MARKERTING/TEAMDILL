@@ -201,7 +201,7 @@ export function HelocForm() {
         homeValue: form.home_value,
         mortgageBalance: form.mortgage_balance,
         pageLoadTime: pageLoadTimeRef.current,
-        additionalFields: { helocPurposes: form.heloc_purposes, timeline: form.timeline },
+        additionalFields: { helocPurposes: form.heloc_purposes, timeline: form.timeline, variant: "A" },
       });
       if (result.success) {
         setLocation(`/heloc/whats-next?name=${encodeURIComponent(form.first_name)}`);

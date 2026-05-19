@@ -10,6 +10,7 @@ import Heloc from "@/pages/Heloc";
 import HelocNextSteps from "@/pages/HelocNextSteps";
 import HelocWhatsnext from "@/pages/HelocWhatsnext";
 import HelocInstantOptions from "@/pages/HelocInstantOptions";
+import HelocQuick from "@/pages/HelocQuick";
 import Worksheet from "@/pages/Worksheet";
 import WorksheetInternal from "@/pages/WorksheetInternal";
 import WhatsNext from "@/pages/WhatsNext";
@@ -133,6 +134,7 @@ function Router() {
       <Route path="/heloc/next-steps" component={HelocNextSteps} />
       <Route path="/heloc/whats-next" component={HelocWhatsnext} />
       <Route path="/heloc/instant-options" component={HelocInstantOptions} />
+      <Route path="/heloc/quick" component={HelocQuick} />
       {/* Legacy /apply/* funnels — superseded by the unified /worksheet funnel */}
       <Route path="/apply/cash-out">{() => <RedirectTo to="/worksheet?product=cash-out" />}</Route>
       <Route path="/apply/rate-reduction">{() => <RedirectTo to="/worksheet?product=rate-reduction" />}</Route>

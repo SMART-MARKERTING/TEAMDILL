@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link } from "wouter";
+import { getHelocBucket } from "@/lib/abTest";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
@@ -21,6 +23,11 @@ const STATES_11 = [
 ];
 
 export default function Home() {
+  // HELOC A/B split test: bucket is assigned once per session (src/lib/abTest.ts).
+  // Variant A routes to the full /heloc funnel; variant B to the 1-step /heloc/quick.
+  const [helocBucket] = useState(getHelocBucket);
+  const helocHref = helocBucket === "B" ? "/heloc/quick" : "/heloc";
+
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background selection:bg-primary/10">
       <JsonLd data={{
@@ -196,7 +203,7 @@ export default function Home() {
               Pick your path. About 3 minutes, no credit pull.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-              <Link href="/worksheet?product=heloc">
+              <Link href={helocHref}>
                 <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
                   <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
                     <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
