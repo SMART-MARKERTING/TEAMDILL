@@ -128,59 +128,59 @@ export default function WhatsNext() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{subhead}</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {/* Schedule a Call */}
-            <Card className="shadow-sm border-primary/20 flex flex-col">
-              <CardContent className="p-6 flex flex-col gap-4 h-full">
-                <div
-                  className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full w-fit"
-                  style={{ backgroundColor: "rgba(19,72,90,0.08)", color: "#13485A" }}
-                >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* Schedule a Call — primary hero card (dark, mirrors the funnel screenshot's "Done For You" style) */}
+            <a
+              href={CAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleScheduleCall}
+              data-testid="whatsnext-cta-schedule"
+              className="group rounded-xl border-2 border-primary bg-primary text-primary-foreground hover:bg-primary/90 transition-all p-6 shadow-md focus:outline-none focus:ring-2 focus:ring-accent flex flex-col lg:col-span-1 md:col-span-2"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center">
+                  <CalendarDays className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded bg-accent text-white">
                   Recommended
+                </span>
+              </div>
+              <h2 className="text-xl font-bold mb-2">Schedule a Call</h2>
+              <p className="text-sm text-white/85 leading-relaxed mb-5 flex-1">
+                Want help walking through your numbers and picking the right strategy? Book a
+                20-minute call with Mykoal directly — a real human looking at your situation, not a
+                calculator.
+              </p>
+              <div className="mt-auto">
+                <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm group-hover:bg-accent/90 transition-colors">
+                  Book a Time <ArrowRight className="h-4 w-4" />
+                </span>
+                <div className="text-xs text-white/70 font-medium text-center mt-3">
+                  No cost · No obligation · No credit pull
                 </div>
-                <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center">
-                  <CalendarDays className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-primary mb-2">Schedule a Call</h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Want help walking through your numbers and picking the right strategy? Book a 20-minute
-                    call with Mykoal directly.
-                  </p>
-                </div>
-                <div className="mt-auto">
-                  <a
-                    href={CAL_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleScheduleCall}
-                    data-testid="whatsnext-cta-schedule"
-                  >
-                    <Button className="w-full h-11 bg-accent hover:bg-accent/90 text-white">
-                      Book a Time <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </a>
 
-            {/* Instant HELOC Options */}
+            {/* Instant HELOC Options — secondary card */}
             <Card className="shadow-sm flex flex-col">
               <CardContent className="p-6 flex flex-col gap-4 h-full">
-                <div
-                  className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full w-fit"
-                  style={{ backgroundColor: "rgba(19,72,90,0.08)", color: "#13485A" }}
-                >
-                  Fast Quote
-                </div>
-                <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-primary" />
+                <div className="flex items-center justify-between">
+                  <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center">
+                    <Zap className="h-6 w-6 text-accent" />
+                  </div>
+                  <span
+                    className="text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded"
+                    style={{ backgroundColor: "rgba(19,72,90,0.08)", color: "#13485A" }}
+                  >
+                    Fast Quote
+                  </span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-primary mb-2">See Instant HELOC Options</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Check two digital home-equity programs that may offer fast qualification — typically
-                    no appraisal, soft credit pull.
+                    Check two digital home-equity programs that may offer fast qualification —
+                    typically no appraisal, soft credit pull.
                   </p>
                 </div>
                 <div className="mt-auto">
@@ -194,27 +194,32 @@ export default function WhatsNext() {
                       See My Options <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
+                  <div className="text-xs text-muted-foreground font-medium text-center mt-3">
+                    No cost · No obligation · No credit pull
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Full Application */}
+            {/* Full Application — secondary card */}
             <Card className="shadow-sm flex flex-col">
               <CardContent className="p-6 flex flex-col gap-4 h-full">
-                <div
-                  className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full w-fit"
-                  style={{ backgroundColor: "rgba(19,72,90,0.08)", color: "#13485A" }}
-                >
-                  Ready to Apply
-                </div>
-                <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-primary" />
+                <div className="flex items-center justify-between">
+                  <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-accent" />
+                  </div>
+                  <span
+                    className="text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded"
+                    style={{ backgroundColor: "rgba(19,72,90,0.08)", color: "#13485A" }}
+                  >
+                    Ready to Apply
+                  </span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-primary mb-2">Start a Full Application</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Skip the back-and-forth and start your application now in our secure portal. Takes
-                    about 10–15 minutes.
+                    Skip the back-and-forth and start your application now in our secure portal.
+                    Takes about 10–15 minutes.
                   </p>
                 </div>
                 <div className="mt-auto">
@@ -229,6 +234,9 @@ export default function WhatsNext() {
                       Apply Now <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </a>
+                  <div className="text-xs text-muted-foreground font-medium text-center mt-3">
+                    No cost · No obligation · No credit pull
+                  </div>
                 </div>
               </CardContent>
             </Card>

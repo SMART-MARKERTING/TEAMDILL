@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import {
-  ArrowLeft, ArrowRight, RotateCcw, Plus, Trash2, Check, Mail, Pencil,
-  Calculator, Handshake, Loader2, Home as HomeIcon,
+  ArrowLeft, ArrowRight, RotateCcw, Plus, Trash2, Check, Pencil,
+  Calculator, Loader2, Home as HomeIcon,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -13,13 +13,11 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import WorksheetDocument from "@/components/worksheet/WorksheetDocument";
-import ExportLeadModal from "@/components/worksheet/ExportLeadModal";
+import { getWorksheetPdfBase64 } from "@/lib/generatePdf";
 import {
   computeScenarios,
   makeDefaultInputs,
   money,
-  PRODUCT_LABELS,
   PRODUCT_LABELS_SHORT,
   STRUCTURE_LABELS,
   type WorksheetInputs,
@@ -29,7 +27,7 @@ import {
   DEFAULT_NEW_LOAN_RATE,
   DEFAULT_CLOSING_COSTS,
 } from "@/lib/worksheetCalc";
-import { submitFunnelCompletion, type FunnelEntryButton } from "@/lib/submitLead";
+import { submitFunnelCompletion, getOrCreateTrackingId, type FunnelEntryButton } from "@/lib/submitLead";
 
 const STORAGE_KEY = "smartr8_worksheet_funnel_v2";
 const STEP_KEY = "smartr8_worksheet_funnel_step_v2";
@@ -37,13 +35,11 @@ const CONTACT_KEY = "smartr8_funnel_contact_v1";
 const ENTRY_KEY = "smartr8_funnel_entry_v1";
 
 // Step machinery for the unified funnel.
-// Calc products (CASH_OUT/RATE_REDUCTION/HOME_EQUITY) use 1-7.
+// Calc products (CASH_OUT/RATE_REDUCTION/HOME_EQUITY) use 1-5.
 // Non-calc products (heloc/purchase) jump from Step 1 → Step 5 → redirect.
 // 1 = product   2 = mortgage   3 = goals/debts   4 = loan details
-// 5 = contact info (LM submit happens on 5→6 transition)
-// 6 = fork screen (Build It Yourself vs Professional)
-// 7 = results (only reached via fork "Build It Yourself")
-type FunnelStep = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+// 5 = contact info (LM submit + auto-email worksheet PDF, then redirect to /whats-next)
+type FunnelStep = 1 | 2 | 3 | 4 | 5;
 
 interface ContactInfo {
   firstName: string;
@@ -384,8 +380,6 @@ export default function Worksheet() {
     // product button, so always start at Step 1. Otherwise resume the saved step.
     () => (parseEntryFromUrl(search) ? 1 : loadStep()),
   );
-  const [exportOpen, setExportOpen] = useState(false);
-  const [editing, setEditing] = useState(false); // when on results, allow inline edit of inputs for adjustment
   const [contact, setContact] = useState<ContactInfo>(loadContact);
   const [entryButton, setEntryButton] = useState<FunnelEntryButton | null>(
     () => parseEntryFromUrl(search) ?? loadEntry(),
@@ -448,15 +442,13 @@ export default function Worksheet() {
   //   calc + other:              5 visible steps (product, mortgage, goals, loan, contact)
   const totalSteps = !isCalc ? 2 : isRateReduction ? 4 : 5;
 
-  // Map logical FunnelStep (1-7) to the visible progress index (1-totalSteps).
-  // Steps 6 (fork) and 7 (results) sit beyond the progress bar.
+  // Map logical FunnelStep (1-5) to the visible progress index (1-totalSteps).
   function visibleStep(s: FunnelStep): number {
     if (!isCalc) {
       if (s >= 5) return 2;
       return 1;
     }
     if (s === 5) return isRateReduction ? 4 : 5;
-    if (s === 6 || s === 7) return totalSteps;
     if (isRateReduction && s >= 4) return s - 1;
     return s;
   }
@@ -473,7 +465,6 @@ export default function Worksheet() {
     sessionStorage.removeItem(ENTRY_KEY);
     setInputs(loadInputs());
     setStep(1);
-    setEditing(false);
     setContact(emptyContact());
     setEntryButton(null);
     initialPrefillRef.current = false;
@@ -563,9 +554,6 @@ export default function Worksheet() {
         toast({ title: "Enter the new rate", description: "Set the new interest rate to continue.", variant: "destructive" });
         return;
       }
-      // "Adjust numbers" round-trip: when adjusting from the results screen,
-      // Continue returns straight to results rather than re-collecting contact.
-      if (editing) { setEditing(false); setStep(7); return; }
       setStep(5);
       return;
     }
@@ -577,26 +565,16 @@ export default function Worksheet() {
       if (step === 5) { setStep(1); return; }
       return;
     }
-    if (step === 5) { setStep(4); setEditing(false); return; }
+    if (step === 5) { setStep(4); return; }
     if (step === 4) { setStep(isRateReduction ? 2 : 3); return; }
     if (step === 3) { setStep(2); return; }
     if (step === 2) { setStep(1); return; }
   }
 
   /**
-   * "Adjust numbers" on the results screen: drop the user back into the
-   * loan-setup step (Step 4) with every value preserved. The "editing" flag
-   * makes Continue return straight to results instead of re-collecting contact.
-   */
-  function handleAdjustNumbers() {
-    setEditing(true);
-    setStep(4);
-  }
-
-  /**
-   * Step 5 → 6: validate contact, POST full funnel payload to LeadMailbox.
-   * On success: calc products advance to the fork (Step 6); non-calc products
-   * skip the fork and go directly to /whats-next professional path.
+   * Step 5 submission: validate contact, POST full funnel payload to
+   * LeadMailbox, auto-generate + email the worksheet PDF to the lead's
+   * inbox (calc products only), then redirect to /whats-next.
    */
   async function submitContact() {
     const first = contact.firstName.trim();
@@ -651,9 +629,8 @@ export default function Worksheet() {
       funnelAnswers,
     });
 
-    setIsSubmittingContact(false);
-
     if (!result.success) {
+      setIsSubmittingContact(false);
       toast({
         title: "Submission issue",
         description: result.error ?? "Couldn't send your info — try again in a moment.",
@@ -665,43 +642,55 @@ export default function Worksheet() {
     // Persist trimmed contact (so /whats-next can read the firstName for personal banner)
     setContact({ firstName: first, lastName: last, email, mobile, tcpa: contact.tcpa });
 
-    // All products — calc and non-calc — reach the fork screen.
-    setStep(6);
-  }
-
-  function handleForkSelfBuild() {
-    // HELOC and Purchase have no savings worksheet — route them to the best
-    // available self-directed destination instead of the calc results screen.
-    if (entryButton === "heloc") {
-      const params = new URLSearchParams();
-      if (contact.firstName) params.set("name", contact.firstName);
-      const qs = params.toString();
-      setLocation(`/heloc/instant-options${qs ? `?${qs}` : ""}`);
-      return;
+    // For calc products, auto-generate the worksheet PDF and email it to the
+    // address they just entered. We await this before redirecting so the email
+    // is reliably queued; any failure here is swallowed (the lead is already
+    // captured in LeadMailbox above) and the user still gets to /whats-next.
+    const isCalcProduct =
+      isCalc && entryButton !== "heloc" && entryButton !== "purchase";
+    if (isCalcProduct) {
+      try {
+        const inputsWithName: WorksheetInputs = {
+          ...inputs,
+          clientFirstName: first,
+          clientLastName: last,
+        };
+        const pdfBase64 = await getWorksheetPdfBase64(inputsWithName, results);
+        const clientName = `${first} ${last}`;
+        await fetch("/api/worksheet/submit-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source: "worksheet-auto",
+            firstName: first,
+            lastName: last,
+            clientName,
+            clientEmail: email,
+            phone: mobile,
+            pdfBase64,
+            fileName: `Loan-Benefits-Worksheet-${clientName.replace(/\s+/g, "-")}.pdf`,
+            worksheetSummary,
+            trackingId: getOrCreateTrackingId(),
+          }),
+        });
+      } catch (err) {
+        // Email delivery is best-effort. Mykoal still gets the lead via
+        // LeadMailbox and can email the worksheet manually if needed.
+        console.error("[worksheet] Auto-email failed:", err);
+      }
     }
-    if (entryButton === "purchase") {
-      const params = new URLSearchParams({
-        source: "funnel-self",
-        utm_source: "funnel",
-        utm_medium: "fork",
-        utm_campaign: "self-build-path",
-      });
-      if (contact.firstName) params.set("name", contact.firstName);
-      setLocation(`/whats-next?${params.toString()}`);
-      return;
-    }
-    // Calc products — stay in the worksheet and render the results screen.
-    setStep(7);
-  }
 
-  function handleForkProfessional() {
+    setIsSubmittingContact(false);
+
+    // All products go directly to /whats-next. The fork screen that used to
+    // sit between contact submit and /whats-next has been removed.
     const params = new URLSearchParams({
-      source: "funnel-professional",
+      source: isCalcProduct ? "worksheet" : "funnel-professional",
       utm_source: "funnel",
-      utm_medium: "fork",
-      utm_campaign: "professional-path",
+      utm_medium: "contact-submit",
+      utm_campaign: "direct-to-whats-next",
     });
-    if (contact.firstName) params.set("name", contact.firstName);
+    if (first) params.set("name", first);
     setLocation(`/whats-next?${params.toString()}`);
   }
 
@@ -1351,156 +1340,8 @@ export default function Worksheet() {
     );
   }
 
-  function renderStep6Fork() {
-    // Card 1 ("Build It Yourself") adapts to the product: calc products get the
-    // savings worksheet, HELOC gets instant online offers, Purchase gets
-    // self-directed next steps.
-    const selfBuild =
-      entryButton === "heloc"
-        ? {
-            body: "Jump straight to instant HELOC offers — compare real rates and terms from our partner lenders online, right now.",
-            cta: "See Instant Options",
-          }
-        : entryButton === "purchase"
-        ? {
-            body: "Head to your next steps and explore your options online — start your application or book a time, at your own pace.",
-            cta: "Explore My Options",
-          }
-        : {
-            body: "See your full worksheet right now — monthly savings, interest saved, and years shaved off your loan. Email a copy to yourself when you're ready.",
-            cta: "Create My Quote",
-          };
-    return (
-      <div className="space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-primary mb-2">How would you like your quote?</h2>
-          <p className="text-muted-foreground">Both options are 100% free — no cost either way.</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={handleForkSelfBuild}
-            className="text-left rounded-xl border-2 border-border hover:border-accent transition-all p-6 bg-card hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent flex flex-col"
-            data-testid="fork-self-build"
-          >
-            <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mb-4">
-              <Calculator className="h-6 w-6 text-accent" />
-            </div>
-            <h3 className="text-lg font-bold text-primary mb-2">Build It Yourself</h3>
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-              {selfBuild.body}
-            </p>
-            <div className="mt-auto">
-              <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm">
-                {selfBuild.cta} <ArrowRight className="h-4 w-4" />
-              </span>
-              <div className="text-xs text-muted-foreground font-medium text-center mt-3">
-                No cost · No obligation · No credit pull
-              </div>
-            </div>
-          </button>
-          <button
-            type="button"
-            onClick={handleForkProfessional}
-            className="text-left rounded-xl border-2 border-primary bg-primary text-primary-foreground hover:bg-primary/90 transition-all p-6 shadow-md focus:outline-none focus:ring-2 focus:ring-accent flex flex-col"
-            data-testid="fork-professional"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center">
-                <Handshake className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded bg-accent text-white">
-                Recommended
-              </span>
-            </div>
-            <h3 className="text-lg font-bold mb-2">Done For You</h3>
-            <p className="text-sm text-white/85 mb-4 leading-relaxed">
-              Mykoal personally reviews your details and builds a tailored game plan — a real human
-              looking at your situation, not a calculator.
-            </p>
-            <div className="mt-auto">
-              <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm">
-                Get My Professional Quote <ArrowRight className="h-4 w-4" />
-              </span>
-              <div className="text-xs text-white/70 font-medium text-center mt-3">
-                No cost · No obligation · No credit pull
-              </div>
-            </div>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  function renderResults() {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h2 className="text-2xl font-bold text-primary mb-1">Your worksheet is ready</h2>
-            <p className="text-muted-foreground text-sm">
-              Review the numbers below. When you're happy, get the personalized PDF emailed to you.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleAdjustNumbers}>
-              <Pencil className="h-4 w-4 mr-1.5" /> Adjust numbers
-            </Button>
-            <Button className="bg-accent hover:bg-accent/90 text-white" onClick={() => setExportOpen(true)}>
-              <Mail className="h-4 w-4 mr-1.5" /> Email My Worksheet
-            </Button>
-          </div>
-        </div>
-
-        {/* Quick at-a-glance bar */}
-        <div className="grid sm:grid-cols-3 gap-3">
-          <Stat label="Monthly savings" value={money(results.monthlySavings)} positive={!results.isNegativeSavings} />
-          <Stat label="Interest saved" value={money(results.consolidated.totalInterest - results.accelerated.totalInterest)} positive />
-          <Stat label="Years shaved off" value={(results.consolidated.years - results.accelerated.years).toFixed(1) + " yrs"} positive />
-        </div>
-
-        {/* Blurred worksheet preview teaser with email-gate overlay */}
-        <div className="relative border rounded-lg shadow-sm overflow-hidden bg-white">
-          <div
-            className="select-none pointer-events-none"
-            style={{ filter: "blur(8px)", WebkitFilter: "blur(8px)" }}
-            aria-hidden="true"
-          >
-            <WorksheetDocument inputs={inputs} results={results} />
-          </div>
-          {/* Frosted overlay with CTA */}
-          <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-[2px]">
-            <div className="max-w-md mx-4 text-center bg-white/95 border rounded-xl shadow-lg p-6 sm:p-8">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-3">
-                <Mail className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="text-lg font-bold text-primary mb-2">
-                Your full worksheet is ready
-              </h3>
-              <p className="text-sm text-muted-foreground mb-5">
-                Enter your info to get the complete breakdown emailed to you.
-              </p>
-              <Button
-                size="lg"
-                className="bg-accent hover:bg-accent/90 text-white w-full"
-                onClick={() => setExportOpen(true)}
-              >
-                <Mail className="h-4 w-4 mr-2" /> Email My Worksheet
-              </Button>
-              <p className="text-[11px] text-muted-foreground mt-3">
-                Free · No obligation · No credit pull
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // ── Render ────────────────────────────────────────────────────────────────
   const vStep = visibleStep(step);
-  // Progress bar shows for steps 1-5; hidden on fork (6) and results (7).
-  const showProgress = step <= 5;
 
   return (
     <>
@@ -1515,7 +1356,7 @@ export default function Worksheet() {
 
         <main className="flex-1 container mx-auto max-w-3xl px-4 py-8">
           <TopBar step={vStep} totalSteps={totalSteps} onStartOver={handleStartOver} />
-          {showProgress && <Progress step={vStep} total={totalSteps} />}
+          <Progress step={vStep} total={totalSteps} />
 
           <div className="bg-card border rounded-xl shadow-sm p-6 sm:p-8">
             {/* Step 1: calc shows product picker, non-calc shows confirmation intro */}
@@ -1524,17 +1365,15 @@ export default function Worksheet() {
             {step === 3 && isCalc && renderStep3()}
             {step === 4 && isCalc && renderStep4()}
             {step === 5 && renderStep5Contact()}
-            {step === 6 && renderStep6Fork()}
-            {step === 7 && renderResults()}
 
-            {/* Button bar: shown for steps 1-5 (input collection). Hidden on fork (6) and results (7). */}
+            {/* Button bar: input steps 1-4 → Continue; step 5 → Submit (handled below). */}
             {step <= 4 && (
               <div className="flex items-center justify-between gap-3 mt-8 pt-6 border-t">
                 <Button variant="ghost" onClick={back} disabled={step === 1}>
                   <ArrowLeft className="h-4 w-4 mr-1" /> Back
                 </Button>
                 <Button onClick={next} className="bg-accent hover:bg-accent/90 text-white">
-                  {editing && step === 4 ? "Update Worksheet" : "Continue"} <ArrowRight className="h-4 w-4 ml-1" />
+                  Continue <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
             )}
@@ -1550,7 +1389,7 @@ export default function Worksheet() {
                   data-testid="submit-contact"
                 >
                   {isSubmittingContact ? (
-                    <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Submitting...</>
+                    <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Sending your worksheet…</>
                   ) : (
                     <>Submit My Info <ArrowRight className="h-4 w-4 ml-1" /></>
                   )}
@@ -1562,23 +1401,7 @@ export default function Worksheet() {
 
         <Footer />
       </div>
-
-      <ExportLeadModal
-        open={exportOpen}
-        onOpenChange={setExportOpen}
-        inputs={inputs}
-        results={results}
-        worksheetSummary={worksheetSummary}
-      />
     </>
   );
 }
 
-function Stat({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={`text-xl font-bold mt-1 ${positive ? "text-green-700" : "text-destructive"}`}>{value}</div>
-    </div>
-  );
-}
