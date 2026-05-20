@@ -12,7 +12,7 @@ export type LoanStructure =
   | "ARM_10_1"
   | "INTEREST_ONLY";
 
-export type Goal = "DEBT" | "IMPROVEMENT" | "BOTH" | null;
+export type Goal = "DEBT" | "IMPROVEMENT" | "BOTH" | "OTHER" | null;
 
 export const PRODUCT_LABELS: Record<ProductType, string> = {
   CASH_OUT: "Cash-Out Refinance",

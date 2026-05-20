@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import {
   ArrowLeft, ArrowRight, RotateCcw, Plus, Trash2, Check, Mail, Pencil,
-  Calculator, Handshake, Loader2, Briefcase, Home as HomeIcon,
+  Calculator, Handshake, Loader2, Home as HomeIcon,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -10,7 +10,6 @@ import { PageMeta } from "@/components/PageMeta";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
@@ -161,6 +160,7 @@ function NumberField({
   value,
   onChange,
   prefix,
+  suffix,
   step,
   optional,
   hint,
@@ -171,6 +171,7 @@ function NumberField({
   value: number;
   onChange: (n: number) => void;
   prefix?: string;
+  suffix?: string;
   step?: number;
   optional?: boolean;
   hint?: string;
@@ -179,9 +180,11 @@ function NumberField({
 }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-sm font-medium">
-        {label} {optional && <span className="text-muted-foreground font-normal text-xs">(optional)</span>}
-      </Label>
+      {label && (
+        <Label className="text-sm font-medium">
+          {label} {optional && <span className="text-muted-foreground font-normal text-xs">(optional)</span>}
+        </Label>
+      )}
       <div className="relative">
         {prefix && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">
@@ -192,16 +195,141 @@ function NumberField({
           type="number"
           step={step}
           min={min}
+          inputMode="decimal"
           placeholder={placeholder}
           value={value ? value : ""}
           onChange={(e) => {
             const v = e.target.value;
             onChange(v === "" ? 0 : Number(v));
           }}
-          className={prefix ? "pl-7" : ""}
+          className={`${prefix ? "pl-7" : ""} ${suffix ? "pr-10" : ""}`.trim()}
         />
+        {suffix && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">
+            {suffix}
+          </span>
+        )}
       </div>
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+// ── Big tap-target card (used for binary/multi choices in mobile-first flow) ─
+function BigChoiceCard({
+  selected,
+  onClick,
+  title,
+  description,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-left rounded-lg border-2 p-4 transition-all min-h-[60px] ${
+        selected ? "border-accent bg-accent/5 shadow-sm" : "border-border hover:border-muted-foreground/50"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div className={`mt-0.5 h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selected ? "border-accent bg-accent" : "border-muted-foreground/30"}`}>
+          {selected && <Check className="h-3 w-3 text-white" />}
+        </div>
+        <div>
+          <div className="font-semibold text-primary">{title}</div>
+          {description && <div className="text-sm text-muted-foreground mt-0.5">{description}</div>}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+// ── Yes/No card pair that reveals a NumberField when the user picks Yes ─────
+function KnowsItField({
+  question,
+  knows,
+  onKnowsChange,
+  fieldLabel,
+  value,
+  onChange,
+  prefix,
+  suffix,
+  placeholder,
+  step,
+}: {
+  question: string;
+  knows: boolean | null;
+  onKnowsChange: (b: boolean) => void;
+  fieldLabel: string;
+  value: number;
+  onChange: (n: number) => void;
+  prefix?: string;
+  suffix?: string;
+  placeholder?: string;
+  step?: number;
+}) {
+  return (
+    <div className="space-y-2.5">
+      <Label className="text-sm font-medium">{question}</Label>
+      <div className="grid grid-cols-2 gap-3">
+        <BigChoiceCard selected={knows === true} onClick={() => onKnowsChange(true)} title="Yes" />
+        <BigChoiceCard selected={knows === false} onClick={() => onKnowsChange(false)} title="No" />
+      </div>
+      {knows === true && (
+        <div className="pt-1">
+          <NumberField
+            label={fieldLabel}
+            value={value}
+            onChange={onChange}
+            prefix={prefix}
+            suffix={suffix}
+            placeholder={placeholder}
+            step={step}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Step 4 locked field wrapper: display value + pencil to unlock ───────────
+function LockedField({
+  label,
+  locked,
+  onToggleLock,
+  displayValue,
+  children,
+}: {
+  label: string;
+  locked: boolean;
+  onToggleLock: (l: boolean) => void;
+  displayValue: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between gap-2">
+        <Label className="text-sm font-medium">{label}</Label>
+        <button
+          type="button"
+          onClick={() => onToggleLock(!locked)}
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+          aria-label={locked ? `Edit ${label}` : `Lock ${label}`}
+        >
+          {locked ? (<><Pencil className="h-3 w-3" /> Edit</>) : (<><Check className="h-3 w-3" /> Done</>)}
+        </button>
+      </div>
+      {locked ? (
+        <div className="rounded-md border border-dashed bg-muted/30 px-3 py-2.5 text-base font-semibold text-primary">
+          {displayValue}
+        </div>
+      ) : (
+        <div>{children}</div>
+      )}
     </div>
   );
 }
@@ -265,6 +393,26 @@ export default function Worksheet() {
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const { toast } = useToast();
   const initialPrefillRef = useRef(false);
+
+  // Step 2 — explicit Yes/No toggles for the optional mortgage fields. Initialized
+  // from whatever is already in storage so a returning user sees their answers.
+  const [knowsRate, setKnowsRate] = useState<boolean | null>(() => (inputs.existRate > 0 ? true : null));
+  const [knowsEscrow, setKnowsEscrow] = useState<boolean | null>(() => (inputs.existEscrow > 0 ? true : null));
+  const [knowsYears, setKnowsYears] = useState<boolean | null>(() => (inputs.existYearsRemaining > 0 ? true : null));
+
+  // Step 3 — debt entry mode. Itemized = list each creditor. Bulk = one total.
+  const [debtMode, setDebtMode] = useState<"itemized" | "bulk">(() => {
+    // If the only debt row is a synthetic "Total debt" entry, restore bulk mode.
+    if (inputs.debts.length === 1 && inputs.debts[0]?.name === "Total debt") return "bulk";
+    return "itemized";
+  });
+
+  // Step 4 — per-field locked state. Pencil unlocks; Done re-locks (snaps back to auto for numeric fields).
+  const [lockedLoanAmount, setLockedLoanAmount] = useState(true);
+  const [lockedLoanRate, setLockedLoanRate] = useState(true);
+  const [lockedClosingCosts, setLockedClosingCosts] = useState(true);
+  const [lockedTerm, setLockedTerm] = useState(true);
+  const [lockedStructure, setLockedStructure] = useState(true);
 
   const results = useMemo(() => computeScenarios(inputs), [inputs]);
 
@@ -375,19 +523,25 @@ export default function Worksheet() {
       }
       const wantsDebt = inputs.goal === "DEBT" || inputs.goal === "BOTH";
       const wantsImprovement = inputs.goal === "IMPROVEMENT" || inputs.goal === "BOTH";
-      if (wantsDebt && inputs.debts.length === 0) {
-        toast({ title: "Add at least one debt", description: "List the debts you want to consolidate.", variant: "destructive" });
+      const wantsOther = inputs.goal === "OTHER";
+      const debtSum = inputs.debts.reduce((s, d) => s + d.balance, 0);
+      if (wantsDebt && debtSum <= 0) {
+        toast({ title: "Add your debt balance", description: "Enter the balance(s) you want to consolidate.", variant: "destructive" });
         return;
       }
       if (wantsImprovement && inputs.homeImprovementAmount <= 0) {
         toast({ title: "Add an improvement amount", description: "Enter how much you want for home improvements.", variant: "destructive" });
         return;
       }
+      if (wantsOther && inputs.cashBack <= 0) {
+        toast({ title: "Enter a cash amount", description: "Tell us how much cash you'd like.", variant: "destructive" });
+        return;
+      }
       // Auto-prefill loan amount when first arriving at step 4
-      const debtSum = inputs.debts.reduce((s, d) => s + d.balance, 0);
       const prefill = (inputs.hasExistingMortgage ? inputs.existBalance : 0) +
         (wantsDebt ? debtSum : 0) +
         (wantsImprovement ? inputs.homeImprovementAmount : 0) +
+        (wantsOther ? inputs.cashBack : 0) +
         DEFAULT_CLOSING_COSTS;
       if (!initialPrefillRef.current || inputs.loanAmount <= 0) {
         update("loanAmount", Math.round(prefill / 100) * 100);
@@ -477,9 +631,11 @@ export default function Worksheet() {
       "Monthly-Payment-PITI": isCalc && inputs.hasExistingMortgage ? money(inputs.existTotalPayment) : undefined,
       "Existing-Rate": isCalc && inputs.existRate ? `${inputs.existRate}%` : undefined,
       "Goal": isCalc ? inputs.goal ?? undefined : undefined,
-      "Debt-Count": isCalc && inputs.debts.length ? inputs.debts.length : undefined,
+      "Debt-Entry-Mode": isCalc && inputs.debts.length ? (debtMode === "bulk" ? "Total" : "Itemized") : undefined,
+      "Debt-Count": isCalc && inputs.debts.length && debtMode === "itemized" ? inputs.debts.length : undefined,
       "Total-Debt-Balance": isCalc && inputs.debts.length ? money(debtSum) : undefined,
       "Home-Improvement-Amount": isCalc && inputs.homeImprovementAmount ? money(inputs.homeImprovementAmount) : undefined,
+      "Cash-Back-Amount": isCalc && inputs.cashBack ? money(inputs.cashBack) : undefined,
       "New-Loan-Amount": isCalc && inputs.loanAmount ? money(inputs.loanAmount) : undefined,
       "New-Loan-Rate": isCalc && inputs.loanRate ? `${inputs.loanRate}%` : undefined,
       "Loan-Structure": isCalc ? STRUCTURE_LABELS[inputs.loanStructure] : undefined,
@@ -558,6 +714,36 @@ export default function Worksheet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, isRateReduction]);
 
+  // Keep the stored loan amount in sync with the live auto-fill whenever the
+  // user is on step 4 and the field is locked. This handles the case where
+  // they go back to step 2/3, adjust an upstream answer, and return — the
+  // locked display already shows the live value; this ensures the actual
+  // submitted value matches.
+  useEffect(() => {
+    if (step !== 4 || !lockedLoanAmount) return;
+    const wantsDebt = inputs.goal === "DEBT" || inputs.goal === "BOTH";
+    const wantsImprovement = inputs.goal === "IMPROVEMENT" || inputs.goal === "BOTH";
+    const wantsOther = inputs.goal === "OTHER";
+    const debtSum = inputs.debts.reduce((s, d) => s + d.balance, 0);
+    const closing = inputs.closingCosts || DEFAULT_CLOSING_COSTS;
+    const auto = Math.round((
+      (inputs.hasExistingMortgage ? inputs.existBalance : 0) +
+      (wantsDebt ? debtSum : 0) +
+      (wantsImprovement ? inputs.homeImprovementAmount : 0) +
+      (wantsOther ? inputs.cashBack : 0) +
+      closing
+    ) / 100) * 100;
+    if (inputs.loanAmount !== auto) {
+      update("loanAmount", auto);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    step, lockedLoanAmount,
+    inputs.hasExistingMortgage, inputs.existBalance,
+    inputs.goal, inputs.debts, inputs.homeImprovementAmount,
+    inputs.cashBack, inputs.closingCosts,
+  ]);
+
   // Worksheet summary for lead notes
   const worksheetSummary = useMemo(() => {
     return [
@@ -621,71 +807,89 @@ export default function Worksheet() {
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">Tell us about your current mortgage</h2>
-          <p className="text-muted-foreground text-sm">All fields except the balance and total payment are optional.</p>
+          <p className="text-muted-foreground text-sm">Just the basics — answer what you know.</p>
         </div>
 
         {showMortgageGate && (
-          <div className="rounded-lg border p-4 bg-muted/30">
-            <Label className="text-sm font-medium mb-2 block">Do you have an existing mortgage?</Label>
-            <RadioGroup
-              value={inputs.hasExistingMortgage ? "yes" : "no"}
-              onValueChange={(v) => update("hasExistingMortgage", v === "yes")}
-              className="flex gap-6"
-            >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem id="hm-yes" value="yes" />
-                <Label htmlFor="hm-yes" className="cursor-pointer font-normal">Yes</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioGroupItem id="hm-no" value="no" />
-                <Label htmlFor="hm-no" className="cursor-pointer font-normal">No — free and clear</Label>
-              </div>
-            </RadioGroup>
+          <div className="space-y-2.5">
+            <Label className="text-sm font-medium">Do you have an existing mortgage?</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <BigChoiceCard
+                selected={inputs.hasExistingMortgage === true}
+                onClick={() => update("hasExistingMortgage", true)}
+                title="Yes"
+              />
+              <BigChoiceCard
+                selected={inputs.hasExistingMortgage === false}
+                onClick={() => update("hasExistingMortgage", false)}
+                title="No — free and clear"
+              />
+            </div>
           </div>
         )}
 
         {inputs.hasExistingMortgage && (
-          <div className="grid sm:grid-cols-2 gap-4">
-            <NumberField
-              label="Current Mortgage Balance"
-              value={inputs.existBalance}
-              onChange={(v) => update("existBalance", v)}
-              placeholder="350000"
-              hint="What you still owe."
-            />
-            <NumberField
-              label="Total Monthly Payment (PITI)"
-              value={inputs.existTotalPayment}
-              onChange={(v) => update("existTotalPayment", v)}
-              placeholder="2400"
-              hint="Full payment including taxes & insurance."
-            />
-            <NumberField
-              label="Current Interest Rate"
+          <div className="space-y-5">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <NumberField
+                label="Current Mortgage Balance"
+                value={inputs.existBalance}
+                onChange={(v) => update("existBalance", v)}
+                prefix="$"
+                placeholder="350,000"
+                hint="What you still owe."
+              />
+              <NumberField
+                label="Total Monthly Payment (PITI)"
+                value={inputs.existTotalPayment}
+                onChange={(v) => update("existTotalPayment", v)}
+                prefix="$"
+                placeholder="2,400"
+                hint="Full payment including taxes & insurance."
+              />
+            </div>
+
+            <KnowsItField
+              question="Do you know your current interest rate?"
+              knows={knowsRate}
+              onKnowsChange={(b) => {
+                setKnowsRate(b);
+                if (!b) update("existRate", 0);
+              }}
+              fieldLabel="Current Interest Rate"
               value={inputs.existRate}
               onChange={(v) => update("existRate", v)}
-              prefix=""
-              step={0.001}
-              optional
+              suffix="%"
               placeholder="6.5"
-              hint="Leave blank if unknown."
+              step={0.001}
             />
-            <NumberField
-              label="Monthly Escrow"
+
+            <KnowsItField
+              question="Do you know your monthly escrow?"
+              knows={knowsEscrow}
+              onKnowsChange={(b) => {
+                setKnowsEscrow(b);
+                if (!b) update("existEscrow", 0);
+              }}
+              fieldLabel="Monthly Escrow"
               value={inputs.existEscrow}
               onChange={(v) => update("existEscrow", v)}
-              optional
+              prefix="$"
               placeholder="450"
-              hint="Taxes & insurance portion. Optional."
             />
-            <NumberField
-              label="Years Remaining"
+
+            <KnowsItField
+              question="Do you know how many years are left on the loan?"
+              knows={knowsYears}
+              onKnowsChange={(b) => {
+                setKnowsYears(b);
+                if (!b) update("existYearsRemaining", 0);
+              }}
+              fieldLabel="Years Remaining"
               value={inputs.existYearsRemaining}
               onChange={(v) => update("existYearsRemaining", v)}
-              prefix=""
-              optional
+              suffix="yrs"
               placeholder="25"
-              hint="Approximate years left on your mortgage."
             />
           </div>
         )}
@@ -696,110 +900,190 @@ export default function Worksheet() {
   function renderStep3() {
     const wantsDebt = inputs.goal === "DEBT" || inputs.goal === "BOTH";
     const wantsImprovement = inputs.goal === "IMPROVEMENT" || inputs.goal === "BOTH";
+    const wantsOther = inputs.goal === "OTHER";
+
+    const goalOptions: { v: Exclude<Goal, null>; t: string }[] = [
+      { v: "DEBT", t: "Pay off debt" },
+      { v: "IMPROVEMENT", t: "Home improvement" },
+      { v: "BOTH", t: "Both" },
+      { v: "OTHER", t: "Other" },
+    ];
+
+    function pickGoal(v: Exclude<Goal, null>) {
+      update("goal", v);
+      // Auto-seed the first itemized row when entering a debt-consuming goal.
+      if ((v === "DEBT" || v === "BOTH") && debtMode === "itemized" && inputs.debts.length === 0) {
+        update("debts", [{ name: "Debt 1", balance: 0, payment: 0 }]);
+      }
+    }
+
     return (
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">What do you want to do with the funds?</h2>
-          <p className="text-muted-foreground text-sm">Pick one or both.</p>
+          <p className="text-muted-foreground text-sm">Choose what fits.</p>
         </div>
 
-        <RadioGroup
-          value={inputs.goal ?? ""}
-          onValueChange={(v) => update("goal", v as Goal)}
-          className="grid sm:grid-cols-3 gap-3"
-        >
-          {([
-            { v: "DEBT", t: "Pay off debt" },
-            { v: "IMPROVEMENT", t: "Home improvement" },
-            { v: "BOTH", t: "Both" },
-          ] as const).map((opt) => {
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {goalOptions.map((opt) => {
             const selected = inputs.goal === opt.v;
             return (
-              <label
+              <button
                 key={opt.v}
-                className={`rounded-lg border-2 p-4 text-center cursor-pointer transition-all ${
-                  selected ? "border-accent bg-accent/5" : "border-border hover:border-muted-foreground/40"
+                type="button"
+                onClick={() => pickGoal(opt.v)}
+                className={`rounded-lg border-2 p-4 text-center transition-all min-h-[68px] ${
+                  selected ? "border-accent bg-accent/5 shadow-sm" : "border-border hover:border-muted-foreground/40"
                 }`}
               >
-                <RadioGroupItem value={opt.v} className="sr-only" />
-                <div className="font-semibold text-primary">{opt.t}</div>
-              </label>
+                <div className="font-semibold text-primary text-sm leading-tight">{opt.t}</div>
+              </button>
             );
           })}
-        </RadioGroup>
+        </div>
+
+        {wantsOther && (
+          <NumberField
+            label="How much cash do you want?"
+            value={inputs.cashBack}
+            onChange={(v) => update("cashBack", v)}
+            prefix="$"
+            placeholder="50,000"
+            hint="Total cash you'd like to walk away with."
+          />
+        )}
 
         {wantsDebt && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">Debts to consolidate</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => update("debts", [...inputs.debts, { name: "", balance: 0, payment: 0 }])}
-              >
-                <Plus className="h-3.5 w-3.5 mr-1" /> Add debt
-              </Button>
+          <div className="space-y-4">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">How do you want to enter your debts?</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <BigChoiceCard
+                  selected={debtMode === "itemized"}
+                  onClick={() => {
+                    if (debtMode === "itemized") return;
+                    setDebtMode("itemized");
+                    // Discard bulk total — start fresh with one row.
+                    update("debts", [{ name: "Debt 1", balance: 0, payment: 0 }]);
+                  }}
+                  title="Add debts manually"
+                  description="Itemize each creditor."
+                />
+                <BigChoiceCard
+                  selected={debtMode === "bulk"}
+                  onClick={() => {
+                    if (debtMode === "bulk") return;
+                    setDebtMode("bulk");
+                    // Discard itemized — start fresh with one synthetic total row.
+                    update("debts", [{ name: "Total debt", balance: 0, payment: 0 }]);
+                  }}
+                  title="List total debt"
+                  description="One total balance & payment."
+                />
+              </div>
             </div>
-            {inputs.debts.length === 0 && (
-              <p className="text-sm text-muted-foreground italic">Click "Add debt" to list each balance you want rolled into the new loan.</p>
-            )}
-            <div className="space-y-2">
-              {inputs.debts.map((d, i) => (
-                <div key={i} className="grid grid-cols-12 gap-2 items-center">
-                  <Input
-                    className="col-span-5"
-                    placeholder="Creditor (e.g., Chase Visa)"
-                    value={d.name}
-                    onChange={(e) => {
-                      const next = [...inputs.debts];
-                      next[i] = { ...next[i], name: e.target.value };
-                      update("debts", next);
-                    }}
-                  />
-                  <div className="col-span-3 relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
-                    <Input
-                      type="number"
-                      className="pl-6"
-                      placeholder="Balance"
-                      value={d.balance || ""}
-                      onChange={(e) => {
-                        const next = [...inputs.debts];
-                        next[i] = { ...next[i], balance: Number(e.target.value || 0) };
-                        update("debts", next);
-                      }}
-                    />
-                  </div>
-                  <div className="col-span-3 relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
-                    <Input
-                      type="number"
-                      className="pl-6"
-                      placeholder="Min pmt"
-                      value={d.payment || ""}
-                      onChange={(e) => {
-                        const next = [...inputs.debts];
-                        next[i] = { ...next[i], payment: Number(e.target.value || 0) };
-                        update("debts", next);
-                      }}
-                    />
-                  </div>
+
+            {debtMode === "itemized" ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Debts to consolidate</Label>
                   <Button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="col-span-1 h-9 w-9 text-muted-foreground hover:text-destructive"
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
-                      const next = inputs.debts.filter((_, idx) => idx !== i);
-                      update("debts", next);
+                      const nextIdx = inputs.debts.length + 1;
+                      update("debts", [...inputs.debts, { name: `Debt ${nextIdx}`, balance: 0, payment: 0 }]);
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Plus className="h-3.5 w-3.5 mr-1" /> Add debt
                   </Button>
                 </div>
-              ))}
-            </div>
+                <div className="space-y-2">
+                  {inputs.debts.map((d, i) => (
+                    <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                      <div className="col-span-4 text-sm font-semibold text-primary px-1 py-1.5 truncate">
+                        {d.name || `Debt ${i + 1}`}
+                      </div>
+                      <div className="col-span-3 relative">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
+                        <Input
+                          type="number"
+                          inputMode="decimal"
+                          className="pl-6"
+                          placeholder="Balance"
+                          value={d.balance || ""}
+                          onChange={(e) => {
+                            const next = [...inputs.debts];
+                            next[i] = { ...next[i], balance: Number(e.target.value || 0) };
+                            update("debts", next);
+                          }}
+                        />
+                      </div>
+                      <div className="col-span-4 relative">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
+                        <Input
+                          type="number"
+                          inputMode="decimal"
+                          className="pl-6"
+                          placeholder="Min pmt"
+                          value={d.payment || ""}
+                          onChange={(e) => {
+                            const next = [...inputs.debts];
+                            next[i] = { ...next[i], payment: Number(e.target.value || 0) };
+                            update("debts", next);
+                          }}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="col-span-1 h-9 w-9 text-muted-foreground hover:text-destructive"
+                        disabled={inputs.debts.length === 1}
+                        onClick={() => {
+                          const next = inputs.debts
+                            .filter((_, idx) => idx !== i)
+                            .map((row, idx) =>
+                              row.name && row.name.startsWith("Debt ")
+                                ? { ...row, name: `Debt ${idx + 1}` }
+                                : row,
+                            );
+                          update("debts", next);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-4">
+                <NumberField
+                  label="Total debt balance"
+                  value={inputs.debts[0]?.balance ?? 0}
+                  onChange={(v) =>
+                    update("debts", [
+                      { name: "Total debt", balance: v, payment: inputs.debts[0]?.payment ?? 0 },
+                    ])
+                  }
+                  prefix="$"
+                  placeholder="35,000"
+                />
+                <NumberField
+                  label="Total minimum payment"
+                  value={inputs.debts[0]?.payment ?? 0}
+                  onChange={(v) =>
+                    update("debts", [
+                      { name: "Total debt", balance: inputs.debts[0]?.balance ?? 0, payment: v },
+                    ])
+                  }
+                  prefix="$"
+                  placeholder="850"
+                />
+              </div>
+            )}
           </div>
         )}
 
@@ -808,7 +1092,8 @@ export default function Worksheet() {
             label="Home improvement amount"
             value={inputs.homeImprovementAmount}
             onChange={(v) => update("homeImprovementAmount", v)}
-            placeholder="40000"
+            prefix="$"
+            placeholder="40,000"
             hint="How much cash you'd like for projects."
           />
         )}
@@ -817,38 +1102,95 @@ export default function Worksheet() {
   }
 
   function renderStep4() {
+    // Live auto-fill — always reflects upstream answers. Used as the locked
+    // display value and as the snap-back when the user re-locks the field.
+    const wantsDebt = inputs.goal === "DEBT" || inputs.goal === "BOTH";
+    const wantsImprovement = inputs.goal === "IMPROVEMENT" || inputs.goal === "BOTH";
+    const wantsOther = inputs.goal === "OTHER";
+    const debtSum = inputs.debts.reduce((s, d) => s + d.balance, 0);
+    const closingCostsValue = inputs.closingCosts || DEFAULT_CLOSING_COSTS;
+    const autoLoanAmount = Math.round((
+      (inputs.hasExistingMortgage ? inputs.existBalance : 0) +
+      (wantsDebt ? debtSum : 0) +
+      (wantsImprovement ? inputs.homeImprovementAmount : 0) +
+      (wantsOther ? inputs.cashBack : 0) +
+      closingCostsValue
+    ) / 100) * 100;
+
     return (
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">Set up the new loan</h2>
           <p className="text-muted-foreground text-sm">
-            We've pre-filled with sensible defaults — adjust to match what you've been quoted.
+            Pre-filled from your answers — tap <span className="inline-flex items-center gap-0.5"><Pencil className="h-3 w-3" /> Edit</span> on any field to override.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
-          <NumberField
+          <LockedField
             label="New loan amount"
-            value={inputs.loanAmount}
-            onChange={(v) => update("loanAmount", v)}
-            placeholder="400000"
-            hint="Auto-filled from your existing balance + debts + closing costs."
-          />
-          <NumberField
+            locked={lockedLoanAmount}
+            onToggleLock={(l) => {
+              setLockedLoanAmount(l);
+              // Re-locking snaps back to the live auto-fill so locked = auto.
+              if (l) update("loanAmount", autoLoanAmount);
+            }}
+            displayValue={money(lockedLoanAmount ? autoLoanAmount : inputs.loanAmount)}
+          >
+            <NumberField
+              label=""
+              value={inputs.loanAmount}
+              onChange={(v) => update("loanAmount", v)}
+              prefix="$"
+              placeholder="400,000"
+              hint="Existing balance + debts/improvements/cash + closing costs."
+            />
+          </LockedField>
+
+          <LockedField
             label="New interest rate"
-            value={inputs.loanRate}
-            onChange={(v) => update("loanRate", v)}
-            prefix=""
-            step={0.001}
-            hint={`Default ${DEFAULT_NEW_LOAN_RATE}%. Use the rate you've been quoted.`}
-          />
-          <NumberField
+            locked={lockedLoanRate}
+            onToggleLock={(l) => {
+              setLockedLoanRate(l);
+              if (l) update("loanRate", DEFAULT_NEW_LOAN_RATE);
+            }}
+            displayValue={`${(lockedLoanRate ? DEFAULT_NEW_LOAN_RATE : inputs.loanRate) || DEFAULT_NEW_LOAN_RATE}%`}
+          >
+            <NumberField
+              label=""
+              value={inputs.loanRate}
+              onChange={(v) => update("loanRate", v)}
+              suffix="%"
+              step={0.001}
+              placeholder={String(DEFAULT_NEW_LOAN_RATE)}
+              hint={`Default ${DEFAULT_NEW_LOAN_RATE}%. Use the rate you've been quoted.`}
+            />
+          </LockedField>
+
+          <LockedField
             label="Estimated closing costs"
-            value={inputs.closingCosts}
-            onChange={(v) => update("closingCosts", v)}
-            hint={`APR is auto-calculated from this. Default ${money(DEFAULT_CLOSING_COSTS)}.`}
-          />
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Term</Label>
+            locked={lockedClosingCosts}
+            onToggleLock={(l) => {
+              setLockedClosingCosts(l);
+              if (l) update("closingCosts", DEFAULT_CLOSING_COSTS);
+            }}
+            displayValue={money(lockedClosingCosts ? DEFAULT_CLOSING_COSTS : (inputs.closingCosts || DEFAULT_CLOSING_COSTS))}
+          >
+            <NumberField
+              label=""
+              value={inputs.closingCosts}
+              onChange={(v) => update("closingCosts", v)}
+              prefix="$"
+              placeholder={String(DEFAULT_CLOSING_COSTS)}
+              hint={`APR is auto-calculated from this. Default ${money(DEFAULT_CLOSING_COSTS)}.`}
+            />
+          </LockedField>
+
+          <LockedField
+            label="Term"
+            locked={lockedTerm}
+            onToggleLock={(l) => setLockedTerm(l)}
+            displayValue={`${inputs.termYears} years`}
+          >
             <Select
               value={String(inputs.termYears)}
               onValueChange={(v) => update("termYears", Number(v))}
@@ -860,22 +1202,29 @@ export default function Worksheet() {
                 <SelectItem value="30">30 years</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label className="text-sm font-medium">Loan structure</Label>
-            <Select
-              value={inputs.loanStructure}
-              onValueChange={(v) => update("loanStructure", v as LoanStructure)}
+          </LockedField>
+
+          <div className="sm:col-span-2">
+            <LockedField
+              label="Loan structure"
+              locked={lockedStructure}
+              onToggleLock={(l) => setLockedStructure(l)}
+              displayValue={STRUCTURE_LABELS[inputs.loanStructure]}
             >
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {(Object.entries(STRUCTURE_LABELS) as [LoanStructure, string][]).map(([v, label]) => (
-                  <SelectItem key={v} value={v}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {inputs.loanStructure !== "FIXED" && (
-              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2 mt-1">
+              <Select
+                value={inputs.loanStructure}
+                onValueChange={(v) => update("loanStructure", v as LoanStructure)}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {(Object.entries(STRUCTURE_LABELS) as [LoanStructure, string][]).map(([v, label]) => (
+                    <SelectItem key={v} value={v}>{label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </LockedField>
+            {inputs.loanStructure !== "FIXED" && !lockedStructure && (
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2 mt-2">
                 ARM and Interest-Only loans have different long-term behavior. The illustration assumes the
                 initial rate stays constant — actual payments may adjust later. See full disclaimer on the PDF.
               </p>
