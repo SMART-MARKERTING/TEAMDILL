@@ -21,6 +21,12 @@ const HelocQuickV2 = lazy(() => import("@/pages/HelocQuickV2"));
 const HelocInstantOptionsV2 = lazy(() => import("@/pages/HelocInstantOptionsV2"));
 const HelocV2 = lazy(() => import("@/pages/HelocV2"));
 const HelocNextStepV2 = lazy(() => import("@/pages/HelocNextStepV2"));
+// Product funnels (single-page landers). Each tags its lead with a loanType
+// the CRM uses to enroll it into the matching drip campaign.
+const Dscr = lazy(() => import("@/pages/Dscr"));
+const CashOutRefi = lazy(() => import("@/pages/CashOutRefi"));
+const RateTermRefi = lazy(() => import("@/pages/RateTermRefi"));
+const Purchase = lazy(() => import("@/pages/Purchase"));
 const Worksheet = lazy(() => import("@/pages/Worksheet"));
 const WorksheetInternal = lazy(() => import("@/pages/WorksheetInternal"));
 const WhatsNext = lazy(() => import("@/pages/WhatsNext"));
@@ -180,6 +186,12 @@ function Router() {
         <Route path="/heloc/next-step-v2" component={HelocNextStepV2} />
         <Route path="/heloc/quick">{() => <RedirectTo to="/heloc/quick-v2" preserveSearch />}</Route>
         <Route path="/heloc/quick-v2" component={HelocQuickV2} />
+        {/* Product funnels — single-page landers that POST to the CRM with a
+            loanType tag (DSCR | CASHOUT_REFI | RT_REFI | PURCHASE). */}
+        <Route path="/dscr" component={Dscr} />
+        <Route path="/cash-out-refi" component={CashOutRefi} />
+        <Route path="/rate-and-term-refi" component={RateTermRefi} />
+        <Route path="/purchase" component={Purchase} />
         {/* Legacy /apply/* funnels — superseded by the unified /worksheet funnel */}
         <Route path="/apply/cash-out">{() => <RedirectTo to="/worksheet?product=cash-out" />}</Route>
         <Route path="/apply/rate-reduction">{() => <RedirectTo to="/worksheet?product=rate-reduction" />}</Route>
