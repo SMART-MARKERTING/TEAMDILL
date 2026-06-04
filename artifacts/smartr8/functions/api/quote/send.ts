@@ -43,7 +43,7 @@ function esc(s) {
   );
 }
 
-async function sendResendEmail({ apiKey, from, replyTo, to, subject, html, pdfBase64, fileName }) {
+async function sendResendEmail({ apiKey, from, replyTo, to, bcc, subject, html, pdfBase64, fileName }) {
   const body = {
     from,
     reply_to: replyTo,
@@ -51,6 +51,11 @@ async function sendResendEmail({ apiKey, from, replyTo, to, subject, html, pdfBa
     subject,
     html,
   };
+  // Optional BCC — automated funnel quotes copy the loan officer so they see
+  // exactly what the client received.
+  if (bcc) {
+    body.bcc = Array.isArray(bcc) ? bcc : [bcc];
+  }
   if (pdfBase64 && fileName) {
     body.attachments = [{ filename: fileName, content: pdfBase64 }];
   }
@@ -206,18 +211,25 @@ export async function onRequest(context) {
   const replyTo = (adv.email && String(adv.email).trim()) || "mykoal@adaxahome.com";
   const subject = `Your Quick Quote${body.clientName ? ` — ${body.clientName}` : ""}`;
 
+  // BCC must be a valid address if supplied (e.g. the auto-quote copies Mykoal).
+  const bcc =
+    body.bcc && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(body.bcc)) ? String(body.bcc) : undefined;
+
   const result = await sendResendEmail({
     apiKey: resendKey,
     from: `"${cleanName}" <mykoal@mykoal.com>`,
     replyTo,
     to: body.clientEmail,
+    bcc,
     subject,
     html: buildQuoteEmailHtml(body),
     pdfBase64: body.pdfBase64,
     fileName: body.fileName || "adaxa-quickquote.pdf",
   });
 
-  console.log(`[quote] send — to=${body.clientEmail} advisor="${cleanName}" emailOk=${result.ok}`);
+  console.log(
+    `[quote] send — to=${body.clientEmail} advisor="${cleanName}" source=${body.source || "tool"} bcc=${bcc ? "yes" : "no"} emailOk=${result.ok}`,
+  );
   return jsonResponse(
     { success: true, emailOk: result.ok, emailError: result.ok ? undefined : result.error },
     200,

@@ -25,6 +25,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TcpaConsent, TcpaSubmitNotice } from "@/components/TcpaConsent";
 import { submitLead } from "@/lib/submitLead";
+import { sendAutoQuote, computeQuoteNumbers } from "@/lib/autoQuote";
 import { saveRateContext } from "@/lib/rateEstimate";
 import { useGA4 } from "@/hooks/useGA4";
 import { trackFbEvent } from "@/lib/fbq";
@@ -673,8 +674,8 @@ function StepAbout({
 }
 
 function Result({ data, onRestart }: { data: Data; onRestart: () => void }) {
-  const equity = Math.max(0, (Number(data.homeValue) || 0) - (Number(data.balance) || 0));
-  const access = Math.round((equity * 0.85) / 1000) * 1000;
+  // Mirror the emailed quote exactly: HELOC line at 90% LTV less the balance.
+  const access = computeQuoteNumbers(data.homeValue, data.balance).helocAvailable;
   const fmt = (n: number) => "$" + (n || 0).toLocaleString("en-US");
   const goal = goalLabel(data.goal).toLowerCase() || "your goal";
 
@@ -709,7 +710,7 @@ function Result({ data, onRestart }: { data: Data; onRestart: () => void }) {
             <div className="rec-stat">
               <div className="lbl">Est. equity available</div>
               <div className="val">{fmt(access)}</div>
-              <div className="sub">up to ~85% of equity</div>
+              <div className="sub">up to ~90% of home value</div>
             </div>
             <div className="rec-stat">
               <div className="lbl">First-mortgage rate</div>
@@ -959,6 +960,17 @@ export default function HelocV3() {
         ga4.trackStepCompleted(4, "about_you");
         ga4.trackLead({ funnel_version: FUNNEL_VERSION, funnel_length: "long" });
         saveRateContext({ creditScore: creditLabel(data.credit), funnel: "heloc" });
+        // Fire-and-forget: email the client their estimated quote (HELOC at
+        // 90% LTV + cash-out refi at 80%) and BCC Mykoal. Never blocks the
+        // result screen — the lead is already captured if this fails.
+        void sendAutoQuote({
+          firstName: data.first,
+          lastName: data.last,
+          email: data.email,
+          homeValue: data.homeValue,
+          balance: data.balance,
+          creditId: data.credit,
+        });
         setIsSubmitting(false);
         go("result");
       } else {
