@@ -49,31 +49,49 @@ function propertyStateFor(lead: Lead): string {
   return m ? m[1] : "";
 }
 
-// Maps URL pathname -> GHL loan-type tag. Add new entries when
-// launching new ad campaigns. The GHL workflow's "Tag by Loan Type"
-// router branches off these tags. Untagged leads fall to the
-// "Unknown" None Branch and are not auto-routed/assigned/texted -
-// they require manual handling in GHL.
+// Loan-type tag by funnel id. The GHL "Tag by Loan Type" router branches off
+// this tag to assign, route, and start the SMS/email nurture, so every active
+// funnel maps to a loan type — no lead lands untagged (untagged leads fall to
+// the router's None branch and are never auto-routed or texted). HELOC funnels
+// map to "heloc"; the refinance/purchase worksheet funnels all share
+// "mortgage" because the worksheet funnel id doesn't distinguish product (the
+// specific product rides in the lead notes / loan_request for the LO).
+const FUNNEL_LOAN_TYPE: Record<string, string> = {
+  heloc: "heloc",
+  "heloc-v2": "heloc",
+  "heloc-quick": "heloc",
+  "heloc-quick-v2": "heloc",
+  cashout: "mortgage",
+  "cash-out": "mortgage",
+  "rate-reduction": "mortgage",
+  purchase: "mortgage",
+  worksheet: "mortgage",
+};
+
+// Legacy fallback: loan-type tag by ad-campaign landing-page path. Retained so
+// a lead whose funnel id isn't recognized still tags correctly off the URL.
 const FUNNEL_TAG_MAP: Record<string, string> = {
   "/heloc-v2": "heloc",
   "/heloc/quick-v2": "heloc",
 };
 
-/** Build the GHL contact tag set from a Lead. Always includes
- *  "web lead"; appends a loan-type tag only when the landing page
- *  matches an active ad-campaign URL in FUNNEL_TAG_MAP. v1 funnels
- *  and worksheet leads intentionally land untagged. */
+/** Build the GHL contact tag set from a Lead. Always includes "web lead",
+ *  then appends a loan-type tag derived from the funnel id (preferred) and,
+ *  as a fallback, the landing-page path. Deduped so a lead matching both
+ *  sources carries the loan-type tag only once. */
 function tagsFor(lead: Lead): string[] {
   const tags = ["web lead"];
+  const byFunnel = FUNNEL_LOAN_TYPE[String(lead.funnel || "").toLowerCase()];
+  if (byFunnel) tags.push(byFunnel);
   try {
     const url = new URL(lead.landing_page ?? "");
     const pathname = url.pathname.replace(/\/$/, "") || url.pathname;
-    const mapped = FUNNEL_TAG_MAP[pathname];
-    if (mapped) tags.push(mapped);
+    const byPath = FUNNEL_TAG_MAP[pathname];
+    if (byPath) tags.push(byPath);
   } catch {
-    // Missing or malformed landing_page — leave tags as ["web lead"].
+    // Missing or malformed landing_page — the funnel-based tag still applies.
   }
-  return tags;
+  return Array.from(new Set(tags));
 }
 
 /** Log 401/403 as scope errors distinctly so dev catches them quickly. */
