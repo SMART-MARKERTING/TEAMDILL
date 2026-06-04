@@ -74,6 +74,10 @@ function buildApplicationUrl(): string {
 // ---- Step content -----------------------------------------------------------
 const STEP_LABELS = ["Mortgage", "Goal", "Credit", "About you", "Options"];
 
+// Single-select steps (Goal, Credit) auto-advance on tap; this brief pause lets
+// the chosen card show as selected before the funnel moves to the next step.
+const AUTO_ADVANCE_MS = 180;
+
 type GoalDef = { id: string; icon: typeof DollarSign; title: string; sub: string };
 const GOALS: GoalDef[] = [
   { id: "debt", icon: DollarSign, title: "Pay off debt", sub: "Consolidate higher-rate balances" },
@@ -315,7 +319,7 @@ function NavRow({
   under,
 }: {
   onBack?: () => void;
-  onNext: () => void;
+  onNext?: () => void;
   nextLabel?: string;
   disabled?: boolean;
   under?: string;
@@ -328,9 +332,11 @@ function NavRow({
             <ArrowLeft size={17} /> Back
           </button>
         )}
-        <button type="button" className="btn btn-primary" disabled={disabled} onClick={onNext}>
-          {nextLabel} <ArrowRight size={18} />
-        </button>
+        {onNext && (
+          <button type="button" className="btn btn-primary" disabled={disabled} onClick={onNext}>
+            {nextLabel} <ArrowRight size={18} />
+          </button>
+        )}
       </div>
       {under && <p className="under-cta">{under}</p>}
     </>
@@ -459,6 +465,12 @@ function StepBalance({ data, set, onNext, onBack }: StepProps) {
 }
 
 function StepGoal({ data, set, onNext, onBack }: StepProps) {
+  // Single-select: picking an option records it and auto-advances (no Continue
+  // button). A brief delay lets the selected card register visually first.
+  const choose = (goal: string) => {
+    set({ goal });
+    window.setTimeout(onNext, AUTO_ADVANCE_MS);
+  };
   return (
     <div className="step">
       <Progress current={1} />
@@ -476,17 +488,22 @@ function StepGoal({ data, set, onNext, onBack }: StepProps) {
               title={g.title}
               sub={g.sub}
               selected={data.goal === g.id}
-              onClick={() => set({ goal: g.id })}
+              onClick={() => choose(g.id)}
             />
           ))}
         </div>
-        <NavRow onBack={onBack} onNext={onNext} disabled={!data.goal} />
+        <NavRow onBack={onBack} />
       </div>
     </div>
   );
 }
 
 function StepCredit({ data, set, onNext, onBack }: StepProps) {
+  // Single-select: picking a credit band auto-advances (no Continue button).
+  const choose = (credit: string) => {
+    set({ credit });
+    window.setTimeout(onNext, AUTO_ADVANCE_MS);
+  };
   return (
     <div className="step">
       <Progress current={2} />
@@ -503,14 +520,14 @@ function StepCredit({ data, set, onNext, onBack }: StepProps) {
               title={c.title}
               sub={c.sub}
               selected={data.credit === c.id}
-              onClick={() => set({ credit: c.id })}
+              onClick={() => choose(c.id)}
             />
           ))}
         </div>
         <Reassure icon="shield" title="Checking your options won't affect your credit">
           A full credit review only happens if you decide to move forward.
         </Reassure>
-        <NavRow onBack={onBack} onNext={onNext} disabled={!data.credit} />
+        <NavRow onBack={onBack} />
       </div>
     </div>
   );
