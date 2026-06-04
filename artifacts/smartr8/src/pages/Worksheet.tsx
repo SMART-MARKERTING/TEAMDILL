@@ -450,6 +450,27 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
   useEffect(() => { saveContact(contact); }, [contact]);
   useEffect(() => { saveEntry(entryButton); }, [entryButton]);
 
+  // Wouter reuses this component instance across the canonical product routes
+  // (/cash-out, /rate-reduction, /purchase, /see-my-options all render
+  // <Worksheet>), so a changed `entry` prop must be synced into state — the
+  // useState initializer only runs once. Without this, navigating between
+  // product routes wouldn't update the selection or restart the funnel.
+  useEffect(() => {
+    if (entry && entry !== entryButton) {
+      setEntryButton(entry);
+      const pt = entryToProductType(entry);
+      if (pt) {
+        setInputs((prev) => ({
+          ...prev,
+          productType: pt,
+          ...(pt === "RATE_REDUCTION" ? { hasExistingMortgage: true } : {}),
+        }));
+      }
+      setStep(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry]);
+
   // Home equity / 2nd mortgage no longer runs the worksheet calculator — it
   // has its own dedicated funnel. Bounce any such entry (deep link, saved
   // session, or legacy ?product=home-equity) straight to /heloc-v3.
@@ -809,15 +830,15 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
 
   // ── Step renderers ────────────────────────────────────────────────────────
   function renderStep1() {
-    // The picker is a router: each strategy lives at its own canonical URL.
-    // Cash-Out / Rate-Reduction / Purchase run this funnel; Home Equity has its
-    // own dedicated /heloc-v3 funnel. The current product (from the route) is
-    // pre-highlighted so a direct /cash-out visit shows Cash-Out selected.
-    const cards: { entry: FunnelEntryButton; href: string; title: string; desc: string }[] = [
-      { entry: "cash-out", href: "/cash-out", title: "Cash-Out Refinance", desc: "Replace your current mortgage and pull cash to consolidate debt or fund improvements." },
-      { entry: "rate-reduction", href: "/rate-reduction", title: "Rate Reduction Refinance", desc: "Lower your existing mortgage rate and redirect savings to principal." },
-      { entry: "purchase", href: "/purchase", title: "Purchase", desc: "Buy a home or investment property — get pre-approved so you can shop with confidence." },
-      { entry: "home-equity", href: "/heloc-v3", title: "Home Equity / 2nd Mortgage", desc: "Keep your low-rate first mortgage; add a second mortgage or HELOC for cash or debt consolidation." },
+    // Strategy picker. Cash-Out / Rate-Reduction / Purchase select in place
+    // (highlight, then Continue advances); Home Equity has its own dedicated
+    // /heloc-v3 funnel, so its card navigates away. The current product (from
+    // a direct /cash-out visit) is pre-highlighted.
+    const cards: { entry: FunnelEntryButton; productType: ProductType | null; href?: string; title: string; desc: string }[] = [
+      { entry: "cash-out", productType: "CASH_OUT", title: "Cash-Out Refinance", desc: "Replace your current mortgage and pull cash to consolidate debt or fund improvements." },
+      { entry: "rate-reduction", productType: "RATE_REDUCTION", title: "Rate Reduction Refinance", desc: "Lower your existing mortgage rate and redirect savings to principal." },
+      { entry: "purchase", productType: null, title: "Purchase", desc: "Buy a home or investment property — get pre-approved so you can shop with confidence." },
+      { entry: "home-equity", productType: null, href: "/heloc-v3", title: "Home Equity / 2nd Mortgage", desc: "Keep your low-rate first mortgage; add a second mortgage or HELOC for cash or debt consolidation." },
     ];
     return (
       <div className="space-y-6">
@@ -832,7 +853,15 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
               <button
                 key={c.entry}
                 type="button"
-                onClick={() => setLocation(c.href)}
+                onClick={() => {
+                  // Home Equity runs the dedicated HELOC funnel.
+                  if (c.href) { setLocation(c.href); return; }
+                  setEntryButton(c.entry);
+                  if (c.productType) {
+                    update("productType", c.productType);
+                    if (c.entry === "rate-reduction") update("hasExistingMortgage", true);
+                  }
+                }}
                 className={`text-left rounded-lg border-2 p-4 transition-all ${
                   selected ? "border-accent bg-accent/5 shadow-sm" : "border-border hover:border-muted-foreground/50"
                 }`}
@@ -850,6 +879,9 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
             );
           })}
         </div>
+        {/* Purchase selected → show its tailored questions inline beneath the
+            picker (Continue then goes straight to contact). */}
+        {entryButton === "purchase" && renderPurchaseQuestions()}
       </div>
     );
   }
@@ -1476,8 +1508,10 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
           <Progress step={vStep} total={totalSteps} />
 
           <div className="bg-card border rounded-2xl shadow-md p-6 sm:p-8">
-            {/* Step 1: calc shows product picker, non-calc shows confirmation intro */}
-            {step === 1 && (isCalc ? renderStep1() : renderNonCalcIntro())}
+            {/* Step 1: the strategy picker for everyone (Purchase renders its
+                tailored questions inline). HELOC is the only product that uses
+                the legacy confirmation intro, and it normally runs /heloc-v3. */}
+            {step === 1 && (entryButton === "heloc" ? renderNonCalcIntro() : renderStep1())}
             {step === 2 && isCalc && renderStep2()}
             {step === 3 && isCalc && renderStep3()}
             {step === 4 && isCalc && renderStep4()}
