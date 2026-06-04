@@ -102,9 +102,11 @@ describe("ghlUpsert request shape", () => {
 });
 
 describe("ghlUpsert tag derivation from landing_page", () => {
+  // funnel "other" carries no funnel-based loan-type tag, so these cases
+  // isolate the landing-page fallback derivation.
   async function tagsFor(landing_page: string | undefined): Promise<string[]> {
     fetchMock.mockResolvedValueOnce(upsertOk());
-    await ghlUpsert(makeEnv(), makeLead({ landing_page }));
+    await ghlUpsert(makeEnv(), makeLead({ landing_page, funnel: "other" }));
     return JSON.parse(fetchMock.mock.calls[0][1].body).tags as string[];
   }
 
@@ -149,6 +151,44 @@ describe("ghlUpsert tag derivation from landing_page", () => {
 
   it('returns ["web lead"] when landing_page is undefined', async () => {
     expect(await tagsFor(undefined)).toEqual(["web lead"]);
+  });
+});
+
+describe("ghlUpsert tag derivation from funnel", () => {
+  // Hold landing_page to an unmapped URL so these cases isolate the
+  // funnel-based loan-type derivation.
+  async function tagsFor(funnel: Lead["funnel"]): Promise<string[]> {
+    fetchMock.mockResolvedValueOnce(upsertOk());
+    await ghlUpsert(makeEnv(), makeLead({ funnel, landing_page: "https://smartr8.com/x" }));
+    return JSON.parse(fetchMock.mock.calls[0][1].body).tags as string[];
+  }
+
+  it.each(["heloc", "heloc-v2", "heloc-quick", "heloc-quick-v2"] as const)(
+    'tags %s as ["web lead", "heloc"]',
+    async (funnel) => {
+      expect(await tagsFor(funnel)).toEqual(["web lead", "heloc"]);
+    },
+  );
+
+  it.each(["cashout", "cash-out", "rate-reduction", "purchase", "worksheet"] as const)(
+    'tags %s as ["web lead", "mortgage"]',
+    async (funnel) => {
+      expect(await tagsFor(funnel)).toEqual(["web lead", "mortgage"]);
+    },
+  );
+
+  it('tags the "other" funnel as ["web lead"] only', async () => {
+    expect(await tagsFor("other")).toEqual(["web lead"]);
+  });
+
+  it("dedupes when funnel and landing_page map to the same loan type", async () => {
+    fetchMock.mockResolvedValueOnce(upsertOk());
+    await ghlUpsert(
+      makeEnv(),
+      makeLead({ funnel: "heloc", landing_page: "https://smartr8.com/heloc-v2" }),
+    );
+    const tags = JSON.parse(fetchMock.mock.calls[0][1].body).tags as string[];
+    expect(tags).toEqual(["web lead", "heloc"]);
   });
 });
 
