@@ -1,23 +1,17 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Calendar,
   Check,
-  CheckCircle2,
-  Clock,
   DollarSign,
   GraduationCap,
   Home,
   Info,
   Lock,
-  MessageSquare,
-  Phone,
   PiggyBank,
   ShieldCheck,
-  TrendingUp,
-  User,
 } from "lucide-react";
 import { PageMeta } from "@/components/PageMeta";
 import { JsonLd } from "@/components/JsonLd";
@@ -25,7 +19,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TcpaConsent, TcpaSubmitNotice } from "@/components/TcpaConsent";
 import { submitLead } from "@/lib/submitLead";
-import { sendAutoQuote, computeQuoteNumbers } from "@/lib/autoQuote";
+import { sendAutoQuote } from "@/lib/autoQuote";
 import { saveRateContext } from "@/lib/rateEstimate";
 import { useGA4 } from "@/hooks/useGA4";
 import { trackFbEvent } from "@/lib/fbq";
@@ -34,11 +28,13 @@ import "./helocV3.css";
 // ============================================================================
 // HELOC v3 — the "elevated" Adaxa funnel.
 //
-// A premium, single-route funnel: hero landing → four question steps → an
-// inline recommendation payoff screen. The bespoke teal/red/cream visual
-// system lives in ./helocV3.css (scoped under .heloc-v3) and renders in the
-// real brand fonts (Bricolage Grotesque display + Plus Jakarta Sans body,
-// self-hosted under /public/fonts). Chrome is the shared <Header/>/<Footer/>.
+// A premium, single-route funnel: four question steps, opening directly on
+// step one (no hero landing). Submitting "About you" hands off straight to
+// the external application (no inline recommendation screen). The bespoke
+// teal/red/cream visual system lives in ./helocV3.css (scoped under
+// .heloc-v3) and renders in the real brand fonts (Bricolage Grotesque
+// display + Plus Jakarta Sans body, self-hosted under /public/fonts).
+// Chrome is the shared <Header/>/<Footer/>.
 //
 // Production wiring matches /heloc-v2: a single submitLead() POST on the
 // "About you" step, gated by Cloudflare Turnstile (via <TcpaConsent/>), with
@@ -48,7 +44,6 @@ import "./helocV3.css";
 
 const SESSION_KEY = "funnel_heloc_v3";
 const FUNNEL_VERSION = "v3";
-const PHONE = "4802069290";
 const CAL_URL = "https://cal.com/mykoal-deshazo/consult";
 
 // Fast Digital Path application destination — same target the v2 next-step
@@ -78,11 +73,6 @@ const STEP_LABELS = ["Mortgage", "Goal", "Credit", "About you", "Options"];
 // the chosen card show as selected before the funnel moves to the next step.
 const AUTO_ADVANCE_MS = 180;
 
-// End-of-funnel: the Options/Result screen auto-hands off to the application
-// after this pause, mirroring the v2 next-step page. The CTA stays as a manual
-// fallback.
-const RESULT_REDIRECT_MS = 1500;
-
 type GoalDef = { id: string; icon: typeof DollarSign; title: string; sub: string };
 const GOALS: GoalDef[] = [
   { id: "debt", icon: DollarSign, title: "Pay off debt", sub: "Consolidate higher-rate balances" },
@@ -111,7 +101,7 @@ function goalLabel(id: string): string {
 }
 
 // ---- Funnel state -----------------------------------------------------------
-type Stage = "hero" | "s0" | "s1" | "s2" | "s3" | "result";
+type Stage = "s0" | "s1" | "s2" | "s3";
 type Data = {
   homeValue: string;
   balance: string;
@@ -348,95 +338,14 @@ function NavRow({
   );
 }
 
-function TrustBar() {
-  return (
-    <div className="trustbar">
-      <div className="ti">
-        <ShieldCheck size={17} /> Soft credit only
-      </div>
-      <div className="sep"></div>
-      <div className="ti">
-        <Clock size={17} /> Results in minutes
-      </div>
-      <div className="sep"></div>
-      <div className="ti">
-        <Lock size={17} /> Bank-level encryption
-      </div>
-      <div className="sep"></div>
-      <div className="ti">
-        <User size={17} /> Reviewed by a licensed LO
-      </div>
-    </div>
-  );
-}
-
 // ============================================================================
 // Screens
 // ============================================================================
-function Hero({ onStart }: { onStart: () => void }) {
-  return (
-    <div className="wide-wrap" style={{ paddingTop: 40, paddingBottom: 20 }}>
-      <div className="hero">
-        <div className="hero-grid">
-          <div className="hero-left">
-            <span className="hero-eyebrow">
-              <span className="dot"></span> HELOC &amp; home-equity options
-            </span>
-            <h1>
-              See what your equity could <span className="accent">unlock</span>.
-            </h1>
-            <p className="hero-sub">
-              Check your options without touching your mortgage rate. Soft credit review only — no
-              obligation, no pressure.
-            </p>
-            <div className="hero-chips">
-              <span className="hero-chip">
-                <ShieldCheck size={15} /> Soft credit only
-              </span>
-              <span className="hero-chip">
-                <Clock size={15} /> Under 2 minutes
-              </span>
-              <span className="hero-chip">
-                <User size={15} /> Reviewed by Mykoal
-              </span>
-            </div>
-          </div>
-          <div className="hero-right">
-            <div className="start-card">
-              <h3>Start your free equity review</h3>
-              <p className="sc-sub">Most people finish in under 2 minutes.</p>
-              <div className="estimate">
-                <div>
-                  <div className="lbl">Homeowners like you unlock</div>
-                  <div className="val">$40k–$150k+</div>
-                </div>
-                <TrendingUp size={26} strokeWidth={1.8} />
-              </div>
-              <button type="button" className="btn btn-primary btn-block" onClick={onStart}>
-                See My Options <ArrowRight size={18} />
-              </button>
-              <p className="under-cta">No cost · No obligation · No credit pull</p>
-              <div className="start-officer">
-                <div className="av">MD</div>
-                <div className="meta">
-                  <b>Reviewed by Mykoal, a licensed loan officer</b>
-                  <span>Your info stays private. We never sell it.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <TrustBar />
-    </div>
-  );
-}
-
 type StepProps = {
   data: Data;
   set: (patch: Partial<Data>) => void;
   onNext: () => void;
-  onBack: () => void;
+  onBack?: () => void;
 };
 
 function StepBalance({ data, set, onNext, onBack }: StepProps) {
@@ -695,188 +604,6 @@ function StepAbout({
   );
 }
 
-function Result({ data, onRestart }: { data: Data; onRestart: () => void }) {
-  // Mirror the emailed quote exactly: HELOC line at 90% LTV less the balance.
-  const access = computeQuoteNumbers(data.homeValue, data.balance).helocAvailable;
-  const fmt = (n: number) => "$" + (n || 0).toLocaleString("en-US");
-  const goal = goalLabel(data.goal).toLowerCase() || "your goal";
-
-  // One-shot guard so the auto-redirect and a manual click can't both fire the
-  // SubmitApplication event or navigate twice.
-  const redirectedRef = useRef(false);
-
-  function continueToApplication() {
-    if (redirectedRef.current) return;
-    redirectedRef.current = true;
-    trackFbEvent("SubmitApplication", {
-      content_name: "HELOC Application",
-      content_category: "Mortgage",
-      funnel_version: FUNNEL_VERSION,
-    });
-    window.location.href = buildApplicationUrl();
-  }
-
-  // Auto-hand off to the application after a brief pause, matching the v2
-  // next-step page. The CTA below remains as a manual fallback.
-  useEffect(() => {
-    const id = window.setTimeout(continueToApplication, RESULT_REDIRECT_MS);
-    return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <div className="funnel-wrap" style={{ maxWidth: 720 }}>
-      <div className="result-hero">
-        <span className="eyebrow">
-          <CheckCircle2 size={15} /> Review complete
-        </span>
-        <h1>{data.first ? `${data.first}, here's your recommended path.` : "Here's your recommended path."}</h1>
-        <p>
-          Based on your equity, goal, and credit, this is the strongest fit. Mykoal will confirm the
-          details.
-        </p>
-      </div>
-
-      <div className="rec-card">
-        <span className="rec-badge">Recommended</span>
-        <div className="rc-body">
-          <div className="rc-eyebrow">Best fit for {goal}</div>
-          <h2>Home Equity Line of Credit (HELOC)</h2>
-          <div className="rec-stats">
-            <div className="rec-stat">
-              <div className="lbl">Est. equity available</div>
-              <div className="val">{fmt(access)}</div>
-              <div className="sub">up to ~90% of home value</div>
-            </div>
-            <div className="rec-stat">
-              <div className="lbl">First-mortgage rate</div>
-              <div className="val">Untouched</div>
-              <div className="sub">no refinance needed</div>
-            </div>
-            <div className="rec-stat">
-              <div className="lbl">Typical timeline</div>
-              <div className="val">Days</div>
-              <div className="sub">varies by lender</div>
-            </div>
-          </div>
-          <div className="why">
-            <b>
-              <Info size={16} /> Why this path?
-            </b>
-            <ul>
-              <li>
-                <Check size={16} /> Lets you borrow against equity without refinancing your low
-                first-mortgage rate.
-              </li>
-              <li>
-                <Check size={16} /> Flexible — draw what you need, when you need it, for {goal}.
-              </li>
-              <li>
-                <Check size={16} /> Matched to your credit range across our 90+ lender network.
-              </li>
-            </ul>
-          </div>
-          <button type="button" className="btn btn-primary btn-block" onClick={continueToApplication}>
-            Continue to my application <ArrowRight size={18} />
-          </button>
-          <p className="under-cta">
-            Taking you to your secure application… &nbsp;·&nbsp; This is not a commitment to lend.
-            Final terms are set by the lender after review.
-          </p>
-        </div>
-      </div>
-
-      <div className="support">
-        <div className="av">MD</div>
-        <div className="meta">
-          <b>Questions? Call or text Mykoal</b>
-          <span>Licensed loan officer · usually replies within the hour</span>
-        </div>
-        <div className="actions">
-          <a className="sbtn" href={`tel:${PHONE}`} title="Call">
-            <Phone size={18} />
-          </a>
-          <a className="sbtn" href={`sms:${PHONE}`} title="Text">
-            <MessageSquare size={18} />
-          </a>
-          <a className="sbtn" href={CAL_URL} target="_blank" rel="noopener noreferrer" title="Book a time">
-            <Calendar size={18} />
-          </a>
-        </div>
-      </div>
-
-      <div style={{ marginTop: 30 }}>
-        <div className="eyebrow" style={{ color: "var(--text-400)" }}>
-          What happens next
-        </div>
-        <div className="steps-list">
-          <div className="step-item done">
-            <div className="sn">
-              <Check size={16} strokeWidth={3} />
-            </div>
-            <div className="si-body">
-              <h4>You shared your basics</h4>
-              <p>Equity, goal, and credit range — done in under two minutes.</p>
-            </div>
-          </div>
-          <div className="step-item now">
-            <div className="sn">2</div>
-            <div className="si-body">
-              <h4>
-                Mykoal reviews your options <span className="tag-now">In progress</span>
-              </h4>
-              <p>
-                A licensed loan officer personally checks your numbers against the lender network —
-                no automated decision.
-              </p>
-              <div className="eta">Typically within a few hours</div>
-            </div>
-          </div>
-          <div className="step-item">
-            <div className="sn">3</div>
-            <div className="si-body">
-              <h4>You choose how to move forward</h4>
-              <p>
-                Review your matched options together. If it's a fit, Mykoal walks you through the
-                application — your call, no pressure.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="alt-paths">
-        <a className="alt-path" href={CAL_URL} target="_blank" rel="noopener noreferrer">
-          <div className="ap-ic">
-            <DollarSign size={20} />
-          </div>
-          <h4>Cash-out refinance</h4>
-          <p>Replace your mortgage and pull equity in one new loan. Worth it only if today's rate beats yours.</p>
-          <div className="ap-meta">
-            Compare with Mykoal <ArrowRight size={14} />
-          </div>
-        </a>
-        <a className="alt-path" href={CAL_URL} target="_blank" rel="noopener noreferrer">
-          <div className="ap-ic">
-            <Home size={20} />
-          </div>
-          <h4>Home equity loan</h4>
-          <p>A fixed lump sum at a fixed rate — predictable payments for a one-time expense.</p>
-          <div className="ap-meta">
-            Compare with Mykoal <ArrowRight size={14} />
-          </div>
-        </a>
-      </div>
-
-      <p style={{ textAlign: "center", marginTop: 28 }}>
-        <button type="button" className="btn btn-ghost" onClick={onRestart}>
-          ← Start over
-        </button>
-      </p>
-    </div>
-  );
-}
-
 // Floating, secondary "Book a time" CTA. Anchored bottom-right; never competes
 // with the in-funnel red primary. Links to Cal so the global PixelLinkTracker
 // fires a Schedule event automatically.
@@ -900,7 +627,7 @@ function BookCal() {
 export default function HelocV3() {
   const ga4 = useGA4("heloc");
 
-  const [stage, setStage] = useState<Stage>("hero");
+  const [stage, setStage] = useState<Stage>("s0");
   const [data, setData] = useState<Data>(() => {
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);
@@ -935,20 +662,6 @@ export default function HelocV3() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Auto-advance past the hero into step one ~50ms after landing, so visitors
-  // drop straight into the first question instead of dwelling on the hero — the
-  // same target as the hero's "See My Options" button. One-shot (ref-guarded) so
-  // going Back to the hero, or a restart, doesn't bounce them forward again. The
-  // ViewContent + funnel_start pixels already fired on mount, so none is lost.
-  const autoStartedRef = useRef(false);
-  useEffect(() => {
-    if (autoStartedRef.current || stage !== "hero") return;
-    autoStartedRef.current = true;
-    const id = window.setTimeout(() => go("s0"), 50);
-    return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Stage index for GA4 step-completed tracking (1-based question steps).
   const STAGE_STEP: Record<string, { n: number; name: string }> = {
     s0: { n: 1, name: "mortgage_balance" },
@@ -960,13 +673,6 @@ export default function HelocV3() {
     const meta = STAGE_STEP[from];
     if (meta) ga4.trackStepCompleted(meta.n, meta.name);
     go(to);
-  };
-
-  const restart = () => {
-    setData({ ...DEFAULT_DATA, pageLoadTime: Date.now() });
-    sessionStorage.removeItem(SESSION_KEY);
-    setSubmitError("");
-    go("hero");
   };
 
   const SUBMIT_ERR =
@@ -1022,8 +728,15 @@ export default function HelocV3() {
           balance: data.balance,
           creditId: data.credit,
         });
-        setIsSubmitting(false);
-        go("result");
+        // Straight to the external application — no inline options screen.
+        // isSubmitting stays true so the CTA can't double-fire during the
+        // hand-off.
+        trackFbEvent("SubmitApplication", {
+          content_name: "HELOC Application",
+          content_category: "Mortgage",
+          funnel_version: FUNNEL_VERSION,
+        });
+        window.location.href = buildApplicationUrl();
       } else {
         setSubmitError(result.error || SUBMIT_ERR);
         setIsSubmitting(false);
@@ -1035,12 +748,10 @@ export default function HelocV3() {
   }
 
   let screen: ReactNode;
-  if (stage === "hero") {
-    screen = <Hero onStart={() => go("s0")} />;
-  } else if (stage === "s0") {
+  if (stage === "s0") {
     screen = (
       <div className="funnel-wrap">
-        <StepBalance data={data} set={set} onBack={() => go("hero")} onNext={() => advanceFrom("s0", "s1")} />
+        <StepBalance data={data} set={set} onNext={() => advanceFrom("s0", "s1")} />
       </div>
     );
   } else if (stage === "s1") {
@@ -1055,7 +766,7 @@ export default function HelocV3() {
         <StepCredit data={data} set={set} onBack={() => go("s1")} onNext={() => advanceFrom("s2", "s3")} />
       </div>
     );
-  } else if (stage === "s3") {
+  } else {
     screen = (
       <div className="funnel-wrap">
         <StepAbout
@@ -1070,8 +781,6 @@ export default function HelocV3() {
         />
       </div>
     );
-  } else {
-    screen = <Result data={data} onRestart={restart} />;
   }
 
   return (
