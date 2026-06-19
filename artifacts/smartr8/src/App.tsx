@@ -87,8 +87,9 @@ function PixelRouteTracker() {
  * Mappings:
  *   tel:*                  → Contact      (method: 'phone')
  *   mailto:*               → Contact      (method: 'email')
- *   *cal.com*              → Schedule     (content_name: 'Consultation Call')
- *   *lendingpad.com*       → SubmitApplication (content_name: 'Full Application')
+ *   cal.com                → Schedule     (content_name: 'Consultation Call')
+ *   lendingpad.com         → SubmitApplication (content_name: 'Full Application')
+ *   legalzoom.com          → ViewContent  (content_name: 'LegalZoom Partner')
  *
  * Notes:
  * - We use capture phase so we fire before any nested onClick stops propagation.
@@ -119,15 +120,25 @@ function PixelLinkTracker() {
         trackFbEvent("Contact", { method: "email" });
         return;
       }
-      if (href.includes("cal.com")) {
+
+      let hostname = "";
+      try {
+        hostname = new URL(href, window.location.origin).hostname.toLowerCase();
+      } catch {
+        return;
+      }
+      const isAllowedHost = (host: string, domain: string) =>
+        host === domain || host.endsWith(`.${domain}`);
+
+      if (isAllowedHost(hostname, "cal.com")) {
         trackFbEvent("Schedule", { content_name: "Consultation Call", content_category: "Mortgage" });
         return;
       }
-      if (href.includes("lendingpad.com")) {
+      if (isAllowedHost(hostname, "lendingpad.com")) {
         trackFbEvent("SubmitApplication", { content_name: "Full Application", content_category: "Mortgage" });
         return;
       }
-      if (href.includes("legalzoom.com")) {
+      if (isAllowedHost(hostname, "legalzoom.com")) {
         trackFbEvent("ViewContent", { content_name: "LegalZoom Partner", content_category: "Legal Services" });
         return;
       }
