@@ -108,6 +108,7 @@ Set these in **Cloudflare Pages → Settings → Environment variables** for bot
 | `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile server-side secret |
 | `VITE_TURNSTILE_SITE_KEY` | Turnstile site key (exposed to the browser) |
 | `VITE_TCPA_CONSENT_VERSION` | Optional client-side override for the consent version (defaults to the value in `src/lib/tcpa.ts`) |
+| `VITE_LEGALZOOM_AFFILIATE_URL` | LegalZoom partner/affiliate URL used by `/legal` and `legal.smartr8.com` CTAs |
 | `CRON_SECRET` | Shared secret between the companion retry Worker and `/api/cron/retry-failed` |
 | `RESEND_API_KEY` | Resend API key (already in place; powers the confirmation email and worksheet PDFs) |
 | `LEAD_INBOX_EMAIL` | Documented for clarity; not currently read by the Worker code |

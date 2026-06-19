@@ -4,6 +4,7 @@ interface PageMetaProps {
   title: string;
   description: string;
   canonical: string;
+  canonicalUrl?: string;
   ogImage?: string;
   noIndex?: boolean;
 }
@@ -38,12 +39,12 @@ function setLink(rel: string, href: string): LinkEntry {
   return { el, prev, created };
 }
 
-export function PageMeta({ title, description, canonical, ogImage, noIndex }: PageMetaProps) {
+export function PageMeta({ title, description, canonical, canonicalUrl, ogImage, noIndex }: PageMetaProps) {
   useEffect(() => {
     const prevTitle = document.title;
     document.title = title;
 
-    const ogUrl = `https://smartr8.com${canonical}`;
+    const ogUrl = canonicalUrl ?? `https://smartr8.com${canonical}`;
     const image = ogImage ?? "https://smartr8.com/og-image-heloc.jpg";
 
     const metas: MetaEntry[] = [
@@ -72,6 +73,6 @@ export function PageMeta({ title, description, canonical, ogImage, noIndex }: Pa
         else if (prev !== null) el.setAttribute("href", prev);
       });
     };
-  }, []);
+  }, [title, description, canonical, canonicalUrl, ogImage, noIndex]);
   return null;
 }
