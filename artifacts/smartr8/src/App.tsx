@@ -32,6 +32,7 @@ const Dscr = lazy(() => import("@/pages/Dscr"));
 // the noIndex /heloc-v3 application funnel.
 const Va = lazy(() => import("@/pages/Va"));
 const HelocOptions = lazy(() => import("@/pages/HelocOptions"));
+const LegalZoom = lazy(() => import("@/pages/LegalZoom"));
 const Worksheet = lazy(() => import("@/pages/Worksheet"));
 const WorksheetNextStep = lazy(() => import("@/pages/WorksheetNextStep"));
 const WorksheetInternal = lazy(() => import("@/pages/WorksheetInternal"));
@@ -86,8 +87,9 @@ function PixelRouteTracker() {
  * Mappings:
  *   tel:*                  → Contact      (method: 'phone')
  *   mailto:*               → Contact      (method: 'email')
- *   *cal.com*              → Schedule     (content_name: 'Consultation Call')
- *   *lendingpad.com*       → SubmitApplication (content_name: 'Full Application')
+ *   cal.com                → Schedule     (content_name: 'Consultation Call')
+ *   lendingpad.com         → SubmitApplication (content_name: 'Full Application')
+ *   legalzoom.com          → ViewContent  (content_name: 'LegalZoom Partner')
  *
  * Notes:
  * - We use capture phase so we fire before any nested onClick stops propagation.
@@ -118,12 +120,26 @@ function PixelLinkTracker() {
         trackFbEvent("Contact", { method: "email" });
         return;
       }
-      if (href.includes("cal.com")) {
+
+      let hostname = "";
+      try {
+        hostname = new URL(href, window.location.origin).hostname.toLowerCase();
+      } catch {
+        return;
+      }
+      const isAllowedHost = (host: string, domain: string) =>
+        host === domain || host.endsWith(`.${domain}`);
+
+      if (isAllowedHost(hostname, "cal.com")) {
         trackFbEvent("Schedule", { content_name: "Consultation Call", content_category: "Mortgage" });
         return;
       }
-      if (href.includes("lendingpad.com")) {
+      if (isAllowedHost(hostname, "lendingpad.com")) {
         trackFbEvent("SubmitApplication", { content_name: "Full Application", content_category: "Mortgage" });
+        return;
+      }
+      if (isAllowedHost(hostname, "legalzoom.com")) {
+        trackFbEvent("ViewContent", { content_name: "LegalZoom Partner", content_category: "Legal Services" });
         return;
       }
     }
@@ -198,6 +214,8 @@ function RouteChangeScrollReset() {
 }
 
 function Router() {
+  const isLegalHost =
+    typeof window !== "undefined" && window.location.hostname === "legal.smartr8.com";
   // null fallback: lazy chunks resolve in microseconds on a warm cache and
   // typically under a few hundred ms on first visit. A loading spinner would
   // flash visibly only on slow connections, which we'd rather not draw
@@ -205,7 +223,7 @@ function Router() {
   return (
     <Suspense fallback={null}>
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/" component={isLegalHost ? LegalZoom : Home} />
         <Route path="/thank-you" component={ThankYou} />
         {/* All HELOC / home-equity traffic now lands on the v3 "elevated"
             funnel — the legacy v1/v2/quick routes redirect there, preserving
@@ -235,6 +253,7 @@ function Router() {
         {/* VA lander (new lane) + indexable HELOC lander with FAQ + schema. */}
         <Route path="/va" component={Va} />
         <Route path="/heloc-options" component={HelocOptions} />
+        <Route path="/legal" component={LegalZoom} />
         {/* Retired single-page landers → their canonical funnel routes. */}
         <Route path="/cash-out-refi">{() => <RedirectTo to="/cash-out" preserveSearch />}</Route>
         <Route path="/rate-and-term-refi">{() => <RedirectTo to="/rate-reduction" preserveSearch />}</Route>
