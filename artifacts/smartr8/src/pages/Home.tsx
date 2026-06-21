@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, Phone, Home as HomeIcon, Percent, HelpCircle, Droplets, TrendingDown, Key, BarChart2, Layers } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, Phone, Home as HomeIcon, Percent, HelpCircle, Droplets, TrendingDown, Key, BarChart2, Hammer, Layers } from "lucide-react";
 
 const STATES_11 = [
   { "@type": "State", "name": "Arizona" },
@@ -21,9 +21,9 @@ const STATES_11 = [
 ];
 
 export default function Home() {
-  // Homepage HELOC / home-equity cards point at the indexable /heloc-options
-  // lander (the /heloc-v3 application funnel itself is left unchanged).
-  const helocHref = "/heloc-options";
+  // Homepage HELOC / home-equity clicks go through /heloc-main so completed
+  // /heloc-v3 leads can retain main-page attribution in the CRM.
+  const helocHref = "/heloc-main";
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background selection:bg-primary/10">
@@ -199,7 +199,7 @@ export default function Home() {
             <p className="text-center text-muted-foreground mb-8 text-sm">
               Pick your path. About 3 minutes, no credit pull.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
               <Link href={helocHref}>
                 <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
                   <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
@@ -280,6 +280,40 @@ export default function Home() {
                     </div>
                     <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                       Start <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/dscr-main">
+                <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
+                  <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
+                    <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <Building2 className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm md:text-base text-foreground leading-tight">DSCR</div>
+                      <div className="text-muted-foreground text-xs mt-0.5">Rental investor loans</div>
+                    </div>
+                    <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                      Start <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/hard-money-loans">
+                <Card className="hover:border-primary/50 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full">
+                  <CardContent className="p-4 md:p-5 flex flex-col gap-2 h-full">
+                    <div className="h-9 w-9 bg-primary/5 rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <Hammer className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm md:text-base text-foreground leading-tight">Hard Money</div>
+                      <div className="text-muted-foreground text-xs mt-0.5">Fix, flip, bridge</div>
+                    </div>
+                    <div className="mt-auto pt-2 text-primary text-xs font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                      Learn <ArrowRight className="h-3 w-3" />
                     </div>
                   </CardContent>
                 </Card>

@@ -31,6 +31,9 @@ export interface CrmLeadPayload {
   pageLoadTime?: number;
   /** Cloudflare Turnstile token from the bot-check widget. */
   turnstile_token?: string;
+  /** Optional attribution override for routes that hand off into a funnel. */
+  pageUrlOverride?: string;
+  sourceOverride?: string;
 }
 
 export interface SubmitResult {
@@ -66,8 +69,10 @@ export async function submitCrmLead(payload: CrmLeadPayload): Promise<SubmitResu
     pageLoadTime: payload.pageLoadTime ?? 0,
     turnstile_token: payload.turnstile_token ?? "",
     // source = the funnel URL so Mykoal can see which page captured the lead.
-    source: typeof window !== "undefined" ? window.location.pathname.replace(/^\//, "") || "smartr8.com" : "smartr8.com",
-    page_url: typeof window !== "undefined" ? window.location.href : "",
+    source:
+      payload.sourceOverride ||
+      (typeof window !== "undefined" ? window.location.pathname.replace(/^\//, "") || "smartr8.com" : "smartr8.com"),
+    page_url: payload.pageUrlOverride || (typeof window !== "undefined" ? window.location.href : ""),
     utm_source: getParam("utm_source"),
     utm_medium: getParam("utm_medium"),
     utm_campaign: getParam("utm_campaign"),

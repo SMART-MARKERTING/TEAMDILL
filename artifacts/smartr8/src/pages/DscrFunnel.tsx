@@ -1,15 +1,15 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Building2,
   Check,
   DollarSign,
-  GraduationCap,
   Home,
   Info,
+  KeyRound,
   Lock,
-  PiggyBank,
   ShieldCheck,
 } from "lucide-react";
 import { PageMeta } from "@/components/PageMeta";
@@ -17,103 +17,52 @@ import { JsonLd } from "@/components/JsonLd";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TcpaConsent, TcpaSubmitNotice } from "@/components/TcpaConsent";
-import { submitLead } from "@/lib/submitLead";
-import { sendAutoQuote } from "@/lib/autoQuote";
-import { saveRateContext } from "@/lib/rateEstimate";
-import { useGA4 } from "@/hooks/useGA4";
+import { submitCrmLead } from "@/lib/submitCrmLead";
 import { trackFbEvent } from "@/lib/fbq";
+import { makeFunnelTracker } from "@/lib/funnelEvents";
 import "./helocV3.css";
 
-// ============================================================================
-// HELOC v3 — the "elevated" Adaxa funnel.
-//
-// A premium, single-route funnel: four question steps, opening directly on
-// step one (no hero landing). Submitting "About you" hands off straight to
-// the external application (no inline recommendation screen). The bespoke
-// teal/red/cream visual system lives in ./helocV3.css (scoped under
-// .heloc-v3) and renders in the real brand fonts (Bricolage Grotesque
-// display + Plus Jakarta Sans body, self-hosted under /public/fonts).
-// Chrome is the shared <Header/>/<Footer/>.
-//
-// Production wiring matches /heloc-v2: a single submitLead() POST on the
-// "About you" step, gated by Cloudflare Turnstile (via <TcpaConsent/>), with
-// GA4 + Meta Pixel Lead/ViewContent tracking and rate-context persistence.
-// State persists in sessionStorage (project rule — never localStorage).
-// ============================================================================
+const SESSION_KEY = "funnel_dscr_v3";
+const FUNNEL_VERSION = "dscr-v3";
+const AUTO_ADVANCE_MS = 180;
+const STEP_LABELS = ["Property", "Rental", "Credit", "About you"];
 
-const SESSION_KEY = "funnel_heloc_v3";
-const FUNNEL_VERSION = "v3";
-
-// Fast Digital Path application destination — same target the v2 next-step
-// page redirects to. Defined here so the result CTA can be retargeted in one
-// place. Inbound query params (utm_*, etc.) are merged in without clobbering
-// the baked-in referrer.
-const APPLICATION_URL =
-  "https://heloc.adaxahome.com/account/heloc/register?referrer=07b7dc41-da1d-4044-8cfc-694ebbc1d3b7";
-
-function buildApplicationUrl(): string {
-  try {
-    const url = new URL(APPLICATION_URL);
-    const incoming = new URLSearchParams(window.location.search);
-    incoming.forEach((value, key) => {
-      if (!url.searchParams.has(key)) url.searchParams.set(key, value);
-    });
-    return url.toString();
-  } catch {
-    return APPLICATION_URL;
-  }
-}
-
-function leadSourcePageUrl(): string | undefined {
+function leadSourceAttribution(): { pageUrlOverride?: string; sourceOverride?: string } {
   try {
     const source = new URLSearchParams(window.location.search).get("lead_source");
-    if (source !== "heloc-main") return undefined;
-    return `${window.location.origin}/heloc-main`;
+    if (source !== "dscr-main") return {};
+    return {
+      pageUrlOverride: `${window.location.origin}/dscr-main`,
+      sourceOverride: "dscr-main",
+    };
   } catch {
-    return undefined;
+    return {};
   }
 }
 
-// ---- Step content -----------------------------------------------------------
-const STEP_LABELS = ["Mortgage", "Goal", "Credit", "About you"];
+type OptionDef = { id: string; icon?: typeof Building2; title: string; sub: string };
 
-// Single-select steps (Goal, Credit) auto-advance on tap; this brief pause lets
-// the chosen card show as selected before the funnel moves to the next step.
-const AUTO_ADVANCE_MS = 180;
-
-type GoalDef = { id: string; icon: typeof DollarSign; title: string; sub: string };
-const GOALS: GoalDef[] = [
-  { id: "debt", icon: DollarSign, title: "Pay off debt", sub: "Consolidate higher-rate balances" },
-  { id: "reno", icon: Home, title: "Home improvement", sub: "Renovate, repair, or expand" },
-  { id: "cash", icon: PiggyBank, title: "Cash reserve", sub: "A safety cushion on hand" },
-  { id: "big", icon: GraduationCap, title: "Big expense", sub: "Tuition, medical, life events" },
+const PROPERTY_TYPES: OptionDef[] = [
+  { id: "single_family", icon: Home, title: "Single family", sub: "Detached rental home" },
+  { id: "condo", icon: Building2, title: "Condo or townhome", sub: "Investor condo, townhome, or PUD" },
+  { id: "two_to_four", icon: KeyRound, title: "2 to 4 units", sub: "Duplex, triplex, or fourplex" },
+  { id: "short_term", icon: DollarSign, title: "Short term rental", sub: "Airbnb, VRBO, or furnished rental" },
 ];
 
-type CreditDef = { id: string; title: string; sub: string };
-const CREDIT: CreditDef[] = [
+const CREDIT: OptionDef[] = [
   { id: "excellent", title: "Excellent", sub: "740+" },
-  { id: "good", title: "Good", sub: "680–739" },
-  { id: "fair", title: "Fair", sub: "620–679" },
+  { id: "good", title: "Good", sub: "680 to 739" },
+  { id: "fair", title: "Fair", sub: "620 to 679" },
   { id: "building", title: "Still building", sub: "Below 620" },
   { id: "unsure", title: "Not sure", sub: "That's okay" },
 ];
 
-/** Readable label sent to the CRM (the id alone is meaningless to Mykoal). */
-function creditLabel(id: string): string {
-  const c = CREDIT.find((x) => x.id === id);
-  return c ? `${c.title} (${c.sub})` : "";
-}
-function goalLabel(id: string): string {
-  const g = GOALS.find((x) => x.id === id);
-  return g ? g.title : "";
-}
-
-// ---- Funnel state -----------------------------------------------------------
 type Stage = "s0" | "s1" | "s2" | "s3";
 type Data = {
-  homeValue: string;
-  balance: string;
-  goal: string;
+  propertyValue: string;
+  loanAmount: string;
+  monthlyRent: string;
+  propertyType: string;
   credit: string;
   first: string;
   last: string;
@@ -122,10 +71,12 @@ type Data = {
   honeypot: string;
   pageLoadTime: number;
 };
+
 const DEFAULT_DATA: Data = {
-  homeValue: "",
-  balance: "",
-  goal: "",
+  propertyValue: "",
+  loanAmount: "",
+  monthlyRent: "",
+  propertyType: "",
   credit: "",
   first: "",
   last: "",
@@ -142,6 +93,7 @@ type ConsentState = {
   consent_text: string;
   turnstile_token: string;
 };
+
 const EMPTY_CONSENT: ConsentState = {
   ready: false,
   consent: false,
@@ -150,9 +102,11 @@ const EMPTY_CONSENT: ConsentState = {
   turnstile_token: "",
 };
 
-// ============================================================================
-// Shared funnel primitives (ported from the Adaxa design, lucide icons)
-// ============================================================================
+function optionLabel(options: OptionDef[], id: string): string {
+  const match = options.find((x) => x.id === id);
+  return match ? `${match.title} (${match.sub})` : "";
+}
+
 function Progress({ current, total = 4 }: { current: number; total?: number }) {
   const pct = Math.round(((current + 1) / total) * 100);
   return (
@@ -164,10 +118,10 @@ function Progress({ current, total = 4 }: { current: number; total?: number }) {
         <span className="p">{pct}%</span>
       </div>
       <div className="p-steps">
-        {STEP_LABELS.map((l, i) => (
-          <div key={l} className={"p-st " + (i < current ? "done" : i === current ? "now" : "")}>
+        {STEP_LABELS.map((label, i) => (
+          <div key={label} className={"p-st " + (i < current ? "done" : i === current ? "now" : "")}>
             <i></i>
-            <span>{l}</span>
+            <span>{label}</span>
           </div>
         ))}
       </div>
@@ -192,7 +146,7 @@ function OptionCard({
   selected,
   onClick,
 }: {
-  icon?: typeof DollarSign;
+  icon?: typeof Building2;
   title: string;
   sub?: string;
   selected: boolean;
@@ -321,9 +275,6 @@ function NavRow({
   );
 }
 
-// ============================================================================
-// Screens
-// ============================================================================
 type StepProps = {
   data: Data;
   set: (patch: Partial<Data>) => void;
@@ -331,83 +282,85 @@ type StepProps = {
   onBack?: () => void;
 };
 
-function StepBalance({ data, set, onNext, onBack }: StepProps) {
+function StepProperty({ data, set, onNext, onBack }: StepProps) {
   return (
     <div className="step">
       <Progress current={0} />
       <StepHead
-        eyebrow="Your home"
-        title="How much is left on your mortgage?"
-        help="An estimate is fine — you can refine it later."
+        eyebrow="The rental"
+        title="What numbers should we run for the property?"
+        help="Use estimates if you are still shopping or finalizing a purchase."
       />
       <div className="q-body">
-        <Field label="Estimated home value" hint="Roughly what your home is worth today.">
-          <MoneyInput value={data.homeValue} onChange={(v) => set({ homeValue: v })} placeholder="500,000" />
+        <Field label="Estimated property value or purchase price" hint="What the rental is worth or expected to sell for.">
+          <MoneyInput value={data.propertyValue} onChange={(v) => set({ propertyValue: v })} placeholder="450,000" />
         </Field>
-        <Field label="Current mortgage balance" hint="What you still owe on your first mortgage.">
-          <MoneyInput value={data.balance} onChange={(v) => set({ balance: v })} placeholder="350,000" />
+        <Field label="Requested loan amount or current balance" hint="For a purchase, use the loan amount you want to finance.">
+          <MoneyInput value={data.loanAmount} onChange={(v) => set({ loanAmount: v })} placeholder="315,000" />
         </Field>
-        <Reassure icon="info" title="Why we ask">
-          Your equity is the gap between these two numbers — it's what you may be able to tap.
+        <Reassure icon="info" title="DSCR loans focus on the property">
+          The first pass is about value, debt, and rent, not W2s or tax returns.
         </Reassure>
         <NavRow
           onBack={onBack}
           onNext={onNext}
-          disabled={!data.balance || !data.homeValue}
-          under="This won't affect your credit score."
+          disabled={!data.propertyValue || !data.loanAmount}
+          under="No personal income docs needed to start."
         />
       </div>
     </div>
   );
 }
 
-function StepGoal({ data, set, onNext, onBack }: StepProps) {
-  // Single-select: picking an option records it and auto-advances (no Continue
-  // button). A brief delay lets the selected card register visually first.
-  const choose = (goal: string) => {
-    set({ goal });
+function StepRental({ data, set, onNext, onBack }: StepProps) {
+  const choose = (propertyType: string) => {
+    set({ propertyType });
     window.setTimeout(onNext, AUTO_ADVANCE_MS);
   };
+
   return (
     <div className="step">
       <Progress current={1} />
       <StepHead
-        eyebrow="Your goal"
-        title="What would you put the funds toward?"
-        help="Pick the main one — it helps Mykoal match the right option."
+        eyebrow="Rental income"
+        title="What type of rental is it?"
+        help="Add the estimated rent first, then pick the closest property type."
       />
       <div className="q-body">
+        <Field label="Estimated monthly rent" hint="Long term rent, market rent, or short term rental projection.">
+          <MoneyInput value={data.monthlyRent} onChange={(v) => set({ monthlyRent: v })} placeholder="3,200" />
+        </Field>
         <div className="opts cols-2">
-          {GOALS.map((g) => (
+          {PROPERTY_TYPES.map((p) => (
             <OptionCard
-              key={g.id}
-              icon={g.icon}
-              title={g.title}
-              sub={g.sub}
-              selected={data.goal === g.id}
-              onClick={() => choose(g.id)}
+              key={p.id}
+              icon={p.icon}
+              title={p.title}
+              sub={p.sub}
+              selected={data.propertyType === p.id}
+              onClick={() => choose(p.id)}
             />
           ))}
         </div>
-        <NavRow onBack={onBack} />
+        <NavRow onBack={onBack} onNext={onNext} disabled={!data.monthlyRent || !data.propertyType} />
       </div>
     </div>
   );
 }
 
 function StepCredit({ data, set, onNext, onBack }: StepProps) {
-  // Single-select: picking a credit band auto-advances (no Continue button).
   const choose = (credit: string) => {
     set({ credit });
     window.setTimeout(onNext, AUTO_ADVANCE_MS);
   };
+
   return (
     <div className="step">
       <Progress current={2} />
       <StepHead
-        eyebrow="Your credit"
-        title="Roughly where's your credit?"
-        help="A ballpark is all we need right now."
+        eyebrow="Borrower profile"
+        title="Roughly where is your credit?"
+        help="A ballpark lets Mykoal narrow the DSCR programs that may fit."
       />
       <div className="q-body">
         <div className="opts">
@@ -421,7 +374,7 @@ function StepCredit({ data, set, onNext, onBack }: StepProps) {
             />
           ))}
         </div>
-        <Reassure icon="shield" title="Checking your options won't affect your credit">
+        <Reassure icon="shield" title="Checking options will not affect your credit">
           A full credit review only happens if you decide to move forward.
         </Reassure>
         <NavRow onBack={onBack} />
@@ -463,8 +416,8 @@ function StepAbout({
       <Progress current={3} />
       <StepHead
         eyebrow="About you"
-        title="Almost done — where should we send your options?"
-        help="Mykoal personally reviews every submission."
+        title="Almost done. Where should we send your DSCR options?"
+        help="Mykoal personally reviews every investor scenario."
       />
       <form
         className="q-body"
@@ -473,7 +426,6 @@ function StepAbout({
           if (ready && !isSubmitting) onSubmit();
         }}
       >
-        {/* Honeypot — bots fill this; humans never see it. */}
         <input
           type="text"
           name="website"
@@ -525,8 +477,7 @@ function StepAbout({
           />
         </Field>
         <Reassure icon="lock" title="Your info stays private">
-          We use bank-level encryption and only use your details to review your options. We never
-          sell your info or spam you.
+          We only use your details to review the DSCR scenario and follow up on your request.
         </Reassure>
         <TcpaConsent onChange={setConsentState} />
         {submitError && (
@@ -543,8 +494,8 @@ function StepAbout({
             if (ready && !isSubmitting) onSubmit();
           }}
           disabled={!ready || isSubmitting}
-          nextLabel={isSubmitting ? "Submitting…" : "See My Options"}
-          under="No cost · No obligation · Soft credit review only"
+          nextLabel={isSubmitting ? "Submitting..." : "See My DSCR Options"}
+          under="No cost. No obligation. Investor focused review."
         />
         <TcpaSubmitNotice />
       </form>
@@ -552,12 +503,8 @@ function StepAbout({
   );
 }
 
-// ============================================================================
-// Page
-// ============================================================================
-export default function HelocV3() {
-  const ga4 = useGA4("heloc");
-
+export default function Dscr() {
+  const tracker = useRef(makeFunnelTracker("dscr")).current;
   const [stage, setStage] = useState<Stage>("s0");
   const [data, setData] = useState<Data>(() => {
     try {
@@ -571,17 +518,17 @@ export default function HelocV3() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
   const [consentState, setConsentState] = useState<ConsentState>(EMPTY_CONSENT);
 
-  // ViewContent + funnel_start once on mount.
   useEffect(() => {
     trackFbEvent("ViewContent", {
-      content_name: "HELOC",
+      content_name: "DSCR",
       content_category: "Mortgage",
       funnel_version: FUNNEL_VERSION,
     });
-    ga4.trackFunnelStart();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    tracker.formStart();
+  }, [tracker]);
 
   useEffect(() => {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
@@ -593,77 +540,81 @@ export default function HelocV3() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Stage index for GA4 step-completed tracking (1-based question steps).
-  const STAGE_STEP: Record<string, { n: number; name: string }> = {
-    s0: { n: 1, name: "mortgage_balance" },
-    s1: { n: 2, name: "heloc_purpose" },
-    s2: { n: 3, name: "credit_score" },
-    s3: { n: 4, name: "about_you" },
+  const trackStep = (step: number, stepName: string) => {
+    try {
+      const payload = {
+        event: "dscr_step_completed",
+        page: "dscr",
+        step_number: step,
+        step_name: stepName,
+        funnel_version: FUNNEL_VERSION,
+      };
+      if (Array.isArray(window.dataLayer)) window.dataLayer.push(payload);
+      else if (typeof window.gtag === "function") {
+        window.gtag("event", "dscr_step_completed", {
+          page: "dscr",
+          step_number: step,
+          step_name: stepName,
+          funnel_version: FUNNEL_VERSION,
+        });
+      }
+    } catch {}
   };
   const advanceFrom = (from: Stage, to: Stage) => {
-    const meta = STAGE_STEP[from];
-    if (meta) ga4.trackStepCompleted(meta.n, meta.name);
+    const steps: Record<Stage, { n: number; name: string }> = {
+      s0: { n: 1, name: "property_numbers" },
+      s1: { n: 2, name: "rental_income" },
+      s2: { n: 3, name: "credit_score" },
+      s3: { n: 4, name: "about_you" },
+    };
+    trackStep(steps[from].n, steps[from].name);
     go(to);
   };
 
   const SUBMIT_ERR =
-    "Something went wrong with your submission. Please text or call Mykoal directly at (480) 206-9290 and he'll get back to you within minutes.";
+    "Something went wrong with your submission. Please text or call Mykoal directly at (480) 206-9290 and he will get back to you within minutes.";
 
   async function handleSubmit() {
     setIsSubmitting(true);
     setSubmitError("");
+    const attribution = leadSourceAttribution();
+    const dscrGoal = [
+      `Property type: ${optionLabel(PROPERTY_TYPES, data.propertyType)}`,
+      `Estimated monthly rent: $${Number(data.monthlyRent || 0).toLocaleString("en-US")}`,
+      `Funnel version: ${FUNNEL_VERSION}`,
+    ].join(" | ");
+
     try {
-      const result = await submitLead({
-        funnel: "heloc",
+      const result = await submitCrmLead({
+        loanType: "DSCR",
         firstName: data.first,
         lastName: data.last,
         email: data.email,
         phone: data.phone,
-        homeValue: data.homeValue,
-        mortgageBalance: data.balance,
-        creditScore: creditLabel(data.credit),
+        consent: consentState.consent,
+        consent_text: consentState.consent_text,
+        consent_version: consentState.consent_version,
+        homeValue: data.propertyValue,
+        mortgageBalance: data.loanAmount,
+        creditScore: optionLabel(CREDIT, data.credit),
+        loanPurpose: dscrGoal,
         honeypot: data.honeypot,
         pageLoadTime: data.pageLoadTime,
-        pageUrlOverride: leadSourcePageUrl(),
         turnstile_token: consentState.turnstile_token,
-        consent: consentState.consent,
-        consent_version: consentState.consent_version,
-        consent_text: consentState.consent_text,
-        additionalFields: {
-          helocPurpose: goalLabel(data.goal),
-          funnel_version: FUNNEL_VERSION,
-        },
+        ...attribution,
       });
+
       if (result.success) {
         trackFbEvent("Lead", {
-          content_name: "HELOC",
-          content_category: "Mortgage",
-          funnel_version: FUNNEL_VERSION,
-          funnel_length: "long",
-        });
-        ga4.trackStepCompleted(4, "about_you");
-        ga4.trackLead({ funnel_version: FUNNEL_VERSION, funnel_length: "long" });
-        saveRateContext({ creditScore: creditLabel(data.credit), funnel: "heloc" });
-        // Fire-and-forget: email the client their estimated quote (HELOC at
-        // 90% LTV + cash-out refi at 80%) and BCC Mykoal. Never blocks the
-        // result screen — the lead is already captured if this fails.
-        void sendAutoQuote({
-          firstName: data.first,
-          lastName: data.last,
-          email: data.email,
-          homeValue: data.homeValue,
-          balance: data.balance,
-          creditId: data.credit,
-        });
-        // Straight to the external application — no inline options screen.
-        // isSubmitting stays true so the CTA can't double-fire during the
-        // hand-off.
-        trackFbEvent("SubmitApplication", {
-          content_name: "HELOC Application",
+          content_name: "DSCR",
           content_category: "Mortgage",
           funnel_version: FUNNEL_VERSION,
         });
-        window.location.href = buildApplicationUrl();
+        trackStep(4, "about_you");
+        tracker.formSubmit();
+        setSubmitError("");
+        setIsSubmitting(false);
+        setSubmitted(true);
       } else {
         setSubmitError(result.error || SUBMIT_ERR);
         setIsSubmitting(false);
@@ -678,13 +629,13 @@ export default function HelocV3() {
   if (stage === "s0") {
     screen = (
       <div className="funnel-wrap">
-        <StepBalance data={data} set={set} onNext={() => advanceFrom("s0", "s1")} />
+        <StepProperty data={data} set={set} onNext={() => advanceFrom("s0", "s1")} />
       </div>
     );
   } else if (stage === "s1") {
     screen = (
       <div className="funnel-wrap">
-        <StepGoal data={data} set={set} onBack={() => go("s0")} onNext={() => advanceFrom("s1", "s2")} />
+        <StepRental data={data} set={set} onBack={() => go("s0")} onNext={() => advanceFrom("s1", "s2")} />
       </div>
     );
   } else if (stage === "s2") {
@@ -696,16 +647,37 @@ export default function HelocV3() {
   } else {
     screen = (
       <div className="funnel-wrap">
-        <StepAbout
-          data={data}
-          set={set}
-          onBack={() => go("s2")}
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-          consentState={consentState}
-          setConsentState={setConsentState}
-        />
+        {submitted ? (
+          <div className="step">
+            <Progress current={3} />
+            <div className="q-body">
+              <div className="reassure">
+                <Check size={18} />
+                <div>
+                  <b>Thanks, {data.first || "your request is in"}.</b>
+                  <p>
+                    Mykoal will review the rental value, requested loan amount, rent, property type, and credit band
+                    you shared, then follow up with DSCR options.
+                  </p>
+                </div>
+              </div>
+              <a className="btn btn-primary" href="tel:4802069290">
+                Call or text Mykoal <ArrowRight size={18} />
+              </a>
+            </div>
+          </div>
+        ) : (
+          <StepAbout
+            data={data}
+            set={set}
+            onBack={() => go("s2")}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            submitError={submitError}
+            consentState={consentState}
+            setConsentState={setConsentState}
+          />
+        )}
       </div>
     );
   }
@@ -713,20 +685,19 @@ export default function HelocV3() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="HELOC Options | Mykoal DeShazo at Adaxa Home"
-        description="See what your home equity could unlock with a HELOC from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. Soft credit review only to see your options. NMLS #1912347."
-        canonical="/heloc-v3"
-        noIndex
+        title="DSCR Investor Loan Options | Mykoal DeShazo at Adaxa Home"
+        description="Run a DSCR investor loan scenario based on rental cash flow, property value, requested loan amount, and credit profile with Mykoal DeShazo at Adaxa Home."
+        canonical="/dscr"
       />
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@type": "Service",
-          name: "HELOC (Home Equity Line of Credit)",
-          serviceType: "Home Equity Line of Credit",
+          name: "DSCR Investor Loan",
+          serviceType: "Debt Service Coverage Ratio Loan",
           provider: { "@type": "FinancialService", name: "Adaxa Home LLC", url: "https://smartr8.com/" },
           description:
-            "See what your home equity could unlock with a HELOC from Mykoal DeShazo at Adaxa Home. Soft credit review only to see your options. NMLS #1912347.",
+            "DSCR investor loan review based on rental property cash flow, property value, requested loan amount, and credit profile.",
           areaServed: [
             "Arizona",
             "Colorado",
@@ -740,16 +711,14 @@ export default function HelocV3() {
             "Virginia",
             "Washington",
           ].map((name) => ({ "@type": "State", name })),
-          url: "https://smartr8.com/heloc-v3",
+          url: "https://smartr8.com/dscr",
         }}
       />
 
       <Header />
-
       <div className="heloc-v3 flex-1 flex flex-col">
         <main className="main">{screen}</main>
       </div>
-
       <Footer />
     </div>
   );
