@@ -27,11 +27,14 @@ const HelocNextStepV2 = lazy(() => import("@/pages/HelocNextStepV2"));
 // landers were folded into the unified funnel and now 301 to their canonical
 // product routes below.
 const Dscr = lazy(() => import("@/pages/Dscr"));
+const DscrFunnel = lazy(() => import("@/pages/DscrFunnel"));
 // Indexable product landers carrying the FAQ + FAQPage schema (search / AI
 // visibility). VA is a new lane; HelocOptions is the indexable companion to
 // the noIndex /heloc-v3 application funnel.
 const Va = lazy(() => import("@/pages/Va"));
 const HelocOptions = lazy(() => import("@/pages/HelocOptions"));
+const HardMoneyLoans = lazy(() => import("@/pages/HardMoneyLoans"));
+const ProgramFinderPreview = lazy(() => import("@/pages/ProgramFinderPreview"));
 const LegalZoom = lazy(() => import("@/pages/LegalZoom"));
 const Worksheet = lazy(() => import("@/pages/Worksheet"));
 const WorksheetNextStep = lazy(() => import("@/pages/WorksheetNextStep"));
@@ -243,16 +246,24 @@ function Router() {
             pre-selected to its product; Cash-Out / Rate-Reduction / Purchase
             all hand off to the LendingPad guest application via
             /application-next. /see-my-options is the generic strategy picker. */}
-        <Route path="/see-my-options">{() => <Worksheet />}</Route>
+        <Route path="/see-my-options" component={ProgramFinderPreview} />
         <Route path="/cash-out">{() => <Worksheet entry="cash-out" />}</Route>
         <Route path="/rate-reduction">{() => <Worksheet entry="rate-reduction" />}</Route>
         <Route path="/purchase">{() => <Worksheet entry="purchase" />}</Route>
         <Route path="/application-next" component={WorksheetNextStep} />
-        {/* DSCR remains its own standalone lander. */}
+        {/* DSCR info page and dedicated v3-style application funnel. */}
         <Route path="/dscr" component={Dscr} />
+        <Route path="/dscr-main" component={Dscr} />
+        <Route path="/dscr-v3" component={DscrFunnel} />
         {/* VA lander (new lane) + indexable HELOC lander with FAQ + schema. */}
         <Route path="/va" component={Va} />
+        <Route path="/heloc-main" component={HelocOptions} />
         <Route path="/heloc-options" component={HelocOptions} />
+        <Route path="/hard-money-loans" component={HardMoneyLoans} />
+        <Route path="/fix-and-flip-loans">{() => <RedirectTo to="/hard-money-loans" preserveSearch />}</Route>
+        <Route path="/bridge-loans">{() => <RedirectTo to="/hard-money-loans" preserveSearch />}</Route>
+        <Route path="/construction-loans">{() => <RedirectTo to="/hard-money-loans" preserveSearch />}</Route>
+        <Route path="/program-finder-preview">{() => <RedirectTo to="/see-my-options" preserveSearch />}</Route>
         <Route path="/legal" component={LegalZoom} />
         {/* Retired single-page landers → their canonical funnel routes. */}
         <Route path="/cash-out-refi">{() => <RedirectTo to="/cash-out" preserveSearch />}</Route>

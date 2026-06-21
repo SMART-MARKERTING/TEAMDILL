@@ -19,6 +19,8 @@ export interface LeadPayload {
   additionalFields?: Record<string, string | string[]>;
   honeypot?: string;
   pageLoadTime?: number;
+  /** Optional attribution override for routes that hand off into a funnel. */
+  pageUrlOverride?: string;
   /** When set, opts into the strict v2 server pipeline (Turnstile +
    *  TCPA audit). Forms not yet migrated to <TcpaConsent /> can omit
    *  these fields and the server still accepts them. */
@@ -135,7 +137,7 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
     utm_content,
     utm_term,
     referrer: document.referrer,
-    page_url: typeof window !== "undefined" ? window.location.href : "",
+    page_url: payload.pageUrlOverride || (typeof window !== "undefined" ? window.location.href : ""),
     trackingId: getOrCreateTrackingId(),
     // Legacy aliases for backwards compatibility
     funnelType: payload.funnel,
