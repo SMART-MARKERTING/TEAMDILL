@@ -148,6 +148,35 @@ function parseMoney(n: string) {
   return Number((n || "").replace(/[^\d]/g, "")) || 0;
 }
 
+function dollars(n: number) {
+  if (!Number.isFinite(n) || n <= 0) return "Review needed";
+  return `$${Math.round(n).toLocaleString("en-US")}`;
+}
+
+function monthlyInterestOnly(amount: number, apr: number) {
+  return amount > 0 ? (amount * (apr / 100)) / 12 : 0;
+}
+
+function monthlyAmortized(amount: number, apr: number, years: number) {
+  if (amount <= 0) return 0;
+  const months = years * 12;
+  const rate = apr / 100 / 12;
+  return (amount * rate) / (1 - Math.pow(1 + rate, -months));
+}
+
+function creditRateAdjuster(credit: string) {
+  if (credit === "excellent") return -0.45;
+  if (credit === "good") return 0;
+  if (credit === "fair") return 0.75;
+  if (credit === "building") return 1.55;
+  return 0.35;
+}
+
+function aprRange(low: number, high: number, credit: string) {
+  const adjuster = creditRateAdjuster(credit);
+  return `${(low + adjuster).toFixed(2)}% - ${(high + adjuster).toFixed(2)}%`;
+}
+
 function buildApplicationUrl(data: Data) {
   const url = new URL(HELOC_APPLICATION_URL);
   url.searchParams.set("source", "see-my-options");
@@ -266,6 +295,10 @@ function ProgramSummary({ data }: { data: Data }) {
   const equity = Math.max(0, value - balance);
   const isInvestment = data.occupancy === "investment";
   const selfLike = ["self_employed", "entrepreneur", "unemployed"].includes(data.employment);
+  const maxEquityAccess = Math.max(0, Math.floor(value * (isInvestment ? 0.75 : 0.85) - balance));
+  const cashOutAccess = Math.max(0, Math.floor(value * (isInvestment ? 0.7 : 0.8) - balance));
+  const reviewAmount = maxEquityAccess || cashOutAccess || equity;
+  const creditLabel = label(CREDIT, data.credit) || "Credit review";
 
   const primary = isInvestment
     ? "Investor financing path"
@@ -280,22 +313,108 @@ function ProgramSummary({ data }: { data: Data }) {
         "Cash-out refinance",
         selfLike ? "Bank statement or non-QM review" : "Rate and term review if payment reduction matters",
       ];
+  const estimatedOptions = isInvestment
+    ? [
+        {
+          name: "DSCR rental loan",
+          tag: "Rental cash flow",
+          apr: aprRange(7.25, 9.75, data.credit),
+          payment: dollars(monthlyAmortized(Math.max(balance, reviewAmount), 8.25 + creditRateAdjuster(data.credit), 30)),
+          note: "For rental properties where rent can support the payment.",
+        },
+        {
+          name: "Bridge / hard money",
+          tag: "Fast capital",
+          apr: aprRange(10.5, 13.5, data.credit),
+          payment: dollars(monthlyInterestOnly(Math.max(reviewAmount, 150000), 11.75 + creditRateAdjuster(data.credit))),
+          note: "Shorter-term fit for purchase, rehab, or time-sensitive scenarios.",
+        },
+        {
+          name: "Fix, flip, construction",
+          tag: "Project funding",
+          apr: aprRange(10.99, 14.5, data.credit),
+          payment: dollars(monthlyInterestOnly(Math.max(reviewAmount, 150000), 12.25 + creditRateAdjuster(data.credit))),
+          note: "Can consider purchase, rehab budget, draws, and exit plan.",
+        },
+      ]
+    : [
+        {
+          name: "HELOC",
+          tag: "Flexible line",
+          apr: aprRange(8.25, 11.5, data.credit),
+          payment: dollars(monthlyInterestOnly(maxEquityAccess, 9.5 + creditRateAdjuster(data.credit))),
+          note: "Interest-only style estimate during the draw period.",
+        },
+        {
+          name: "Home equity loan",
+          tag: "Fixed payment",
+          apr: aprRange(8.75, 12.25, data.credit),
+          payment: dollars(monthlyAmortized(maxEquityAccess, 9.75 + creditRateAdjuster(data.credit), 20)),
+          note: "Installment style estimate using available equity.",
+        },
+        {
+          name: "Cash-out refinance",
+          tag: "Replace first lien",
+          apr: aprRange(6.75, 8.75, data.credit),
+          payment: dollars(monthlyAmortized(Math.max(balance + cashOutAccess, balance), 7.25 + creditRateAdjuster(data.credit), 30)),
+          note: "Estimated new first mortgage payment before taxes and insurance.",
+        },
+      ];
 
   return (
-    <div className="reassure" style={{ alignItems: "flex-start" }}>
-      <Sparkles size={20} />
-      <div>
-        <b>We have some promising paths to review.</b>
-        <p>
-          Best-fit genre: <strong>{primary}</strong>. Based on your answers, we would compare {options.join(", ")}.
-        </p>
-        {value > 0 && (
+    <div className="program-options-panel">
+      <div className="pop-head">
+        <div className="pop-icon">
+          <Sparkles size={22} />
+        </div>
+        <div>
+          <span>Loan options preview</span>
+          <h3>We have some promising paths to review.</h3>
           <p>
-            Estimated equity: <strong>{money(String(equity)) || "$0"}</strong>. Final options depend on credit, property, liens,
-            income documentation, and underwriting.
+            Best-fit genre: <strong>{primary}</strong>. We would compare {options.join(", ")}.
           </p>
-        )}
+        </div>
       </div>
+      <div className="pop-stats">
+        <div>
+          <span>Estimated equity</span>
+          <strong>{money(String(equity)) || "$0"}</strong>
+        </div>
+        <div>
+          <span>Possible access</span>
+          <strong>{dollars(maxEquityAccess || cashOutAccess)}</strong>
+        </div>
+        <div>
+          <span>Credit band</span>
+          <strong>{creditLabel}</strong>
+        </div>
+      </div>
+      <div className="loan-option-grid">
+        {estimatedOptions.map((option) => (
+          <div className="loan-option" key={option.name}>
+            <div className="loan-option-top">
+              <span>{option.tag}</span>
+              <Landmark size={17} />
+            </div>
+            <h4>{option.name}</h4>
+            <div className="loan-metrics">
+              <div>
+                <span>Estimated APR</span>
+                <strong>{option.apr}</strong>
+              </div>
+              <div>
+                <span>Est. monthly</span>
+                <strong>{option.payment}</strong>
+              </div>
+            </div>
+            <p>{option.note}</p>
+          </div>
+        ))}
+      </div>
+      <p className="pop-disclaimer">
+        Estimates are illustrative only and not a loan offer. Final pricing, APR, payment, points, and approval depend on
+        credit, property, liens, income documentation, rent or DSCR review, title, appraisal, and underwriting.
+      </p>
     </div>
   );
 }
