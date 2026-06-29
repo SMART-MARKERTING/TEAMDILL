@@ -29,9 +29,8 @@ import { trackFbEvent } from "@/lib/fbq";
 import "./helocV3.css";
 
 const SESSION_KEY = "smartr8_program_finder_v1";
-const CAL_URL = "tel:+18054150275";
-const STANDARD_APPLICATION_URL =
-  "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
+const HELOC_APPLICATION_URL =
+  "https://heloc.adaxahome.com/account/heloc/register?referrer=2b35db42-99cb-4b47-b9d4-4a3dfe6926d1";
 
 const STEP_LABELS = ["Property", "Income", "Credit", "Equity", "Fit"];
 const AUTO_ADVANCE_MS = 160;
@@ -272,7 +271,7 @@ function estimateOptionsText(data: Data) {
 }
 
 function buildApplicationUrl(data: Data) {
-  const url = new URL(STANDARD_APPLICATION_URL);
+  const url = new URL(HELOC_APPLICATION_URL);
   url.searchParams.set("source", "see-my-options");
   url.searchParams.set("name", data.first);
   url.searchParams.set("credit", label(CREDIT, data.credit));
@@ -659,12 +658,9 @@ export default function ProgramFinderPreview() {
           </div>
           <NavRow
             onBack={() => go("mortgage")}
-            onNext={() => {
-              if (data.nextAction === "schedule") window.location.href = CAL_URL;
-              else go("contact");
-            }}
+            onNext={() => go("contact")}
             disabled={!data.nextAction}
-            nextLabel={data.nextAction === "schedule" ? "Call Cameron" : "Continue"}
+            nextLabel="Continue"
           />
         </div>
       </div>
