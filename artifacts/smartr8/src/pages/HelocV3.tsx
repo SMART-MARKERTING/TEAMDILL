@@ -98,7 +98,7 @@ const CREDIT: CreditDef[] = [
   { id: "unsure", title: "Not sure", sub: "That's okay" },
 ];
 
-/** Readable label sent to the CRM (the id alone is meaningless to Mykoal). */
+/** Readable label sent to the CRM (the id alone is meaningless to Cameron). */
 function creditLabel(id: string): string {
   const c = CREDIT.find((x) => x.id === id);
   return c ? `${c.title} (${c.sub})` : "";
@@ -374,7 +374,7 @@ function StepGoal({ data, set, onNext, onBack }: StepProps) {
       <StepHead
         eyebrow="Your goal"
         title="What would you put the funds toward?"
-        help="Pick the main one — it helps Mykoal match the right option."
+        help="Pick the main one — it helps Cameron match the right option."
       />
       <div className="q-body">
         <div className="opts cols-2">
@@ -464,7 +464,7 @@ function StepAbout({
       <StepHead
         eyebrow="About you"
         title="Almost done — where should we send your options?"
-        help="Mykoal personally reviews every submission."
+        help="Cameron personally reviews every submission."
       />
       <form
         className="q-body"
@@ -514,7 +514,7 @@ function StepAbout({
             onChange={(e) => set({ email: e.target.value })}
           />
         </Field>
-        <Field label="Mobile phone" hint="So Mykoal can text you your options.">
+        <Field label="Mobile phone" hint="So Cameron can text you your options.">
           <input
             className="inp"
             type="tel"
@@ -607,7 +607,7 @@ export default function HelocV3() {
   };
 
   const SUBMIT_ERR =
-    "Something went wrong with your submission. Please text or call Mykoal directly at (480) 206-9290 and he'll get back to you within minutes.";
+    "Something went wrong with your submission. Please text or call Cameron directly at 805-415-0275 and he'll get back to you within minutes.";
 
   async function handleSubmit() {
     setIsSubmitting(true);
@@ -645,7 +645,7 @@ export default function HelocV3() {
         ga4.trackLead({ funnel_version: FUNNEL_VERSION, funnel_length: "long" });
         saveRateContext({ creditScore: creditLabel(data.credit), funnel: "heloc" });
         // Fire-and-forget: email the client their estimated quote (HELOC at
-        // 90% LTV + cash-out refi at 80%) and BCC Mykoal. Never blocks the
+        // 90% LTV + cash-out refi at 80%) and BCC Cameron. Never blocks the
         // result screen — the lead is already captured if this fails.
         void sendAutoQuote({
           firstName: data.first,
@@ -713,8 +713,8 @@ export default function HelocV3() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="HELOC Options | Mykoal DeShazo at Adaxa Home"
-        description="See what your home equity could unlock with a HELOC from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. Soft credit review only to see your options. NMLS #1912347."
+        title="HELOC Options | Cameron Dill at Adaxa Home"
+        description="See what your home equity could unlock with a HELOC from Cameron Dill, Senior Loan Officer at Adaxa Home. Soft credit review only to see your options. NMLS #763991."
         canonical="/heloc-v3"
         noIndex
       />
@@ -726,7 +726,7 @@ export default function HelocV3() {
           serviceType: "Home Equity Line of Credit",
           provider: { "@type": "FinancialService", name: "Adaxa Home LLC", url: "https://smartr8.com/" },
           description:
-            "See what your home equity could unlock with a HELOC from Mykoal DeShazo at Adaxa Home. Soft credit review only to see your options. NMLS #1912347.",
+            "See what your home equity could unlock with a HELOC from Cameron Dill at Adaxa Home. Soft credit review only to see your options. NMLS #763991.",
           areaServed: [
             "Arizona",
             "Colorado",

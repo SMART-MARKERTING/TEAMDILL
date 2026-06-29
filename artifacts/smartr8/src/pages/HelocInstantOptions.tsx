@@ -8,8 +8,8 @@ export default function HelocInstantOptions() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="HELOC Instant Options | Mykoal DeShazo at Adaxa Home"
-        description="Two fast digital HELOC paths from Mykoal DeShazo at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA &amp; WA. NMLS #1912347."
+        title="HELOC Instant Options | Cameron Dill at Adaxa Home"
+        description="Two fast digital HELOC paths from Cameron Dill at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA &amp; WA. NMLS #763991."
         canonical="/heloc/instant-options"
       />
       <JsonLd data={{
@@ -18,7 +18,7 @@ export default function HelocInstantOptions() {
         "name": "HELOC Instant Options",
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
-        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, and WA. NMLS #1912347.",
+        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, and WA. NMLS #763991.",
         "areaServed": [
           { "@type": "State", "name": "Arizona" },
           { "@type": "State", "name": "Colorado" },
@@ -212,15 +212,15 @@ export default function HelocInstantOptions() {
               <p className="text-white/75 mb-6">I'm here to help you choose the right path for your situation.</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
-                  href="tel:4802069290"
+                  href="tel:8054150275"
                   className="flex items-center justify-center gap-2 h-12 px-6 rounded-lg font-semibold text-sm text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: "#E31B23" }}
                 >
-                  Call (480) 206-9290
+                  Call 805-415-0275
                   <ArrowRight className="h-4 w-4" />
                 </a>
                 <a
-                  href="sms:4802069290"
+                  href="sms:8054150275"
                   className="flex items-center justify-center gap-2 h-12 px-6 rounded-lg font-semibold text-sm border border-white/30 hover:bg-white/10 text-white"
                 >
                   Text Me
@@ -229,7 +229,7 @@ export default function HelocInstantOptions() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground mt-8">
-              Equal Housing Opportunity. NMLS #1912347. This is not a commitment to lend. All terms are subject to lender approval.
+              Equal Housing Opportunity. NMLS #763991. This is not a commitment to lend. All terms are subject to lender approval.
             </p>
           </div>
         </div>

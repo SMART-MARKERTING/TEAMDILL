@@ -157,7 +157,7 @@ const WorksheetDocument = React.forwardRef<HTMLDivElement, WorksheetDocumentProp
         {isNegativeSavings && (
           <div style={{ margin: "8px 24px 0", padding: "10px 14px", background: "#FEF2F2", border: `1px solid ${RED}`, borderRadius: 4, color: RED, fontSize: 12, ...noBreak }}>
             <strong>Heads up:</strong> With these inputs, the new loan does not produce monthly savings.
-            This program may not be a fit — please adjust the inputs or consult Mykoal directly.
+            This program may not be a fit — please adjust the inputs or consult Cameron directly.
           </div>
         )}
 

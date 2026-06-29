@@ -3,8 +3,8 @@ import { Footer } from "@/components/Footer";
 import { PageMeta } from "@/components/PageMeta";
 
 const EFFECTIVE_DATE = "May 30, 2026";
-const CONTACT_PHONE_DISPLAY = "(480) 206-9290";
-const CONTACT_PHONE_TEL = "tel:+14802069290";
+const CONTACT_PHONE_DISPLAY = "805-415-0275";
+const CONTACT_PHONE_TEL = "tel:+18054150275";
 
 function H2({ children }: { children: React.ReactNode }) {
   return <h2 className="text-xl sm:text-2xl font-bold text-primary mt-10 mb-3">{children}</h2>;
@@ -26,8 +26,8 @@ export default function Terms() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="Terms of Use | Mykoal DeShazo at Adaxa Home"
-        description="Terms of Use for smartr8.com, including SMS communication policy and A2P opt-in/opt-out disclosures. Mykoal DeShazo, NMLS #1912347."
+        title="Terms of Use | Cameron Dill at Adaxa Home"
+        description="Terms of Use for smartr8.com, including SMS communication policy and A2P opt-in/opt-out disclosures. Cameron Dill, NMLS #763991."
         canonical="/terms-of-use"
       />
       <Header />
@@ -41,7 +41,7 @@ export default function Terms() {
 
           <P>
             Welcome to smartr8.com (the &ldquo;website&rdquo;), operated by
-            Mykoal DeShazo (NMLS #1912347), Vice President and Senior Loan
+            Cameron Dill (NMLS #763991), Vice President and Senior Loan
             Officer at Adaxa Home, LLC (NMLS #2380533). By accessing the
             website you agree to these Terms of Use. If you do not agree,
             please do not use the website.
@@ -87,7 +87,7 @@ export default function Terms() {
           <P>
             When you submit your phone number through any form on this website,
             you provide express written consent to receive SMS and MMS messages
-            from Mykoal DeShazo and Adaxa Home, LLC related to:
+            from Cameron Dill and Adaxa Home, LLC related to:
           </P>
           <UL>
             <li>Account updates</li>
@@ -141,7 +141,7 @@ export default function Terms() {
 
           <H2>Consent to communication and verification</H2>
           <P>
-            By submitting your information you authorize Mykoal DeShazo and
+            By submitting your information you authorize Cameron Dill and
             Adaxa Home, LLC to contact you and to verify the details you
             provided with third-party services where necessary to deliver
             services.

@@ -47,7 +47,7 @@ const benefits = [
 const howSteps = [
   { title: "Share the property", body: "Tell us about the rental, purchase price or value, and rough rent. An estimate is fine to start." },
   { title: "We run your numbers", body: "We check the cash flow against lender programs and find the strongest fit." },
-  { title: "See your options", body: "Mykoal walks you through your DSCR options and the path to close." },
+  { title: "See your options", body: "Cameron walks you through your DSCR options and the path to close." },
 ];
 
 const faqs: FaqItem[] = [
@@ -93,8 +93,8 @@ export default function Dscr() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="DSCR Investor Loans | Mykoal DeShazo at Adaxa Home"
-        description="Finance rental property on its cash flow, not your tax returns. DSCR loans from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. NMLS 1912347."
+        title="DSCR Investor Loans | Cameron Dill at Adaxa Home"
+        description="Finance rental property on its cash flow, not your tax returns. DSCR loans from Cameron Dill, Senior Loan Officer at Adaxa Home. NMLS 763991."
         canonical={location === "/dscr-main" ? "/dscr-main" : "/dscr"}
       />
       <JsonLd

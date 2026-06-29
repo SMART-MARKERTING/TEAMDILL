@@ -46,7 +46,7 @@ const benefits = [
 const howSteps = [
   { title: "Tell us about your home", body: "Share your estimated home value and mortgage balance. An estimate is fine to start." },
   { title: "We review your equity", body: "We look at what your equity could unlock and which programs may fit your goals." },
-  { title: "See your options", body: "Mykoal walks you through the next steps, with no obligation." },
+  { title: "See your options", body: "Cameron walks you through the next steps, with no obligation." },
 ];
 
 const faqs: FaqItem[] = [
@@ -91,8 +91,8 @@ export default function HelocOptions() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="HELOC Options | Mykoal DeShazo at Adaxa Home"
-        description="Tap your home equity with a HELOC and keep your current mortgage rate. See your options from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. NMLS #1912347."
+        title="HELOC Options | Cameron Dill at Adaxa Home"
+        description="Tap your home equity with a HELOC and keep your current mortgage rate. See your options from Cameron Dill, Senior Loan Officer at Adaxa Home. NMLS #763991."
         canonical={location === "/heloc-main" ? "/heloc-main" : "/heloc-options"}
       />
       <JsonLd
@@ -103,7 +103,7 @@ export default function HelocOptions() {
           serviceType: "Home Equity Line of Credit",
           provider: { "@type": "FinancialService", name: "Adaxa Home LLC", url: "https://smartr8.com/" },
           description:
-            "HELOC review from Mykoal DeShazo at Adaxa Home for homeowners who want to access equity while keeping their current first mortgage in place.",
+            "HELOC review from Cameron Dill at Adaxa Home for homeowners who want to access equity while keeping their current first mortgage in place.",
           url: `https://smartr8.com${location === "/heloc-main" ? "/heloc-main" : "/heloc-options"}`,
         }}
       />

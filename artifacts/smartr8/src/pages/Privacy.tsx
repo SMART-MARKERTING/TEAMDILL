@@ -3,9 +3,9 @@ import { Footer } from "@/components/Footer";
 import { PageMeta } from "@/components/PageMeta";
 
 const EFFECTIVE_DATE = "May 30, 2026";
-const CONTACT_PHONE_DISPLAY = "(480) 206-9290";
-const CONTACT_PHONE_TEL = "tel:+14802069290";
-const CONTACT_EMAIL = "mykoal@adaxahome.com";
+const CONTACT_PHONE_DISPLAY = "805-415-0275";
+const CONTACT_PHONE_TEL = "tel:+18054150275";
+const CONTACT_EMAIL = "Cdill@adaxahome.com";
 
 function H2({ children }: { children: React.ReactNode }) {
   return <h2 className="text-xl sm:text-2xl font-bold text-primary mt-10 mb-3">{children}</h2>;
@@ -27,8 +27,8 @@ export default function Privacy() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="Privacy Policy | Mykoal DeShazo at Adaxa Home"
-        description="Privacy Policy for smartr8.com, including SMS communication policy and A2P opt-in/opt-out disclosures. Mykoal DeShazo, NMLS #1912347."
+        title="Privacy Policy | Cameron Dill at Adaxa Home"
+        description="Privacy Policy for smartr8.com, including SMS communication policy and A2P opt-in/opt-out disclosures. Cameron Dill, NMLS #763991."
         canonical="/privacy"
       />
       <Header />
@@ -42,7 +42,7 @@ export default function Privacy() {
 
           <H2>1. Agreement</H2>
           <P>
-            Mykoal DeShazo (NMLS #1912347), operating under Adaxa Home, LLC
+            Cameron Dill (NMLS #763991), operating under Adaxa Home, LLC
             (NMLS #2380533) (collectively &ldquo;we,&rdquo; &ldquo;us,&rdquo;
             or &ldquo;our&rdquo;), respects your privacy and is committed to
             protecting the personal information you share with us.
@@ -103,7 +103,7 @@ export default function Privacy() {
           <P>
             By providing your phone number through any form on this website,
             you give express written consent to receive SMS and MMS messages
-            from Mykoal DeShazo and Adaxa Home, LLC. These messages may include:
+            from Cameron Dill and Adaxa Home, LLC. These messages may include:
           </P>
           <UL>
             <li>Application updates</li>

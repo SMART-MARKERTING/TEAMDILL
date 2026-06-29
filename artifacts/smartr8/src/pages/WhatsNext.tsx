@@ -9,9 +9,9 @@ import { ArrowRight, CalendarDays, FileText, Zap } from "lucide-react";
 import { trackFbEvent } from "@/lib/fbq";
 import { appendNextStepAction, type FunnelEntryButton } from "@/lib/submitLead";
 
-const CAL_URL = "https://cal.com/mykoal/15-min-loan-consult-meeting";
+const CAL_URL = "tel:+18054150275";
 const LENDINGPAD_URL =
-  "https://prod.lendingpad.com/adaxa-home/pos#/?loid=dabbfd28-9b5f-46b8-9029-aa478433a995";
+  "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
 
 function readContactName(): string {
   try {
@@ -62,8 +62,8 @@ export default function WhatsNext() {
   // handoff confirmation; worksheet leads see "your worksheet is on its way".
   const headline = isProfessional
     ? firstName
-      ? `Thanks ${firstName} — your info is on its way to Mykoal.`
-      : "Thanks — your info is on its way to Mykoal."
+      ? `Thanks ${firstName} — your info is on its way to Cameron.`
+      : "Thanks — your info is on its way to Cameron."
     : source === "worksheet"
     ? firstName
       ? `Your worksheet is on its way, ${firstName}.`
@@ -79,7 +79,7 @@ export default function WhatsNext() {
     : "While I review your information, here's how I can help you move forward right now.";
 
   // Each next-step click fires a Meta Pixel event AND appends a slim
-  // "Next-Step-Action" record to LeadMailbox so Mykoal can see what the lead
+  // "Next-Step-Action" record to LeadMailbox so Cameron can see what the lead
   // did after the handoff (correlated by email).
   function handleScheduleCall() {
     trackFbEvent("Schedule", {
@@ -107,7 +107,7 @@ export default function WhatsNext() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="What Happens Next | Adaxa Home"
-        description="Your information has been received. Mykoal DeShazo will be in touch shortly."
+        description="Your information has been received. Cameron Dill will be in touch shortly."
         canonical="/whats-next"
         noIndex
       />
@@ -148,13 +148,13 @@ export default function WhatsNext() {
               </div>
               <h2 className="text-xl font-bold mb-2">Schedule a Call</h2>
               <p className="text-sm text-white/85 leading-relaxed mb-5 flex-1">
-                Want help walking through your numbers and picking the right strategy? Book a
-                20-minute call with Mykoal directly — a real human looking at your situation, not a
+                Want help walking through your numbers and picking the right strategy? Call
+                Cameron directly for a real human look at your situation, not a
                 calculator.
               </p>
               <div className="mt-auto">
                 <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm group-hover:bg-accent/90 transition-colors">
-                  Book a Time <ArrowRight className="h-4 w-4" />
+                  Call Cameron <ArrowRight className="h-4 w-4" />
                 </span>
                 <div className="text-xs text-white/70 font-medium text-center mt-3">
                   No cost · No obligation · No credit pull
@@ -247,10 +247,10 @@ export default function WhatsNext() {
             <br />
             <span className="text-xs">
               Questions? Email{" "}
-              <a href="mailto:mykoal@adaxahome.com" className="underline">
-                mykoal@adaxahome.com
+              <a href="mailto:Cdill@adaxahome.com" className="underline">
+                Cdill@adaxahome.com
               </a>{" "}
-              or call <a href="tel:+14802069290" className="underline">(480) 206-9290</a>.
+              or call <a href="tel:+18054150275" className="underline">805-415-0275</a>.
             </span>
           </div>
         </div>

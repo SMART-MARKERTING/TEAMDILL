@@ -98,7 +98,7 @@ describe("worksheet/submit-lead — branch 1 (worksheet-internal)", () => {
     // Funnel marker contract (issue #19) — both the fine-grained marker and
     // the manual-send tag must survive the migration.
     expect(body.Notes).toContain("Funnel: worksheet-internal");
-    expect(body.Notes).toContain("Tag: manual send by Mykoal");
+    expect(body.Notes).toContain("Tag: manual send by Cameron");
     expect(body.Notes).toContain("Worksheet summary:\nSaves $400/mo");
     // No phone/state collected on the internal path.
     expect(body.MobilePhone).toBe("");
@@ -135,7 +135,7 @@ describe("worksheet/submit-lead — branch 2 (worksheet-self)", () => {
         clientEmail: "self@example.com",
         firstName: "Sam",
         lastName: "Self",
-        phone: "(480) 206-9290",
+        phone: "805-415-0275",
         state: "AZ",
         trackingId: "trk-123",
         pdfBase64: "JVBERi0=",
@@ -155,7 +155,7 @@ describe("worksheet/submit-lead — branch 2 (worksheet-self)", () => {
     expect(body.Notes).toContain("Worksheet summary:\nBig savings");
     // Phone normalized to E.164 → digits-only (leading 1), matching the
     // public unlock-lead path.
-    expect(body.MobilePhone).toBe("14802069290");
+    expect(body.MobilePhone).toBe("18054150275");
     // State preserved via property_state → Phys_State (the library extension).
     expect(body.Phys_State).toBe("AZ");
   });
@@ -191,7 +191,7 @@ describe("worksheet/submit-lead — branch 3 (public unlock-lead)", () => {
         firstName: "Pat",
         lastName: "Public",
         email: "pat@example.com",
-        phone: "4802069290",
+        phone: "8054150275",
         state: "TX",
         worksheetSummary: "details",
       }),

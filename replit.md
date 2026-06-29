@@ -1,6 +1,6 @@
 # SMARTR8 — Adaxa Home Lead Funnel
 
-A static lead capture funnel for Mykoal DeShazo, VP & Senior Loan Officer at Adaxa Home, LLC. Single-page funnel with a 6-step multi-step modal, Formspree form submission, and three routes: /, /thank-you, /404.
+A static lead capture funnel for Cameron Dill, Senior Vice President - Retail at Adaxa Home, LLC. Single-page funnel with a 6-step multi-step modal, Formspree form submission, and three routes: /, /thank-you, /404.
 
 ## Run & Operate
 
@@ -39,16 +39,16 @@ A static lead capture funnel for Mykoal DeShazo, VP & Senior Loan Officer at Ada
 
 ## Product
 
-A trust-first mortgage lead funnel. Homeowners land, choose their goal (cash-out, lower payment, explore options), complete 6 quick questions about their property, and submit contact info. Mykoal gets email notifications via Formspree and follows up personally.
+A trust-first mortgage lead funnel. Homeowners land, choose their goal (cash-out, lower payment, explore options), complete 6 quick questions about their property, and submit contact info. Cameron gets email notifications via Formspree and follows up personally.
 
 ## User preferences
 
-- Owner: Mykoal DeShazo, VP | Senior Loan Officer, Adaxa Home LLC
-- NMLS #1912347 (personal), NMLS #2380533 (company)
-- Phone: (949) 418-5486, Email: mykoal@adaxahome.com
+- Owner: Cameron Dill, Senior Vice President - Retail, Adaxa Home LLC
+- NMLS #763991 (personal), NMLS #2380533 (company)
+- Phone: 805-415-0275, Email: Cdill@adaxahome.com
 - Brand: clean black + white + light gray, Inter font, professional + trust-focused
 - Formspree endpoint: https://formspree.io/f/meennekb
-- Cal.com booking URL: https://cal.com/mykoal-deshazo/consult (used in HelocNextSteps.tsx; embed still pending on /thank-you)
+- Scheduling fallback: direct call link to 805-415-0275 until Cameron's booking URL is provided.
 
 ## Gotchas
 

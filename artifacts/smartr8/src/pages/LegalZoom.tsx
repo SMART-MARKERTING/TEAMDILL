@@ -425,7 +425,7 @@ export default function LegalZoom() {
               </div>
 
               <div className="mt-4 space-y-2">
-                <Label htmlFor="legal-notes">Anything you want Mykoal to know?</Label>
+                <Label htmlFor="legal-notes">Anything you want Cameron to know?</Label>
                 <Textarea
                   id="legal-notes"
                   value={form.notes}
@@ -488,7 +488,7 @@ export default function LegalZoom() {
               <p className="text-lg leading-relaxed text-muted-foreground">
                 Financing decisions often touch legal questions: who owns the
                 business, who signs, whether an entity is ready, and whether
-                your family documents match your property plans. Mykoal handles
+                your family documents match your property plans. Cameron handles
                 the mortgage strategy. LegalZoom can be a separate path for the
                 legal setup pieces.
               </p>

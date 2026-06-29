@@ -360,7 +360,7 @@ function StepCredit({ data, set, onNext, onBack }: StepProps) {
       <StepHead
         eyebrow="Borrower profile"
         title="Roughly where is your credit?"
-        help="A ballpark lets Mykoal narrow the DSCR programs that may fit."
+        help="A ballpark lets Cameron narrow the DSCR programs that may fit."
       />
       <div className="q-body">
         <div className="opts">
@@ -417,7 +417,7 @@ function StepAbout({
       <StepHead
         eyebrow="About you"
         title="Almost done. Where should we send your DSCR options?"
-        help="Mykoal personally reviews every investor scenario."
+        help="Cameron personally reviews every investor scenario."
       />
       <form
         className="q-body"
@@ -466,7 +466,7 @@ function StepAbout({
             onChange={(e) => set({ email: e.target.value })}
           />
         </Field>
-        <Field label="Mobile phone" hint="So Mykoal can text you your options.">
+        <Field label="Mobile phone" hint="So Cameron can text you your options.">
           <input
             className="inp"
             type="tel"
@@ -572,7 +572,7 @@ export default function Dscr() {
   };
 
   const SUBMIT_ERR =
-    "Something went wrong with your submission. Please text or call Mykoal directly at (480) 206-9290 and he will get back to you within minutes.";
+    "Something went wrong with your submission. Please text or call Cameron directly at 805-415-0275 and he will get back to you within minutes.";
 
   async function handleSubmit() {
     setIsSubmitting(true);
@@ -656,13 +656,13 @@ export default function Dscr() {
                 <div>
                   <b>Thanks, {data.first || "your request is in"}.</b>
                   <p>
-                    Mykoal will review the rental value, requested loan amount, rent, property type, and credit band
+                    Cameron will review the rental value, requested loan amount, rent, property type, and credit band
                     you shared, then follow up with DSCR options.
                   </p>
                 </div>
               </div>
-              <a className="btn btn-primary" href="tel:4802069290">
-                Call or text Mykoal <ArrowRight size={18} />
+              <a className="btn btn-primary" href="tel:8054150275">
+                Call or text Cameron <ArrowRight size={18} />
               </a>
             </div>
           </div>
@@ -685,8 +685,8 @@ export default function Dscr() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="DSCR Investor Loan Options | Mykoal DeShazo at Adaxa Home"
-        description="Run a DSCR investor loan scenario based on rental cash flow, property value, requested loan amount, and credit profile with Mykoal DeShazo at Adaxa Home."
+        title="DSCR Investor Loan Options | Cameron Dill at Adaxa Home"
+        description="Run a DSCR investor loan scenario based on rental cash flow, property value, requested loan amount, and credit profile with Cameron Dill at Adaxa Home."
         canonical="/dscr"
       />
       <JsonLd

@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="mt-auto py-12" style={{ backgroundColor: "#1A3A47" }}>
       <div className="container mx-auto px-4 max-w-5xl text-center">
-        <p className="font-medium mb-1 text-white">Mykoal DeShazo | Vice President | Senior Loan Officer | NMLS #1912347</p>
+        <p className="font-medium mb-1 text-white">Cameron Dill | Senior Vice President - Retail | NMLS #763991</p>
         <p className="text-sm mb-1" style={{ color: "rgba(255,255,255,0.7)" }}>Adaxa Home, LLC | NMLS #2380533</p>
         <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>16767 N Perimeter Dr., Ste 150, Scottsdale, AZ 85260</p>
 

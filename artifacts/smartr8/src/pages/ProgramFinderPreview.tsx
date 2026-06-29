@@ -29,9 +29,9 @@ import { trackFbEvent } from "@/lib/fbq";
 import "./helocV3.css";
 
 const SESSION_KEY = "smartr8_program_finder_v1";
-const CAL_URL = "https://cal.com/mykoal/15-min-loan-consult-meeting";
+const CAL_URL = "tel:+18054150275";
 const HELOC_APPLICATION_URL =
-  "https://heloc.adaxahome.com/account/heloc/register?referrer=07b7dc41-da1d-4044-8cfc-694ebbc1d3b7";
+  "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
 
 const STEP_LABELS = ["Property", "Income", "Credit", "Equity", "Fit"];
 const AUTO_ADVANCE_MS = 160;
@@ -545,11 +545,11 @@ export default function ProgramFinderPreview() {
         sessionStorage.removeItem(SESSION_KEY);
         window.location.href = buildApplicationUrl(data);
       } else {
-        setSubmitError(result.error || "Something went wrong. Please call or text Mykoal directly at (480) 206-9290.");
+        setSubmitError(result.error || "Something went wrong. Please call or text Cameron directly at 805-415-0275.");
         setIsSubmitting(false);
       }
     } catch {
-      setSubmitError("Something went wrong. Please call or text Mykoal directly at (480) 206-9290.");
+      setSubmitError("Something went wrong. Please call or text Cameron directly at 805-415-0275.");
       setIsSubmitting(false);
     }
   }
@@ -647,12 +647,12 @@ export default function ProgramFinderPreview() {
           <ProgramSummary data={data} />
           <div className="opts">
             <OptionCard
-              option={{ id: "email_quote", icon: Mail, title: "Have quote emailed/texted to me", sub: "Share where Mykoal should send your options" }}
+              option={{ id: "email_quote", icon: Mail, title: "Have quote emailed/texted to me", sub: "Share where Cameron should send your options" }}
               selected={data.nextAction === "email_quote"}
               onClick={() => set({ nextAction: "email_quote" })}
             />
             <OptionCard
-              option={{ id: "schedule", icon: Phone, title: "Schedule a call", sub: "Open Mykoal's calendar and pick a time" }}
+              option={{ id: "schedule", icon: Phone, title: "Call Cameron", sub: "Talk through your options directly" }}
               selected={data.nextAction === "schedule"}
               onClick={() => set({ nextAction: "schedule" })}
             />
@@ -660,11 +660,11 @@ export default function ProgramFinderPreview() {
           <NavRow
             onBack={() => go("mortgage")}
             onNext={() => {
-              if (data.nextAction === "schedule") window.open(CAL_URL, "_blank", "noopener,noreferrer");
+              if (data.nextAction === "schedule") window.location.href = CAL_URL;
               else go("contact");
             }}
             disabled={!data.nextAction}
-            nextLabel={data.nextAction === "schedule" ? "Open Calendar" : "Continue"}
+            nextLabel={data.nextAction === "schedule" ? "Call Cameron" : "Continue"}
           />
         </div>
       </div>
@@ -675,7 +675,7 @@ export default function ProgramFinderPreview() {
     screen = (
       <div className="step">
         <Progress current={stageIndex} />
-        <StepHead eyebrow="Send my options" title="Where should we send the quote?" help="Mykoal will use this to follow up on the best-fit program path." />
+        <StepHead eyebrow="Send my options" title="Where should we send the quote?" help="Cameron will use this to follow up on the best-fit program path." />
         <div className="q-body">
           <div className="grid2">
             <Field label="First name">

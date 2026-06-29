@@ -10,9 +10,9 @@
 // tokens so they are obvious on-page and grep-able until legal fills them in.
 
 /** {{LO_NAME}} */
-export const LO_NAME = "Mykoal DeShazo";
+export const LO_NAME = "Cameron Dill";
 /** {{NMLS_ID}} — loan officer NMLS. */
-export const NMLS_ID = "1912347";
+export const NMLS_ID = "763991";
 /** {{COMPANY_NMLS_ID}} — Adaxa Home, LLC company NMLS. */
 export const COMPANY_NMLS_ID = "2380533";
 /** Brokerage / company legal name. */

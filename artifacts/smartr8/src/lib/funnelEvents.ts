@@ -44,7 +44,7 @@ export function makeFunnelTracker(page: string) {
     formStart: () => ev("form", "start"),
     formSubmit: () => ev("form", "submit"),
     faqExpand: (question: string) => ev("faq", "expand", { faq_question: question }),
-    outboundMykoalClick: (url: string) =>
+    outboundCameronClick: (url: string) =>
       ev("outbound_mykoal", "click", { destination_url: url }),
   };
 }

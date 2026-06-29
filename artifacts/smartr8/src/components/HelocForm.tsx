@@ -176,7 +176,7 @@ export function HelocForm() {
   };
 
   const pageLoadTimeRef = useRef(Date.now());
-  const SUBMIT_ERR = "Something went wrong with your submission. Please text or call Myke directly at (480) 206-9290 and he will get back to you within minutes.";
+  const SUBMIT_ERR = "Something went wrong with your submission. Please text or call Cameron directly at 805-415-0275 and he will get back to you within minutes.";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -409,7 +409,7 @@ export function HelocForm() {
                 className="mt-0.5 shrink-0"
               />
               <label htmlFor="heloc_consent" className="text-xs text-muted-foreground cursor-pointer leading-relaxed">
-                By submitting this form, you agree to be contacted by Mykoal DeShazo at Adaxa Home regarding your inquiry. Checking the box above is optional and confirms your consent. Consent is not a condition of any service. Standard rates may apply. You can opt out at any time.
+                By submitting this form, you agree to be contacted by Cameron Dill at Adaxa Home regarding your inquiry. Checking the box above is optional and confirms your consent. Consent is not a condition of any service. Standard rates may apply. You can opt out at any time.
               </label>
             </div>
           </div>

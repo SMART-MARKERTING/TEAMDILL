@@ -21,7 +21,7 @@ const REDIRECT_DELAY_MS = 1500;
 // LendingPad guest application — the single destination for all three
 // worksheet products. Change here to retarget without touching the funnel.
 const APPLICATION_URL =
-  "https://prod.lendingpad.com/adaxa-home/dabbfd28-9b5f-46b8-9029-aa478433a995/pos#/account/guest-application";
+  "https://prod.lendingpad.com/adaxa-home/6544142c-ce2a-4b1b-a621-c1d33fa3eb67/pos#/account/guest-application";
 
 type ProductKey = "cash-out" | "rate-reduction" | "purchase";
 
@@ -32,7 +32,7 @@ const PRODUCT_COPY: Record<ProductKey, { label: string; blurb: string; bullets: 
     bullets: [
       "Pull equity in a single new first mortgage",
       "Soft credit check only to see your options",
-      "Mykoal personally reviews every file",
+      "Cameron personally reviews every file",
       "Secure, fully digital application",
     ],
   },
@@ -42,7 +42,7 @@ const PRODUCT_COPY: Record<ProductKey, { label: string; blurb: string; bullets: 
     bullets: [
       "Lower your rate and redirect savings to principal",
       "Soft credit check only to see your options",
-      "Mykoal personally reviews every file",
+      "Cameron personally reviews every file",
       "Secure, fully digital application",
     ],
   },
@@ -52,7 +52,7 @@ const PRODUCT_COPY: Record<ProductKey, { label: string; blurb: string; bullets: 
     bullets: [
       "Get pre-approved so you can shop with confidence",
       "Soft credit check only to see your options",
-      "Mykoal personally reviews every file",
+      "Cameron personally reviews every file",
       "Secure, fully digital application",
     ],
   },
@@ -135,8 +135,8 @@ export default function WorksheetNextStep() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="Next Step | Mykoal DeShazo at Adaxa Home"
-        description="We're getting your application started with Mykoal DeShazo at Adaxa Home. NMLS #1912347."
+        title="Next Step | Cameron Dill at Adaxa Home"
+        description="We're getting your application started with Cameron Dill at Adaxa Home. NMLS #763991."
         canonical="/application-next"
         noIndex
       />
@@ -146,7 +146,7 @@ export default function WorksheetNextStep() {
           "@type": "Service",
           name: copy.label,
           provider: { "@type": "FinancialService", name: "Adaxa Home LLC", url: "https://smartr8.com/" },
-          description: `${copy.label} application path with Adaxa Home. Soft credit only. NMLS #1912347.`,
+          description: `${copy.label} application path with Adaxa Home. Soft credit only. NMLS #763991.`,
           url: "https://smartr8.com/application-next",
         }}
       />
@@ -260,15 +260,15 @@ export default function WorksheetNextStep() {
               <p className="text-white/80 mb-5 text-base">I'm here to help if anything comes up.</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
                 <a
-                  href="tel:4802069290"
+                  href="tel:8054150275"
                   className="flex items-center justify-center gap-2 h-12 px-6 rounded-xl font-semibold text-sm text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: "#E31B23" }}
                 >
                   <Phone className="h-4 w-4" />
-                  Call (480) 206-9290
+                  Call 805-415-0275
                 </a>
                 <a
-                  href="sms:4802069290"
+                  href="sms:8054150275"
                   className="flex items-center justify-center gap-2 h-12 px-6 rounded-xl font-semibold text-sm border border-white/30 hover:bg-white/10 text-white"
                 >
                   Text Me

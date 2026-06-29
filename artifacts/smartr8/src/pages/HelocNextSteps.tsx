@@ -14,7 +14,7 @@ export default function HelocNextSteps() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="Next Steps | Adaxa Home"
-        description="Your HELOC application is underway. Mykoal DeShazo will be in touch shortly with your next steps."
+        description="Your HELOC application is underway. Cameron Dill will be in touch shortly with your next steps."
         canonical="/heloc/next-steps"
         noIndex
       />
@@ -92,13 +92,12 @@ export default function HelocNextSteps() {
                 </div>
                 <div className="mt-auto">
                   <a
-                    href="https://cal.com/mykoal/15-min-loan-consult-meeting"
-                    target="_blank"
+                    href="tel:+18054150275"
                     rel="noopener noreferrer"
-                    aria-label="Book a time with Mykoal on Cal.com (opens in new tab)"
+                    aria-label="Call Cameron Dill"
                   >
                     <Button variant="outline" className="w-full h-11">
-                      Book a Time
+                      Call Cameron
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </a>
@@ -125,13 +124,13 @@ export default function HelocNextSteps() {
                   </p>
                 </div>
                 <div className="mt-auto flex flex-col gap-2">
-                  <a href="tel:4802069290">
+                  <a href="tel:8054150275">
                     <Button className="w-full h-11 bg-primary hover:bg-primary/90 text-white">
                       <Phone className="mr-2 h-4 w-4" />
-                      Call (480) 206-9290
+                      Call 805-415-0275
                     </Button>
                   </a>
-                  <a href="sms:4802069290">
+                  <a href="sms:8054150275">
                     <Button variant="outline" className="w-full h-11">
                       <MessageSquare className="mr-2 h-4 w-4" />
                       Text Me
@@ -144,7 +143,7 @@ export default function HelocNextSteps() {
 
           {/* Compliance note */}
           <p className="text-center text-xs text-muted-foreground mt-10">
-            Equal Housing Opportunity. NMLS #1912347. This page is for general information only and is not a commitment to lend.
+            Equal Housing Opportunity. NMLS #763991. This page is for general information only and is not a commitment to lend.
           </p>
         </div>
       </main>

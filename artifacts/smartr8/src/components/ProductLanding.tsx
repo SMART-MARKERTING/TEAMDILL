@@ -132,7 +132,7 @@ const LICENSED_STATES = [
 function buildConsentText(product: string): string {
   return (
     "By checking this box and providing my phone number, I give my express written consent " +
-    "to receive recurring SMS text messages from Mykoal DeShazo (mortgage services through " +
+    "to receive recurring SMS text messages from Cameron Dill (mortgage services through " +
     "Adaxa Home LLC, NMLS 2380533) about my " +
     product +
     " inquiry, application status, document requests, appointment reminders, and marketing " +
@@ -297,13 +297,13 @@ export function ProductLanding({ config }: { config: ProductConfig }) {
       } else {
         setSubmitError(
           result.error ||
-            "Something went wrong. Please text or call Mykoal directly at (480) 206 9290 and he will get right back to you.",
+            "Something went wrong. Please text or call Cameron directly at 805 415 0275 and he will get right back to you.",
         );
         setIsSubmitting(false);
       }
     } catch {
       setSubmitError(
-        "Something went wrong. Please text or call Mykoal directly at (480) 206 9290 and he will get right back to you.",
+        "Something went wrong. Please text or call Cameron directly at 805 415 0275 and he will get right back to you.",
       );
       setIsSubmitting(false);
     }
@@ -434,10 +434,10 @@ export function ProductLanding({ config }: { config: ProductConfig }) {
                   Thank you, {firstName.trim() || "and welcome"}
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Your request is in. Mykoal DeShazo will reach out shortly with your options. Need to talk sooner? Call
+                  Your request is in. Cameron Dill will reach out shortly with your options. Need to talk sooner? Call
                   or text {""}
-                  <a href="tel:4802069290" onClick={() => track.phoneClick()} className="font-semibold underline" style={{ color: BRAND_RED }}>
-                    (480) 206 9290
+                  <a href="tel:8054150275" onClick={() => track.phoneClick()} className="font-semibold underline" style={{ color: BRAND_RED }}>
+                    805 415 0275
                   </a>
                   .
                 </p>
@@ -655,7 +655,7 @@ export function ProductLanding({ config }: { config: ProductConfig }) {
                     )}
                   </Button>
                   <p className="text-xs text-muted-foreground leading-relaxed text-center">
-                    By submitting, I ask Mykoal DeShazo and Adaxa Home to contact me about my inquiry using the
+                    By submitting, I ask Cameron Dill and Adaxa Home to contact me about my inquiry using the
                     information I provided. The phone field is only needed if you opt into texts above.
                   </p>
                 </form>

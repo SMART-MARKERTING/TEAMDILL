@@ -76,8 +76,8 @@ describe("sendResendConfirmation", () => {
     expect(init.method).toBe("POST");
     expect(init.headers.Authorization).toBe("Bearer re_test_key");
     const body = JSON.parse(init.body);
-    expect(body.from).toContain("mykoal@mykoal.com");
-    expect(body.reply_to).toBe("mykoal@adaxahome.com");
+    expect(body.from).toContain("Cdill@adaxahome.com");
+    expect(body.reply_to).toBe("Cdill@adaxahome.com");
     expect(body.to).toEqual(["jane@example.com"]);
     expect(body.subject).toBe(subjectFor("heloc-v2", "Jane"));
   });

@@ -14,7 +14,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 }
 
 function headshotAbsoluteUrl(): string {
-  return `${window.location.origin}/mykoal-headshot.jpg`;
+  return `${window.location.origin}/cameron-headshot.png`;
 }
 
 async function buildBlob(

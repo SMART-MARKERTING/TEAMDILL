@@ -229,7 +229,7 @@ export default function ExportLeadModal({
                   htmlFor="ex-tcpa"
                   className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
                 >
-                  By submitting this form, I agree to be contacted by Mykoal DeShazo / Adaxa Home
+                  By submitting this form, I agree to be contacted by Cameron Dill / Adaxa Home
                   LLC via phone, email, or text (including automated means) regarding mortgage
                   products. Checking the box above is optional and confirms my consent. Consent is
                   not required to obtain services. Message and data rates may apply.

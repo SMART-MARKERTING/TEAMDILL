@@ -23,7 +23,7 @@ function payload(overrides: Record<string, unknown> = {}): Record<string, unknow
     firstName: "Jane",
     lastName: "Doe",
     email: "jane@example.com",
-    phone: "4802069290",
+    phone: "8054150275",
     funnel: "heloc-v2",
     homeValue: "700000",
     mortgageBalance: "350000",
@@ -159,7 +159,7 @@ describe("api/submit-lead", () => {
     expect(lead.first_name).toBe("Jane");
     expect(lead.last_name).toBe("Doe");
     expect(lead.email).toBe("jane@example.com");
-    expect(lead.phone_e164).toBe("+14802069290");
+    expect(lead.phone_e164).toBe("+18054150275");
     expect(lead.property_state).toBe("AZ");
     expect(lead.notes).toContain("Loan Purpose: Debt consolidation");
     expect(lead.notes).toContain("Timeline: 30 days");

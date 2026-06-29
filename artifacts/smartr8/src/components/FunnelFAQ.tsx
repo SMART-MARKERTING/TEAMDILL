@@ -64,8 +64,8 @@ export function FunnelFAQ({ items, guideLinks, track, heading = "Frequently aske
     lastOpen.current = value;
   };
 
-  const onMykoalClick = (link: GuideLink) => {
-    if (link.mykoal) track?.outboundMykoalClick(link.href);
+  const onCameronClick = (link: GuideLink) => {
+    if (link.mykoal) track?.outboundCameronClick(link.href);
   };
 
   return (
@@ -87,7 +87,7 @@ export function FunnelFAQ({ items, guideLinks, track, heading = "Frequently aske
                   <a
                     href={item.learnMore.href}
                     rel="noopener"
-                    onClick={() => onMykoalClick(item.learnMore!)}
+                    onClick={() => onCameronClick(item.learnMore!)}
                     className="inline-flex items-center gap-1 font-semibold underline"
                     style={{ color: BRAND_RED }}
                   >
@@ -108,7 +108,7 @@ export function FunnelFAQ({ items, guideLinks, track, heading = "Frequently aske
               key={link.href}
               href={link.href}
               rel="noopener"
-              onClick={() => onMykoalClick(link)}
+              onClick={() => onCameronClick(link)}
               className="inline-flex items-center gap-1 text-sm font-semibold underline"
               style={{ color: BRAND_RED }}
             >

@@ -807,9 +807,9 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
 
     // Calc products (cash-out, rate-reduction) get the Quick Quote auto-emailed
     // — the same two-option estimate (cash-out refi at 80% LTV + HELOC at 90%)
-    // the /heloc-v3 funnel sends, BCC'd to Mykoal. Fire-and-forget: the lead is
+    // the /heloc-v3 funnel sends, BCC'd to Cameron. Fire-and-forget: the lead is
     // already captured above, and sendAutoQuote no-ops when there isn't enough
-    // equity to quote. The Loan Benefits Worksheet PDF is internal-only — Mykoal
+    // equity to quote. The Loan Benefits Worksheet PDF is internal-only — Cameron
     // sends it by hand from /worksheet/internal — so it is NOT emailed here.
     const isCalcProduct =
       isCalc && entryButton !== "heloc" && entryButton !== "purchase";
@@ -1394,9 +1394,9 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
       ? "Let's get you pre-approved"
       : "Let's get you started";
     const desc = isHeloc
-      ? "We'll connect you with our top instant-quote HELOC partners and Mykoal will personally follow up to help you compare the offers."
+      ? "We'll connect you with our top instant-quote HELOC partners and Cameron will personally follow up to help you compare the offers."
       : isPurchase
-      ? "Mykoal will build you a personal pre-approval game plan — what you can afford, what programs fit, and the smartest way to structure your offer."
+      ? "Cameron will build you a personal pre-approval game plan — what you can afford, what programs fit, and the smartest way to structure your offer."
       : "Tell us a little about what you're looking for.";
     return (
       <div className="space-y-6">
@@ -1414,7 +1414,7 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
           <div className="font-semibold text-primary mb-1">What happens next:</div>
           <ul className="text-muted-foreground space-y-1 list-disc list-inside">
             <li>Share your name, email, and mobile (one quick step)</li>
-            <li>Mykoal personally reviews and reaches out within 1 business day</li>
+            <li>Cameron personally reviews and reaches out within 1 business day</li>
             <li>Free, no obligation, no credit pull</li>
           </ul>
         </div>
@@ -1465,7 +1465,7 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">Almost done — where should we send your quote?</h2>
           <p className="text-muted-foreground text-sm">
-            Mykoal personally reviews every lead. We never sell your info or spam you.
+            Cameron personally reviews every lead. We never sell your info or spam you.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -1519,7 +1519,7 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
         </div>
         <TcpaConsent onChange={setConsentState} />
         <p className="text-[11px] text-muted-foreground">
-          Mykoal DeShazo · NMLS #1912347 · Adaxa Home, LLC · NMLS #2380533 · Equal Housing Opportunity
+          Cameron Dill · NMLS #763991 · Adaxa Home, LLC · NMLS #2380533 · Equal Housing Opportunity
         </p>
       </div>
     );
@@ -1533,23 +1533,23 @@ export default function Worksheet({ entry }: { entry?: FunnelEntryButton } = {})
   // bare /see-my-options picker stays noIndex.
   const META: Record<string, { title: string; description: string; canonical: string }> = {
     "cash-out": {
-      title: "Cash-Out Refinance | Mykoal DeShazo at Adaxa Home",
-      description: "Pull cash from your home equity with a cash-out refinance from Mykoal DeShazo at Adaxa Home. See your options in minutes, no credit pull. NMLS #1912347.",
+      title: "Cash-Out Refinance | Cameron Dill at Adaxa Home",
+      description: "Pull cash from your home equity with a cash-out refinance from Cameron Dill at Adaxa Home. See your options in minutes, no credit pull. NMLS #763991.",
       canonical: "/cash-out",
     },
     "rate-reduction": {
-      title: "Rate Reduction Refinance | Mykoal DeShazo at Adaxa Home",
-      description: "Lower your mortgage rate and monthly payment with a rate-reduction refinance from Mykoal DeShazo at Adaxa Home. NMLS #1912347.",
+      title: "Rate Reduction Refinance | Cameron Dill at Adaxa Home",
+      description: "Lower your mortgage rate and monthly payment with a rate-reduction refinance from Cameron Dill at Adaxa Home. NMLS #763991.",
       canonical: "/rate-reduction",
     },
     purchase: {
-      title: "Home Purchase Pre-Approval | Mykoal DeShazo at Adaxa Home",
-      description: "Get pre-approved to buy a home with Mykoal DeShazo at Adaxa Home. Know what you can afford and shop with confidence. NMLS #1912347.",
+      title: "Home Purchase Pre-Approval | Cameron Dill at Adaxa Home",
+      description: "Get pre-approved to buy a home with Cameron Dill at Adaxa Home. Know what you can afford and shop with confidence. NMLS #763991.",
       canonical: "/purchase",
     },
   };
   const meta = (entryButton && META[entryButton]) || {
-    title: "See My Options | Mykoal DeShazo at Adaxa Home",
+    title: "See My Options | Cameron Dill at Adaxa Home",
     description: "See exactly how the right loan strategy could lower your monthly payment, eliminate interest, and get you debt-free years sooner.",
     canonical: "/see-my-options",
   };

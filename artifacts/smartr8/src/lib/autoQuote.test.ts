@@ -38,7 +38,7 @@ describe("buildQuotePayload", () => {
     expect(p).not.toBeNull();
     expect(p!.clientEmail).toBe("jane@example.com");
     expect(p!.clientName).toBe("Jane Doe");
-    expect(p!.bcc).toBe("mykoal@adaxahome.com");
+    expect(p!.bcc).toBe("Cdill@adaxahome.com");
     expect(p!.source).toBe("funnel-auto");
     // HELOC line = $350k, cash-out = $300k
     expect(p!.options.b.lineAmount).toBe("$350,000");

@@ -53,7 +53,7 @@ function isValidEmail(email: string): boolean {
 }
 
 const SUBMIT_ERR =
-  "Something went wrong with your submission. Please text or call Myke directly at (480) 206-9290 and he will get back to you within minutes.";
+  "Something went wrong with your submission. Please text or call Cameron directly at 805-415-0275 and he will get back to you within minutes.";
 
 export default function HelocQuickV2() {
   const [, setLocation] = useLocation();
@@ -139,7 +139,7 @@ export default function HelocQuickV2() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="See Your Instant HELOC Options | Adaxa Home"
-        description="Already know you want a HELOC? Share a few details and go straight to your options with Mykoal DeShazo at Adaxa Home."
+        description="Already know you want a HELOC? Share a few details and go straight to your options with Cameron Dill at Adaxa Home."
         canonical="/heloc/quick-v2"
         noIndex
       />

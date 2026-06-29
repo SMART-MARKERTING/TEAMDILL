@@ -92,7 +92,7 @@ export function buildComplianceFooter(inputs: WorksheetInputs): string {
     : "";
 
   return [
-    `${company} | Company NMLS #${inputs.companyNMLS || "2380533"} | ${inputs.preparedBy || "Mykoal DeShazo"} NMLS #${inputs.contactNMLS || "1912347"}. `,
+    `${company} | Company NMLS #${inputs.companyNMLS || "2380533"} | ${inputs.preparedBy || "Cameron Dill"} NMLS #${inputs.contactNMLS || "763991"}. `,
     `Licensed to originate mortgage loans in ${LICENSED_STATES}. Verify licensing at www.nmlsconsumeraccess.org.\n\n`,
     "This document is for informational and illustrative purposes only and does NOT constitute a commitment to lend, an offer to extend credit, a Loan Estimate as required under 12 CFR 1026.19, or a guarantee of any specific terms or rates. The interest rate and APR shown are hypothetical for illustration only. Actual rates, APR, fees, and terms depend on credit approval, property appraisal, income and asset verification, loan-to-value, occupancy, property type, debt-to-income ratio, and current market conditions, and are subject to change without notice.\n\n",
     "APR shown is estimated based on entered closing costs and is for illustration only. Actual APR on your Loan Estimate may vary based on actual finance charges, prepaids, and other factors.\n\n",

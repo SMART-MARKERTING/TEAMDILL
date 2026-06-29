@@ -20,9 +20,9 @@ const config: ProductConfig = {
   loanType: "VA",
   route: "/va",
   meta: {
-    title: "VA Home Loans | Mykoal DeShazo at Adaxa Home",
+    title: "VA Home Loans | Cameron Dill at Adaxa Home",
     description:
-      "VA-backed home loans for eligible veterans, service members, and surviving spouses from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. NMLS #1912347.",
+      "VA-backed home loans for eligible veterans, service members, and surviving spouses from Cameron Dill, Senior Loan Officer at Adaxa Home. NMLS #763991.",
   },
   eyebrow: "VA Home Loans",
   h1: "VA-backed home loans for those who served",
@@ -65,7 +65,7 @@ const config: ProductConfig = {
   howSteps: [
     { title: "Tell us about your goal", body: "Share whether you are buying or refinancing and a little about your situation." },
     { title: "We review your options", body: "We look at VA-backed programs that may fit and what the path to qualify looks like." },
-    { title: "See your options", body: "Mykoal walks you through your VA loan options and the next steps, with no obligation." },
+    { title: "See your options", body: "Cameron walks you through your VA loan options and the next steps, with no obligation." },
   ],
   faqs: [
     {

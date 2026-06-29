@@ -238,7 +238,7 @@ export default function LeadCaptureModal({
                 htmlFor="tcpa"
                 className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
               >
-                By submitting this form, I agree to be contacted by Mykoal DeShazo / Adaxa Home LLC
+                By submitting this form, I agree to be contacted by Cameron Dill / Adaxa Home LLC
                 via phone, email, or text (including automated means) regarding mortgage products.
                 Checking the box above is optional and confirms my consent. Consent is not required
                 to obtain services. Message and data rates may apply.
@@ -264,7 +264,7 @@ export default function LeadCaptureModal({
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">
-            Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA · NMLS #1912347
+            Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA · NMLS #763991
           </p>
         </form>
       </DialogContent>

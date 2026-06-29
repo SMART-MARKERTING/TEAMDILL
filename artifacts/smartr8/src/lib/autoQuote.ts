@@ -9,12 +9,12 @@
 // This module is split into pure, unit-tested calc/builder functions and a
 // thin fire-and-forget `sendAutoQuote()` wrapper. Lead capture never depends
 // on the quote succeeding — if Resend is down or the math yields no equity,
-// the lead is still captured and Mykoal follows up by hand.
+// the lead is still captured and Cameron follows up by hand.
 
 import { getRateEstimate } from "@/lib/rateEstimate";
 
 // Max combined LTV per product. HELOC tops out higher than an agency cash-out
-// refinance, matching how Mykoal quotes these by hand.
+// refinance, matching how Cameron quotes these by hand.
 export const HELOC_LTV = 0.9;
 export const CASHOUT_LTV = 0.8;
 
@@ -23,14 +23,14 @@ export const CASHOUT_LTV = 0.8;
 // human conversation. Tunable.
 export const MIN_HELOC_AVAILABLE = 10_000;
 
-// Mykoal's advisor block, rendered into the email signature + reply-to.
+// Cameron's advisor block, rendered into the email signature + reply-to.
 const ADVISOR = {
-  name: "Mykoal DeShazo",
+  name: "Cameron Dill",
   title: "Senior Loan Officer",
   company: "Adaxa Home",
-  nmls: "1912347",
-  phone: "(480) 206-9290",
-  email: "mykoal@adaxahome.com",
+  nmls: "763991",
+  phone: "805-415-0275",
+  email: "Cdill@adaxahome.com",
   web: "smartr8.com",
 } as const;
 
@@ -41,7 +41,7 @@ const DISCLAIMER =
   "rate for your stated credit range. Your actual available funds, rate, APR, and payment depend on " +
   "a full application, credit review, appraisal, and underwriting, and may differ. All loans are " +
   "subject to credit approval and property eligibility. Adaxa Home, LLC NMLS #2380533; " +
-  "Mykoal DeShazo NMLS #1912347. Equal Housing Opportunity.";
+  "Cameron Dill NMLS #763991. Equal Housing Opportunity.";
 
 // v3 funnel credit-bucket id → rate-table band key. The bands span the bucket
 // labels (e.g. "good" = 680–739), so we pick the band the bucket's midpoint

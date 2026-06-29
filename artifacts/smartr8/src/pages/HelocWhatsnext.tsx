@@ -9,8 +9,8 @@ import { ArrowRight, CalendarDays, FileText, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { useGA4 } from "@/hooks/useGA4";
 import { trackFbEvent } from "@/lib/fbq";
-const CAL_URL = "https://cal.com/mykoal/15-min-loan-consult-meeting";
-const LENDINGPAD_URL = "https://prod.lendingpad.com/adaxa-home/pos#/?loid=dabbfd28-9b5f-46b8-9029-aa478433a995";
+const CAL_URL = "tel:+18054150275";
+const LENDINGPAD_URL = "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
 
 export default function HelocWhatsnext() {
   const search = useSearch();
@@ -25,7 +25,7 @@ export default function HelocWhatsnext() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="What Happens Next | Adaxa Home"
-        description="Your HELOC inquiry has been received. Mykoal DeShazo will be in touch shortly."
+        description="Your HELOC inquiry has been received. Cameron Dill will be in touch shortly."
         canonical="/heloc/whats-next"
         noIndex
       />
@@ -79,8 +79,8 @@ export default function HelocWhatsnext() {
                   <p className="text-sm text-muted-foreground leading-relaxed">Want help comparing your options before moving forward? Book a time to talk through your goals.</p>
                 </div>
                 <div className="mt-auto">
-                  <a href={CAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => ga4.trackWhatsnextClick("schedule_call")}>
-                    <Button variant="outline" className="w-full h-11">Book a Time <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                  <a href={CAL_URL} rel="noopener noreferrer" onClick={() => ga4.trackWhatsnextClick("schedule_call")}>
+                    <Button variant="outline" className="w-full h-11">Call Cameron <ArrowRight className="ml-2 h-4 w-4" /></Button>
                   </a>
                 </div>
               </CardContent>
@@ -109,7 +109,7 @@ export default function HelocWhatsnext() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-10">
-            Equal Housing Opportunity. NMLS #1912347. This page is for general information only and is not a commitment to lend.
+            Equal Housing Opportunity. NMLS #763991. This page is for general information only and is not a commitment to lend.
           </p>
         </div>
       </main>

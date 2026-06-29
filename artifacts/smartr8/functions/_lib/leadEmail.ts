@@ -8,8 +8,8 @@
 // enables idempotency + IP rate limiting). Both are already bound in the
 // capture Workers.
 
-const FROM = "Mykoal DeShazo, Adaxa Home <mykoal@mykoal.com>";
-const REPLY_TO = "mykoal@adaxahome.com";
+const FROM = "Cameron Dill, Adaxa Home <Cdill@adaxahome.com>";
+const REPLY_TO = "Cdill@adaxahome.com";
 // Absolute, production-hosted assets (emails cannot use bundle-relative paths).
 const LOGO_URL = "https://smartr8.com/adaxa-logo-optimized.jpg";
 const EHO_URL = "https://smartr8.com/eho-logo-optimized.png";
@@ -50,16 +50,16 @@ Here's what happens next:
 
 If you have any questions before then, you can reach me directly:
 
-Phone: (480) 206-9290
-Text: (480) 206-9290
-Email: mykoal@adaxahome.com
+Phone: 805-415-0275
+Text: 805-415-0275
+Email: Cdill@adaxahome.com
 
 Looking forward to helping you out.
 
-Mykoal DeShazo
-Vice President | Senior Loan Officer
+Cameron Dill
+Senior Vice President - Retail
 Adaxa Home, LLC
-NMLS #1912347 | Company NMLS #2380533
+NMLS #763991 | Company NMLS #2380533
 16767 N Perimeter Dr., Ste 150, Scottsdale, AZ 85260
 
 Equal Housing Opportunity. Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA.
@@ -100,19 +100,19 @@ export function renderHtml(firstNameRaw) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fdf2f2;border-left:4px solid #E31B23;border-radius:4px;">
       <tr><td style="padding:16px 20px;font-size:15px;line-height:1.8;color:#333333;">
         <strong style="color:#E31B23;">Have questions before then? Reach me directly:</strong><br>
-        Phone: <a href="tel:+14802069290" style="color:#E31B23;text-decoration:none;">(480) 206-9290</a><br>
-        Text: <a href="sms:+14802069290" style="color:#E31B23;text-decoration:none;">(480) 206-9290</a><br>
-        Email: <a href="mailto:mykoal@adaxahome.com" style="color:#E31B23;text-decoration:none;">mykoal@adaxahome.com</a>
+        Phone: <a href="tel:+18054150275" style="color:#E31B23;text-decoration:none;">805-415-0275</a><br>
+        Text: <a href="sms:+18054150275" style="color:#E31B23;text-decoration:none;">805-415-0275</a><br>
+        Email: <a href="mailto:Cdill@adaxahome.com" style="color:#E31B23;text-decoration:none;">Cdill@adaxahome.com</a>
       </td></tr>
     </table>
   </td></tr>
   <tr><td style="padding:20px 32px 8px;color:#333333;font-size:15px;line-height:1.6;">
     <p style="margin:0 0 16px;">Looking forward to helping you out.</p>
-    <p style="margin:0;color:#13485A;font-weight:bold;font-size:16px;">Mykoal DeShazo</p>
+    <p style="margin:0;color:#13485A;font-weight:bold;font-size:16px;">Cameron Dill</p>
     <p style="margin:2px 0 0;color:#666666;font-size:14px;line-height:1.5;">
-      Vice President | Senior Loan Officer<br>
+      Senior Vice President - Retail<br>
       Adaxa Home, LLC<br>
-      NMLS #1912347 | Company NMLS #2380533<br>
+      NMLS #763991 | Company NMLS #2380533<br>
       16767 N Perimeter Dr., Ste 150, Scottsdale, AZ 85260
     </p>
   </td></tr>

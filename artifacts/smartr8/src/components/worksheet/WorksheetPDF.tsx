@@ -200,7 +200,7 @@ export function WorksheetPDF({ inputs, results, headshotUrl }: WorksheetPDFProps
             <View style={s.warning} wrap={false}>
               <Text>
                 Heads up: With these inputs, the new loan does not produce monthly savings.
-                This program may not be a fit — please adjust inputs or consult Mykoal directly.
+                This program may not be a fit — please adjust inputs or consult Cameron directly.
               </Text>
             </View>
           )}

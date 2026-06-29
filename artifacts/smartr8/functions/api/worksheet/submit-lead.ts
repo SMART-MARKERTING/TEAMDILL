@@ -106,8 +106,8 @@ async function sendResendEmail({ apiKey, to, subject, html, pdfBase64, fileName 
     html: string;
     attachments?: Array<{ filename: string; content: string }>;
   } = {
-    from: "Mykoal DeShazo <mykoal@mykoal.com>",
-    reply_to: "mykoal@adaxahome.com",
+    from: "Cameron Dill <Cdill@adaxahome.com>",
+    reply_to: "Cdill@adaxahome.com",
     to: Array.isArray(to) ? to : [to],
     subject,
     html,
@@ -158,27 +158,27 @@ function buildClientEmailHtml(clientName: string, advisorName?: string): string 
     <p>Hi ${clientName || "there"},</p>
     <p>
       Attached is your personalized <strong>Loan Benefits Worksheet</strong>, prepared by
-      <strong>${advisorName || "Mykoal DeShazo"}</strong>.
+      <strong>${advisorName || "Cameron Dill"}</strong>.
     </p>
     <p>
       This worksheet shows exactly how a refinance + debt consolidation strategy could lower your
       monthly payment, reduce your total interest cost, and get you debt-free years sooner.
     </p>
     <p>
-      Have questions? Reply to this email or call me directly at <strong>(480) 206-9290</strong>.
+      Have questions? Reply to this email or call me directly at <strong>805-415-0275</strong>.
       I'm happy to walk through the numbers together.
     </p>
     <p style="margin-top: 24px;">
       Warm regards,<br>
-      <strong>${advisorName || "Mykoal DeShazo"}</strong><br>
-      Vice President | Senior Loan Officer<br>
+      <strong>${advisorName || "Cameron Dill"}</strong><br>
+      Senior Vice President - Retail<br>
       Adaxa Home LLC<br>
-      (480) 206-9290 · mykoal@adaxahome.com<br>
-      NMLS #1912347 · Company NMLS #2380533
+      805-415-0275 · Cdill@adaxahome.com<br>
+      NMLS #763991 · Company NMLS #2380533
     </p>
     <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e5e5;">
     <p style="font-size: 10px; color: #888; line-height: 1.5;">
-      Adaxa Home LLC | Company NMLS #2380533. Mykoal DeShazo NMLS #1912347.
+      Adaxa Home LLC | Company NMLS #2380533. Cameron Dill NMLS #763991.
       Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA.
       Verify licensing at www.nmlsconsumeraccess.org.
       This document is for informational purposes only and does not constitute a commitment to lend.
@@ -291,7 +291,7 @@ export async function onRequest(context: WorksheetContext): Promise<Response> {
       submitToLeadMailbox(lead, ip, {
         notesPrefix: [
           "Funnel: worksheet-internal",
-          "Tag: manual send by Mykoal",
+          "Tag: manual send by Cameron",
           "Source: smartr8.com/worksheet/internal",
         ],
       }),
@@ -320,7 +320,7 @@ export async function onRequest(context: WorksheetContext): Promise<Response> {
         apiKey: resendKey,
         to: body.clientEmail,
         subject: `Your Loan Benefits Worksheet — ${clientName || "See attached"}`,
-        html: buildClientEmailHtml(clientName, "Mykoal DeShazo"),
+        html: buildClientEmailHtml(clientName, "Cameron Dill"),
         pdfBase64: body.pdfBase64,
         fileName: body.fileName || "Loan-Benefits-Worksheet.pdf",
       });
@@ -358,7 +358,7 @@ export async function onRequest(context: WorksheetContext): Promise<Response> {
       waitUntil(
         sendResendEmail({
           apiKey: resendKey,
-          to: "mykoal@adaxahome.com",
+          to: "Cdill@adaxahome.com",
           subject: `New Worksheet Self-Send — ${clientName}`,
           html: buildAdvisorNotificationHtml({ firstName, lastName, email: body.clientEmail, phone: body.phone, state: body.state, worksheetSummary: body.worksheetSummary, source: "worksheet-self" }),
         }).then(r => { if (!r.ok) console.error("[resend] advisor self-send notification failed:", r.error); })

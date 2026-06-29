@@ -59,7 +59,7 @@ const products = [
   {
     icon: Home,
     title: "Rental investor exits",
-    body: "When the project becomes a rental, Mykoal can also compare DSCR takeout financing after the property is stabilized.",
+    body: "When the project becomes a rental, Cameron can also compare DSCR takeout financing after the property is stabilized.",
   },
 ];
 
@@ -74,7 +74,7 @@ export default function HardMoneyLoans() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="Hard Money, Fix and Flip, Construction & Bridge Loans | Smartr8"
-        description="Explore hard money loans, fix and flip financing, construction rehab loans, and bridge loans for real estate investors with Mykoal DeShazo at Adaxa Home."
+        description="Explore hard money loans, fix and flip financing, construction rehab loans, and bridge loans for real estate investors with Cameron Dill at Adaxa Home."
         canonical="/hard-money-loans"
       />
       <JsonLd
@@ -105,7 +105,7 @@ export default function HardMoneyLoans() {
               Hard money, fix and flip, construction, and bridge loan options
             </h1>
             <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed mx-auto max-w-2xl">
-              Need funding for a real estate investment deal that does not fit a conventional box? Mykoal can help you
+              Need funding for a real estate investment deal that does not fit a conventional box? Cameron can help you
               compare investor financing paths and the exit strategy that makes the deal work.
             </p>
             <div className="mt-7 flex flex-col sm:flex-row justify-center gap-3">
@@ -115,7 +115,7 @@ export default function HardMoneyLoans() {
                 className="h-12 px-8 text-base shadow-lg rounded-xl border-0 hover:opacity-90"
                 style={{ backgroundColor: BRAND_RED, color: "#FFFFFF" }}
               >
-                <a href="sms:4802069290">
+                <a href="sms:8054150275">
                   Text My Deal <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </Button>
@@ -189,7 +189,7 @@ export default function HardMoneyLoans() {
               className="h-12 px-8 text-base shadow-lg rounded-xl border-0 hover:opacity-90"
               style={{ backgroundColor: BRAND_RED, color: "#FFFFFF" }}
             >
-              <a href="sms:4802069290">
+              <a href="sms:8054150275">
                 Text My Deal <ArrowRight className="ml-2 h-5 w-5" />
               </a>
             </Button>

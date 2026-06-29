@@ -9,8 +9,8 @@ compliant. The rejection is about how the campaign **use case** was registered.
 Resubmit reframed as **first-party customer care** from a licensed mortgage
 originator.
 
-- **Brand:** DeShazo Wealth LLC (TCR ID CPO2A0R)
-- **NMLS:** #1912347 (individual) / #2380533 (Adaxa Home, LLC)
+- **Brand:** Cameron Dill / Adaxa Home (TCR ID CPO2A0R)
+- **NMLS:** #763991 (individual) / #2380533 (Adaxa Home, LLC)
 
 ---
 
@@ -35,18 +35,18 @@ originator.
 
 > Consumers opt in digitally at smartr8.com by submitting a mortgage / home-equity
 > inquiry form and checking an unchecked-by-default consent box agreeing to
-> receive recurring SMS from Mykoal DeShazo (NMLS #1912347) / Adaxa Home, LLC.
+> receive recurring SMS from Cameron Dill (NMLS #763991) / Adaxa Home, LLC.
 > Consent language and Privacy Policy (with the SMS clause) are at
 > https://smartr8.com/privacy. No opt-ins are purchased or sourced from third
 > parties.
 
 **Sample messages:**
 
-1. Hi {Name}, it's Mykoal at Adaxa Home (NMLS #1912347) following up on the mortgage request you submitted on smartr8.com. Is now a good time to go over your options? Reply STOP to opt out, HELP for help.
+1. Hi {Name}, it's Cameron at Adaxa Home (NMLS #763991) following up on the mortgage request you submitted on smartr8.com. Is now a good time to go over your options? Reply STOP to opt out, HELP for help.
 2. {Name}, I pulled a couple of options for your home-equity goal. Want me to text or email the details? Msg & data rates may apply. Reply STOP to opt out.
 3. Quick follow-up on your request - I have a few times open this week to talk it through. Reply STOP to opt out.
 4. {Name}, I still have the documents checklist ready when you are. Reply with any questions. Reply STOP to opt out, HELP for help.
-5. Reminder: your call with Mykoal at Adaxa Home is set for {time}. Reply to reschedule. Reply STOP to opt out.
+5. Reminder: your call with Cameron at Adaxa Home is set for {time}. Reply to reschedule. Reply STOP to opt out.
 
 ## Keywords
 
@@ -59,7 +59,7 @@ originator.
 **Opt-in message:**
 
 > Adaxa Home: Thanks for confirming! You'll get occasional mortgage updates from
-> Mykoal DeShazo (NMLS #1912347). Msg frequency varies. Msg & data rates may
+> Cameron Dill (NMLS #763991). Msg frequency varies. Msg & data rates may
 > apply. Reply HELP for help, STOP to opt out.
 
 **Opt-out message:**
@@ -69,7 +69,7 @@ originator.
 
 **Help message:**
 
-> Adaxa Home (NMLS #2380533). Help: (480) 206-9290 or mykoal@adaxahome.com.
+> Adaxa Home (NMLS #2380533). Help: 805-415-0275 or Cdill@adaxahome.com.
 > Msg & data rates may apply. Reply STOP to opt out.
 
 ## Toggles / yes-no flags

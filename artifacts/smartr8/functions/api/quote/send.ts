@@ -214,16 +214,16 @@ export async function onRequest(context) {
 
   const adv = body.advisor || {};
   const cleanName = String(adv.name || "Adaxa Home").replace(/["\r\n<>]/g, "").trim() || "Adaxa Home";
-  const replyTo = (adv.email && String(adv.email).trim()) || "mykoal@adaxahome.com";
+  const replyTo = (adv.email && String(adv.email).trim()) || "Cdill@adaxahome.com";
   const subject = `Your Quick Quote${body.clientName ? ` — ${body.clientName}` : ""}`;
 
-  // BCC must be a valid address if supplied (e.g. the auto-quote copies Mykoal).
+  // BCC must be a valid address if supplied (e.g. the auto-quote copies Cameron).
   const bcc =
     body.bcc && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(body.bcc)) ? String(body.bcc) : undefined;
 
   const result = await sendResendEmail({
     apiKey: resendKey,
-    from: `"${cleanName}" <mykoal@mykoal.com>`,
+    from: `"${cleanName}" <Cdill@adaxahome.com>`,
     replyTo,
     to: body.clientEmail,
     bcc,

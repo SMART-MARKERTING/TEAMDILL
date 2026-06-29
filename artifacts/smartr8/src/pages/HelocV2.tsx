@@ -287,7 +287,7 @@ export default function HelocV2() {
   const dobError = dobValidation.error ?? null;
 
   const SUBMIT_ERR =
-    "Something went wrong with your submission. Please text or call Myke directly at (480) 206-9290 and he will get back to you within minutes.";
+    "Something went wrong with your submission. Please text or call Cameron directly at 805-415-0275 and he will get back to you within minutes.";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!st.email) {
@@ -383,8 +383,8 @@ export default function HelocV2() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="HELOC Options | Mykoal DeShazo at Adaxa Home"
-        description="Tap your home equity with a HELOC from Mykoal DeShazo, Senior Loan Officer at Adaxa Home. No credit pull to see your options. NMLS #1912347."
+        title="HELOC Options | Cameron Dill at Adaxa Home"
+        description="Tap your home equity with a HELOC from Cameron Dill, Senior Loan Officer at Adaxa Home. No credit pull to see your options. NMLS #763991."
         canonical="/heloc-v2"
         noIndex
       />
@@ -396,7 +396,7 @@ export default function HelocV2() {
           serviceType: "Home Equity Line of Credit",
           provider: { "@type": "FinancialService", name: "Adaxa Home LLC", url: "https://smartr8.com/" },
           description:
-            "Tap your home equity with a HELOC from Mykoal DeShazo at Adaxa Home. No credit pull required to see your options. NMLS #1912347.",
+            "Tap your home equity with a HELOC from Cameron Dill at Adaxa Home. No credit pull required to see your options. NMLS #763991.",
           areaServed: [
             "Arizona",
             "Colorado",

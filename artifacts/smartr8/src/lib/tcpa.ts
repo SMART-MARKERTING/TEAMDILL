@@ -16,7 +16,7 @@
 // marketing-SMS consent in CONSENT_TEXT.
 //
 // CONSENT_TEXT 2026-06-01.v4 — rewritten to follow Telnyx's 10DLC opt-in
-// template after the DeShazo Wealth campaign (TCR ID CPO2A0R) was rejected
+// template after the prior campaign (TCR ID CPO2A0R) was rejected
 // for missing required A2P phrases. Includes: brand name, marketing
 // use-case qualifier, STOP/HELP, message frequency, msg & data rates,
 // "consent is not a condition of purchase", and the explicit "mobile
@@ -29,7 +29,7 @@ export const CONSENT_VERSION =
 export const CONSENT_TEXT =
   "By providing my phone number and checking this box, I agree to receive " +
   "recurring SMS messages about mortgage and home-equity loan options from " +
-  "Mykoal DeShazo (NMLS #1912347) and Adaxa Home, LLC (NMLS #2380533). I " +
+  "Cameron Dill (NMLS #763991) and Adaxa Home, LLC (NMLS #2380533). I " +
   "am opting into marketing texts. Message frequency may vary. Standard " +
   "Message and Data Rates may apply. Reply STOP to opt out. Reply HELP for " +
   "help. Consent is not a condition of purchase. My mobile information " +
@@ -37,6 +37,6 @@ export const CONSENT_TEXT =
   "marketing purposes.";
 
 export const SUBMIT_NOTICE =
-  "By clicking Submit, I request that Mykoal DeShazo and Adaxa Home contact " +
+  "By clicking Submit, I request that Cameron Dill and Adaxa Home contact " +
   "me about my inquiry using the contact information I provided. I acknowledge " +
   "the Privacy Policy and Terms of Service.";

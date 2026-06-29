@@ -68,7 +68,7 @@ export async function submitCrmLead(payload: CrmLeadPayload): Promise<SubmitResu
     honeypot: payload.honeypot ?? "",
     pageLoadTime: payload.pageLoadTime ?? 0,
     turnstile_token: payload.turnstile_token ?? "",
-    // source = the funnel URL so Mykoal can see which page captured the lead.
+    // source = the funnel URL so Cameron can see which page captured the lead.
     source:
       payload.sourceOverride ||
       (typeof window !== "undefined" ? window.location.pathname.replace(/^\//, "") || "smartr8.com" : "smartr8.com"),

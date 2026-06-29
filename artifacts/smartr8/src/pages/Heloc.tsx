@@ -66,7 +66,7 @@ export default function HelocFunnel() {
   const advanceWithPatch = (patch: Partial<FS>) => setSt((prev) => { ga4.trackStepCompleted(prev.step, STEP_NAMES[prev.step-1]); return { ...prev, ...patch, step: prev.step+1 }; });
   const togglePurpose = (val: string) => p({ helocPurposes: st.helocPurposes.includes(val) ? st.helocPurposes.filter((x) => x !== val) : [...st.helocPurposes, val] });
 
-  const SUBMIT_ERR = "Something went wrong with your submission. Please text or call Myke directly at (480) 206-9290 and he will get back to you within minutes.";
+  const SUBMIT_ERR = "Something went wrong with your submission. Please text or call Cameron directly at 805-415-0275 and he will get back to you within minutes.";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!st.email) { setSubmitError("Please enter your email."); return; }
@@ -81,8 +81,8 @@ export default function HelocFunnel() {
   return (
     <FunnelLayout step={st.step} totalSteps={TOTAL} onBack={st.step > 1 ? back : undefined}>
       <PageMeta
-        title="HELOC Options | Mykoal DeShazo at Adaxa Home"
-        description="Access your home equity with a HELOC from Mykoal DeShazo, Senior Loan Officer at Adaxa Home in Scottsdale. No credit pull to explore options. NMLS #1912347."
+        title="HELOC Options | Cameron Dill at Adaxa Home"
+        description="Access your home equity with a HELOC from Cameron Dill, Senior Loan Officer at Adaxa Home in Scottsdale. No credit pull to explore options. NMLS #763991."
         canonical="/heloc"
       />
       <JsonLd data={{
@@ -91,7 +91,7 @@ export default function HelocFunnel() {
         "name": "HELOC — Home Equity Line of Credit",
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
-        "description": "Access your home equity with a flexible HELOC from Mykoal DeShazo at Adaxa Home. No credit pull required to explore your options. NMLS #1912347.",
+        "description": "Access your home equity with a flexible HELOC from Cameron Dill at Adaxa Home. No credit pull required to explore your options. NMLS #763991.",
         "areaServed": [
           { "@type": "State", "name": "Arizona" },
           { "@type": "State", "name": "Colorado" },

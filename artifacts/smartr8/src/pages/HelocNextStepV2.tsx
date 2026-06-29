@@ -126,8 +126,8 @@ export default function HelocNextStepV2() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
-        title="Next Step | Mykoal DeShazo at Adaxa Home"
-        description="We're getting you started on the Fast Digital Path with Mykoal DeShazo at Adaxa Home. NMLS #1912347."
+        title="Next Step | Cameron Dill at Adaxa Home"
+        description="We're getting you started on the Fast Digital Path with Cameron Dill at Adaxa Home. NMLS #763991."
         canonical="/heloc/next-step-v2"
         noIndex
       />
@@ -143,7 +143,7 @@ export default function HelocNextStepV2() {
             url: "https://smartr8.com/",
           },
           description:
-            "Fast Digital Path for HELOC applications from Adaxa Home. Fully digital, soft credit only, decision in minutes. NMLS #1912347.",
+            "Fast Digital Path for HELOC applications from Adaxa Home. Fully digital, soft credit only, decision in minutes. NMLS #763991.",
           url: "https://smartr8.com/heloc/next-step-v2",
         }}
       />
@@ -291,15 +291,15 @@ export default function HelocNextStepV2() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
                 <a
-                  href="tel:4802069290"
+                  href="tel:8054150275"
                   className="flex items-center justify-center gap-2 h-12 px-6 rounded-xl font-semibold text-sm text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: "#E31B23" }}
                 >
                   <Phone className="h-4 w-4" />
-                  Call (480) 206-9290
+                  Call 805-415-0275
                 </a>
                 <a
-                  href="sms:4802069290"
+                  href="sms:8054150275"
                   className="flex items-center justify-center gap-2 h-12 px-6 rounded-xl font-semibold text-sm border border-white/30 hover:bg-white/10 text-white"
                 >
                   Text Me

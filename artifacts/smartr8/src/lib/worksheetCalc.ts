@@ -326,12 +326,12 @@ export const yrs = (v: number): string => v.toFixed(1) + " yrs";
 // ──────────────────────────────────────────────────────────────────────────
 
 export const DEFAULT_ADVISOR: AdvisorInfo = {
-  preparedBy: "Mykoal DeShazo",
-  preparedByTitle: "Vice President | Senior Loan Officer",
+  preparedBy: "Cameron Dill",
+  preparedByTitle: "Senior Vice President - Retail",
   companyName: "Adaxa Home LLC",
-  contactPhone: "(480) 206-9290",
-  contactEmail: "mykoal@adaxahome.com",
-  contactNMLS: "1912347",
+  contactPhone: "805-415-0275",
+  contactEmail: "Cdill@adaxahome.com",
+  contactNMLS: "763991",
   companyNMLS: "2380533",
 };
 

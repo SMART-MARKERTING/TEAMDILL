@@ -242,7 +242,7 @@ export interface FunnelCompletionPayload {
 /**
  * Submit a unified-funnel lead to LeadMailbox at funnel completion (before fork).
  * Reuses the existing /api/submit-lead Worker → LM + Formspree pipeline.
- * Adds an "Entry-Button" + "Funnel-Source" tag so Mykoal can see which path
+ * Adds an "Entry-Button" + "Funnel-Source" tag so Cameron can see which path
  * the lead came from.
  */
 export async function submitFunnelCompletion(
@@ -279,7 +279,7 @@ export type NextStepAction =
   | "full-application";
 
 /**
- * Append a "next-step action" lightweight record to LeadMailbox so Mykoal
+ * Append a "next-step action" lightweight record to LeadMailbox so Cameron
  * can see what the lead did on /whats-next. LeadMailbox has no native update
  * API; we POST a second slim record tagged so it can be correlated by email.
  *

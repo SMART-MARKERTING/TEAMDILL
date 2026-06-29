@@ -1,6 +1,6 @@
 # SMARTR8 — Adaxa Home Lead Funnel
 
-A static lead capture funnel for Mykoal DeShazo, Vice President & Senior Loan Officer at Adaxa Home, LLC.
+A static lead capture funnel for Cameron Dill, Senior Vice President - Retail at Adaxa Home, LLC.
 
 ## Development
 
@@ -157,7 +157,7 @@ wrangler deploy
 
 After the first production deploy that depends on the pipeline:
 - Submit a test lead on smartr8.com and confirm a row appears in the `leads` D1 table with `leadmailbox_status = 'sent'`, `ghl_upsert_status = 'sent'`, `ghl_status = 'sent'`, `resend_status = 'sent'`.
-- Confirm the Resend confirmation arrives from `mykoal@mykoal.com`.
+- Confirm the Resend confirmation arrives from `Cdill@adaxahome.com`.
 - Confirm the GHL contact appears with the `web lead` and `heloc` tags and the four custom fields populated.
 - Confirm the GHL workflow fires the first SMS via send_blue within 1 to 3 minutes of submit.
 - Hit `POST /api/cron/retry-failed` with the `X-Cron-Secret` header and confirm `{ ok: true, retried: 0 }` when there's nothing failed.
@@ -166,10 +166,10 @@ After the first production deploy that depends on the pipeline:
 
 ## Owner Info
 
-- **Name:** Mykoal DeShazo
-- **Title:** Vice President | Senior Loan Officer
+- **Name:** Cameron Dill
+- **Title:** Senior Vice President - Retail
 - **Company:** Adaxa Home, LLC
-- **NMLS:** #1912347 (personal) / #2380533 (company)
-- **Phone:** (949) 418-5486
-- **Email:** mykoal@adaxahome.com
+- **NMLS:** #763991 (personal) / #2380533 (company)
+- **Phone:** 805-415-0275
+- **Email:** Cdill@adaxahome.com
 - **Formspree endpoint:** https://formspree.io/f/meennekb

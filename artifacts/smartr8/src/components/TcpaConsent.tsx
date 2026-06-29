@@ -130,7 +130,7 @@ export function TcpaConsent({ onChange }: TcpaConsentProps) {
           </span>
           By providing my phone number and checking this box, I agree to
           receive recurring SMS messages about mortgage and home-equity loan
-          options from Mykoal DeShazo (NMLS #1912347) and Adaxa Home, LLC
+          options from Cameron Dill (NMLS #763991) and Adaxa Home, LLC
           (NMLS #2380533). I am opting into marketing texts. Message
           frequency may vary. Standard Message and Data Rates may apply.
           Reply <strong>STOP</strong> to opt out. Reply <strong>HELP</strong>{" "}
@@ -161,7 +161,7 @@ export function TcpaConsent({ onChange }: TcpaConsentProps) {
 export function TcpaSubmitNotice() {
   return (
     <p className="text-xs text-muted-foreground leading-relaxed mt-3">
-      By clicking Submit, I request that Mykoal DeShazo and Adaxa Home contact
+      By clicking Submit, I request that Cameron Dill and Adaxa Home contact
       me about my inquiry using the contact information I provided. I
       acknowledge the{" "}
       <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline">

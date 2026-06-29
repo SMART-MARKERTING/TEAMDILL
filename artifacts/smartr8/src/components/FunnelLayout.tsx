@@ -67,7 +67,7 @@ export function FunnelLayout({ step, totalSteps, onBack, children }: FunnelLayou
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
         <span className="text-[10px] text-muted-foreground text-center">
-          Equal Housing Opportunity · NMLS #1912347 · Adaxa Home, LLC NMLS #2380533
+          Equal Housing Opportunity · NMLS #763991 · Adaxa Home, LLC NMLS #2380533
         </span>
       </div>
     </div>

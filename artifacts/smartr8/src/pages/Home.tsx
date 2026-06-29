@@ -31,17 +31,17 @@ export default function Home() {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "Person",
-        "name": "Mykoal DeShazo",
-        "jobTitle": "Vice President & Senior Loan Officer",
+        "name": "Cameron Dill",
+        "jobTitle": "Senior Vice President - Retail",
         "worksFor": {
           "@type": "Organization",
           "name": "Adaxa Home LLC",
           "url": "https://smartr8.com/"
         },
-        "telephone": "+14802069290",
-        "email": "mykoal@adaxahome.com",
+        "telephone": "+18054150275",
+        "email": "Cdill@adaxahome.com",
         "url": "https://smartr8.com/",
-        "sameAs": ["https://www.nmlsconsumeraccess.org/EntityDetails.aspx/INDIVIDUAL/1912347"],
+        "sameAs": ["https://www.nmlsconsumeraccess.org/EntityDetails.aspx/INDIVIDUAL/763991"],
         "workLocation": STATES_11
       }} />
       <JsonLd id="financial-service-schema" data={{
@@ -49,7 +49,7 @@ export default function Home() {
         "@type": "FinancialService",
         "name": "Adaxa Home LLC",
         "url": "https://smartr8.com/",
-        "telephone": "+14802069290",
+        "telephone": "+18054150275",
         "description": "Mortgage broker offering HELOC, cash-out refinance, rate-and-term refinance, and purchase loans through 99+ wholesale lenders. NMLS #2380533.",
         "areaServed": STATES_11,
         "hasOfferCatalog": {
@@ -74,7 +74,7 @@ export default function Home() {
                 Real mortgage options from a loan officer who actually picks up the phone.
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                I'm Mykoal at Adaxa Home in Scottsdale. Whether you want to pull cash from your home, lower your monthly payment, or just see what's possible, I'll show you real options from 99+ lenders. See your options without affecting your credit. A full credit review only happens when you decide to move forward.
+                I'm Cameron Dill at Adaxa Home. With more than 20 years in lending and 1,000+ mortgage loans closed, I help families compare real options from a broad lender network. See what's possible without affecting your credit. A full credit review only happens when you decide to move forward.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
@@ -95,7 +95,7 @@ export default function Home() {
                   asChild
                   data-testid="hero-secondary-cta"
                 >
-                  <a href="sms:4802069290">
+                  <a href="sms:8054150275">
                     <Phone className="mr-2 h-5 w-5" />
                     Text Me
                   </a>
@@ -106,8 +106,8 @@ export default function Home() {
             {/* HEADSHOT */}
             <div className="relative h-56 sm:h-64 md:h-[420px] w-full max-w-md mx-auto animate-in fade-in zoom-in-95 duration-700 delay-150 flex items-center justify-center">
               <img
-                src="/mykoal-headshot.jpg"
-                alt="Mykoal DeShazo — VP & Senior Loan Officer at Adaxa Home"
+                src="/cameron-headshot.png"
+                alt="Cameron Dill — Senior Vice President - Retail at Adaxa Home"
                 className="h-56 w-56 sm:h-64 sm:w-64 md:h-[380px] md:w-[380px] rounded-full object-cover object-top border-4 border-white shadow-2xl"
                 onError={(e) => {
                   const el = e.currentTarget;
@@ -121,7 +121,7 @@ export default function Home() {
                 className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/30 rounded-full items-center justify-center border-4 border-white shadow-xl hidden"
                 aria-hidden="true"
               >
-                <span className="text-8xl font-bold text-primary/20 tracking-tighter">MD</span>
+                <span className="text-8xl font-bold text-primary/20 tracking-tighter">CD</span>
               </div>
             </div>
           </div>
@@ -131,13 +131,13 @@ export default function Home() {
         <section className="border-y border-border bg-secondary/30 py-6">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-sm md:text-base font-medium text-muted-foreground text-center">
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> 7+ years closing loans</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> 20+ years in lending</span>
               <span className="hidden md:inline text-border">•</span>
               <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> 99+ wholesale lenders</span>
               <span className="hidden md:inline text-border">•</span>
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Vice President at Adaxa Home</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Senior Vice President - Retail</span>
               <span className="hidden md:inline text-border">•</span>
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Licensed since 2020</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> 1,000+ mortgage loans closed</span>
             </div>
           </div>
         </section>
@@ -359,31 +359,31 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* ABOUT MYKOAL */}
+        {/* ABOUT CAMERON */}
         <section className="py-20 px-4 bg-secondary/30 container mx-auto max-w-4xl text-center">
           <div className="flex flex-col items-center mb-8">
             <img
-              src="/mykoal-headshot.jpg"
-              alt="Mykoal DeShazo"
+              src="/cameron-headshot.png"
+              alt="Cameron Dill"
               className="h-24 w-24 rounded-full object-cover object-top border-4 border-white shadow-lg mb-6"
               onError={(e) => { e.currentTarget.style.display = "none"; }}
               data-testid="about-headshot"
             />
-            <h2 className="text-3xl font-bold text-primary">About Mykoal</h2>
+            <h2 className="text-3xl font-bold text-primary">About Cameron</h2>
           </div>
           <div className="prose prose-lg mx-auto text-muted-foreground">
             <p className="lead text-xl text-foreground font-medium mb-6">
-              I'm Vice President and Senior Loan Officer at Adaxa Home in Scottsdale, AZ, with 7+ years closing mortgages.
+              I'm Senior Vice President - Retail at Adaxa Home, with more than 20 years of lending experience and a relationship-first approach to mortgage guidance.
             </p>
             <p className="mb-8">
-              I work with 99+ wholesale lenders -- Rocket, loanDepot, Carrington, CAKE, and more -- which means I'm not stuck pitching one product. I look at your situation and bring you the option that actually fits.
+              I began focusing on mortgage lending in 2007, built my career through credit union leadership, and later became a top Arizona loan officer for three consecutive years. Today, I bring that experience to Adaxa Home to help families find loan options that fit their goals.
             </p>
             <div className="inline-block border border-border rounded-lg p-6 bg-card shadow-sm text-left">
-              <div className="font-semibold text-foreground mb-1">Mykoal DeShazo</div>
+              <div className="font-semibold text-foreground mb-1">Cameron Dill</div>
               <div className="space-y-1 text-sm">
-                <div><a href="tel:4802069290" className="hover:text-primary transition-colors">(480) 206-9290</a></div>
-                <div><a href="mailto:mykoal@adaxahome.com" className="hover:text-primary transition-colors">mykoal@adaxahome.com</a></div>
-                <div className="text-muted-foreground pt-2">NMLS #1912347</div>
+                <div><a href="tel:8054150275" className="hover:text-primary transition-colors">805-415-0275</a></div>
+                <div><a href="mailto:Cdill@adaxahome.com" className="hover:text-primary transition-colors">Cdill@adaxahome.com</a></div>
+                <div className="text-muted-foreground pt-2">NMLS #763991</div>
               </div>
             </div>
           </div>
@@ -406,7 +406,7 @@ export default function Home() {
               </Link>
             </Button>
             <p className="text-primary-foreground/70">
-              Or text me directly at <a href="sms:4802069290" className="font-semibold hover:underline">(480) 206-9290</a>
+              Or text me directly at <a href="sms:8054150275" className="font-semibold hover:underline">805-415-0275</a>
             </p>
           </div>
         </section>
