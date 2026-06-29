@@ -18,15 +18,14 @@ import {
 } from "@/components/ui/select";
 import { Check, Loader2, Zap } from "lucide-react";
 
-// Adaxa Home is licensed in 11 states. Keep this list in sync with compliance.
+// Adaxa Home is licensed in 10 states. Keep this list in sync with compliance.
 const LICENSED_STATES = [
   { value: "AZ", label: "Arizona" },
+  { value: "CA", label: "California" },
   { value: "CO", label: "Colorado" },
   { value: "CT", label: "Connecticut" },
   { value: "FL", label: "Florida" },
-  { value: "MI", label: "Michigan" },
-  { value: "MN", label: "Minnesota" },
-  { value: "OR", label: "Oregon" },
+  { value: "ID", label: "Idaho" },
   { value: "PA", label: "Pennsylvania" },
   { value: "TX", label: "Texas" },
   { value: "VA", label: "Virginia" },

@@ -65,7 +65,7 @@ export default function Terms() {
           <P>
             This website is intended for users in jurisdictions where Adaxa
             Home, LLC is licensed to offer mortgage-related services (currently
-            AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA). You are responsible
+            AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA). You are responsible
             for complying with the laws of your jurisdiction.
           </P>
 

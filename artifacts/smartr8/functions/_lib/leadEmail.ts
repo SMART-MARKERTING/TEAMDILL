@@ -62,7 +62,7 @@ Adaxa Home, LLC
 NMLS #763991 | Company NMLS #2380533
 16767 N Perimeter Dr., Ste 150, Scottsdale, AZ 85260
 
-Equal Housing Opportunity. Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA.
+Equal Housing Opportunity. Licensed in AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA.
 
 This is not a commitment to lend. All loans subject to credit approval, income verification, and property appraisal. Rates and terms subject to change.
 
@@ -119,7 +119,7 @@ export function renderHtml(firstNameRaw) {
   <tr><td style="padding:18px 32px 26px;border-top:1px solid #eeeeee;">
     <table role="presentation" cellpadding="0" cellspacing="0"><tr>
       <td valign="middle" style="padding-right:10px;"><img src="${EHO_URL}" alt="Equal Housing Opportunity" width="28" style="display:block;width:28px;height:auto;border:0;"></td>
-      <td valign="middle" style="font-size:11px;color:#666666;line-height:1.5;">Equal Housing Opportunity.<br>Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA.</td>
+      <td valign="middle" style="font-size:11px;color:#666666;line-height:1.5;">Equal Housing Opportunity.<br>Licensed in AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA.</td>
     </tr></table>
     <p style="margin:14px 0 0;font-size:11px;color:#666666;line-height:1.5;">This is not a commitment to lend. All loans subject to credit approval, income verification, and property appraisal. Rates and terms subject to change.</p>
     <p style="margin:10px 0 0;font-size:11px;color:#666666;line-height:1.5;">This email was sent because you submitted a request through smartr8.com. If you did not submit this request, please disregard this email.</p>

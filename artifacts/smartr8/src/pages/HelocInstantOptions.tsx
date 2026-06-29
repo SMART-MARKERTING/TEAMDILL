@@ -9,7 +9,7 @@ export default function HelocInstantOptions() {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       <PageMeta
         title="HELOC Instant Options | Cameron Dill at Adaxa Home"
-        description="Two fast digital HELOC paths from Cameron Dill at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA &amp; WA. NMLS #763991."
+        description="Two fast digital HELOC paths from Cameron Dill at Adaxa Home. Flexible HELOC financing for homeowners in AZ, CA, CO, CT, FL, ID, PA, TX, VA &amp; WA. NMLS #763991."
         canonical="/heloc/instant-options"
       />
       <JsonLd data={{
@@ -18,15 +18,14 @@ export default function HelocInstantOptions() {
         "name": "HELOC Instant Options",
         "serviceType": "Home Equity Line of Credit",
         "provider": { "@type": "FinancialService", "name": "Adaxa Home LLC", "url": "https://smartr8.com/" },
-        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, and WA. NMLS #763991.",
+        "description": "Two fast digital HELOC paths from Adaxa Home. Flexible and fast HELOC options for homeowners in AZ, CA, CO, CT, FL, ID, PA, TX, VA, and WA. NMLS #763991.",
         "areaServed": [
           { "@type": "State", "name": "Arizona" },
+          { "@type": "State", "name": "California" },
           { "@type": "State", "name": "Colorado" },
           { "@type": "State", "name": "Connecticut" },
           { "@type": "State", "name": "Florida" },
-          { "@type": "State", "name": "Michigan" },
-          { "@type": "State", "name": "Minnesota" },
-          { "@type": "State", "name": "Oregon" },
+          { "@type": "State", "name": "Idaho" },
           { "@type": "State", "name": "Pennsylvania" },
           { "@type": "State", "name": "Texas" },
           { "@type": "State", "name": "Virginia" },

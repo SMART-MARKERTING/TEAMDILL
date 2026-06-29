@@ -117,12 +117,11 @@ export interface ProductConfig {
 
 const LICENSED_STATES = [
   "Arizona",
+  "California",
   "Colorado",
   "Connecticut",
   "Florida",
-  "Michigan",
-  "Minnesota",
-  "Oregon",
+  "Idaho",
   "Pennsylvania",
   "Texas",
   "Virginia",

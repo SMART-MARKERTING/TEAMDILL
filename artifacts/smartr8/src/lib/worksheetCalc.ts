@@ -34,7 +34,7 @@ export const STRUCTURE_LABELS: Record<LoanStructure, string> = {
   INTEREST_ONLY: "Interest Only",
 };
 
-export const LICENSED_STATES = "AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA";
+export const LICENSED_STATES = "AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA";
 
 export interface Debt {
   name: string;

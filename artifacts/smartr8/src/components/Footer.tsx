@@ -22,7 +22,7 @@ export function Footer() {
         </div>
 
         <p className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.6)" }}>
-          Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA.
+          Licensed in AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA.
         </p>
 
         <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.6)" }}>

@@ -21,12 +21,11 @@ import { TcpaConsent, TcpaSubmitNotice } from "@/components/TcpaConsent";
 
 const LICENSED_STATES = [
   { value: "AZ", label: "Arizona" },
+  { value: "CA", label: "California" },
   { value: "CO", label: "Colorado" },
   { value: "CT", label: "Connecticut" },
   { value: "FL", label: "Florida" },
-  { value: "MI", label: "Michigan" },
-  { value: "MN", label: "Minnesota" },
-  { value: "OR", label: "Oregon" },
+  { value: "ID", label: "Idaho" },
   { value: "PA", label: "Pennsylvania" },
   { value: "TX", label: "Texas" },
   { value: "VA", label: "Virginia" },

@@ -6,14 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Building2, CheckCircle2, Phone, Home as HomeIcon, Percent, HelpCircle, Droplets, TrendingDown, Key, BarChart2, Hammer, Layers } from "lucide-react";
 
-const STATES_11 = [
+const LICENSED_STATES = [
   { "@type": "State", "name": "Arizona" },
+  { "@type": "State", "name": "California" },
   { "@type": "State", "name": "Colorado" },
   { "@type": "State", "name": "Connecticut" },
   { "@type": "State", "name": "Florida" },
-  { "@type": "State", "name": "Michigan" },
-  { "@type": "State", "name": "Minnesota" },
-  { "@type": "State", "name": "Oregon" },
+  { "@type": "State", "name": "Idaho" },
   { "@type": "State", "name": "Pennsylvania" },
   { "@type": "State", "name": "Texas" },
   { "@type": "State", "name": "Virginia" },
@@ -42,7 +41,7 @@ export default function Home() {
         "email": "Cdill@adaxahome.com",
         "url": "https://smartr8.com/",
         "sameAs": ["https://www.nmlsconsumeraccess.org/EntityDetails.aspx/INDIVIDUAL/763991"],
-        "workLocation": STATES_11
+        "workLocation": LICENSED_STATES
       }} />
       <JsonLd id="financial-service-schema" data={{
         "@context": "https://schema.org",
@@ -51,7 +50,7 @@ export default function Home() {
         "url": "https://smartr8.com/",
         "telephone": "+18054150275",
         "description": "Mortgage broker offering HELOC, cash-out refinance, rate-and-term refinance, and purchase loans through 99+ wholesale lenders. NMLS #2380533.",
-        "areaServed": STATES_11,
+        "areaServed": LICENSED_STATES,
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
           "name": "Mortgage Products",

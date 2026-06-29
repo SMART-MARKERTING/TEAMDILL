@@ -264,7 +264,7 @@ export default function LeadCaptureModal({
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">
-            Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA · NMLS #763991
+            Licensed in AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA · NMLS #763991
           </p>
         </form>
       </DialogContent>

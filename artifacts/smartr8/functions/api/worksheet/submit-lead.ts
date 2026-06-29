@@ -179,7 +179,7 @@ function buildClientEmailHtml(clientName: string, advisorName?: string): string 
     <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e5e5;">
     <p style="font-size: 10px; color: #888; line-height: 1.5;">
       Adaxa Home LLC | Company NMLS #2380533. Cameron Dill NMLS #763991.
-      Licensed in AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA.
+      Licensed in AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA.
       Verify licensing at www.nmlsconsumeraccess.org.
       This document is for informational purposes only and does not constitute a commitment to lend.
     </p>

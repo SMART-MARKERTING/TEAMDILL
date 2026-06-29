@@ -22,7 +22,7 @@ export const EQUAL_HOUSING_TEXT = "Equal Housing Opportunity";
 
 /** {{LICENSED_STATES}} — the states the LO is licensed in. */
 export const LICENSED_STATES = [
-  "AZ", "CO", "CT", "FL", "MI", "MN", "OR", "PA", "TX", "VA", "WA",
+  "AZ", "CA", "CO", "CT", "FL", "ID", "PA", "TX", "VA", "WA",
 ] as const;
 
 /** Human-readable licensed-states sentence, reused verbatim in FAQ schema. */

@@ -381,7 +381,7 @@ export default function WorksheetInputPanel({
             ))}
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
-            Licensed states are hardcoded in the compliance footer (AZ, CO, CT, FL, MI, MN, OR, PA, TX, VA, WA).
+            Licensed states are hardcoded in the compliance footer (AZ, CA, CO, CT, FL, ID, PA, TX, VA, WA).
           </p>
         </CollapsibleContent>
       </Collapsible>
