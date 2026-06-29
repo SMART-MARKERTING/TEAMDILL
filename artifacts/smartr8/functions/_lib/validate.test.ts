@@ -51,16 +51,16 @@ describe("validateLeadSubmission", () => {
     if (!result.ok) expect(result.errors.email).toMatch(/email/i);
   });
 
-  it("rejects missing turnstile_token", () => {
+  it("accepts missing turnstile_token for Turnstile fallback mode", () => {
     const result = validateLeadSubmission(basePayload({ turnstile_token: "" }));
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.errors.turnstile_token).toBeDefined();
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.turnstile_token).toBe("");
   });
 
-  it("rejects missing consent_version", () => {
+  it("accepts missing consent_version for non-SMS fallback submissions", () => {
     const result = validateLeadSubmission(basePayload({ consent_version: "" }));
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.errors.consent_version).toBeDefined();
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.consent_version).toBe("");
   });
 
   it("rejects consent_text over 2000 characters", () => {

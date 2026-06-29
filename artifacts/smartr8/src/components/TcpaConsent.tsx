@@ -69,44 +69,63 @@ function loadTurnstileScript(): Promise<void> {
 export function TcpaConsent({ onChange }: TcpaConsentProps) {
   const [consent, setConsent] = useState(false);
   const [token, setToken] = useState("");
+  const [turnstileUnavailable, setTurnstileUnavailable] = useState(false);
   const widgetEl = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
+  const tokenRef = useRef("");
 
   useEffect(() => {
-    // The checkbox is optional now. `ready` gates only on Turnstile token
-    // presence so the form can be submitted with the checkbox unchecked.
-    // Bot-check still required (otherwise spam would flood the funnel).
+    // The checkbox is optional. Turnstile is used when it loads correctly; if
+    // Cloudflare rejects the widget for this host, keep lead capture usable.
     onChange({
-      ready: token.length > 0,
+      ready: token.length > 0 || turnstileUnavailable,
       consent,
       consent_version: CONSENT_VERSION,
       consent_text: CONSENT_TEXT,
       turnstile_token: token,
     });
-  }, [consent, token, onChange]);
+  }, [consent, token, turnstileUnavailable, onChange]);
 
   useEffect(() => {
-    if (!SITE_KEY) return;
+    tokenRef.current = token;
+  }, [token]);
+
+  useEffect(() => {
+    if (!SITE_KEY) {
+      setTurnstileUnavailable(true);
+      return;
+    }
     if (!widgetEl.current) return;
     let cancelled = false;
+    const markUnavailable = () => {
+      setToken("");
+      setTurnstileUnavailable(true);
+    };
+    const fallbackTimer = window.setTimeout(() => {
+      if (!tokenRef.current) markUnavailable();
+    }, 4500);
     loadTurnstileScript()
       .then(() => {
         if (cancelled || !widgetEl.current || !window.turnstile) return;
         widgetId.current = window.turnstile.render(widgetEl.current, {
           sitekey: SITE_KEY,
-          callback: (t: string) => setToken(t),
-          "error-callback": () => setToken(""),
+          callback: (t: string) => {
+            window.clearTimeout(fallbackTimer);
+            setTurnstileUnavailable(false);
+            setToken(t);
+          },
+          "error-callback": markUnavailable,
           "expired-callback": () => setToken(""),
           theme: "light",
           size: "flexible",
         });
       })
       .catch(() => {
-        // Script failed to load; keep the form usable but without token
-        // the submit stays disabled (server will reject anyway).
+        markUnavailable();
       });
     return () => {
       cancelled = true;
+      window.clearTimeout(fallbackTimer);
       if (widgetId.current && window.turnstile) {
         try { window.turnstile.remove(widgetId.current); } catch {}
         widgetId.current = null;
@@ -143,7 +162,7 @@ export function TcpaConsent({ onChange }: TcpaConsentProps) {
           for details.
         </label>
       </div>
-      <div ref={widgetEl} aria-label="Turnstile challenge" />
+      {!turnstileUnavailable && <div ref={widgetEl} aria-label="Turnstile challenge" />}
       {!SITE_KEY && (
         <p className="text-xs text-amber-700">
           VITE_TURNSTILE_SITE_KEY is not set. The bot-check widget is disabled and

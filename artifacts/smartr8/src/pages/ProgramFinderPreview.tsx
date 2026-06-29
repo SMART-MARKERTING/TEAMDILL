@@ -721,7 +721,7 @@ export default function ProgramFinderPreview() {
           )}
           {!ready && (
             <p className="errmsg">
-              <AlertTriangle size={13} /> Add name, valid email, phone, and complete the bot check to continue.
+              <AlertTriangle size={13} /> Add name, valid email, and mobile phone to continue.
             </p>
           )}
         </div>

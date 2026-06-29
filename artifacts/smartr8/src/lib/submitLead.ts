@@ -153,10 +153,10 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitResult> {
   };
   if (payload.turnstile_token) {
     body.turnstile_token = payload.turnstile_token;
-    if (payload.consent !== undefined) body.consent = payload.consent;
-    if (payload.consent_version) body.consent_version = payload.consent_version;
-    if (payload.consent_text) body.consent_text = payload.consent_text;
   }
+  if (payload.consent !== undefined) body.consent = payload.consent;
+  if (payload.consent_version) body.consent_version = payload.consent_version;
+  if (payload.consent_text) body.consent_text = payload.consent_text;
 
   // Call the Worker — it tries LM server-side (with user IP forwarding) + Formspree + KV dedup.
   // If the Worker's LM call was blocked by IP filtering, it returns lmPayload so the browser

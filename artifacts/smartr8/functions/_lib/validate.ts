@@ -33,12 +33,12 @@ export const LeadSubmissionSchema = z.object({
   // these were stripped by the schema, so the loan purpose never reached the CRM.
   additionalFields: z.record(z.any()).optional().default({}),
 
-  // Turnstile + TCPA. All forms now ship <TcpaConsent /> so turnstile_token
-  // and consent_version are required. consent_text is optional (server has
-  // CONSENT_TEXT canonical copy) but accepted up to 2000 chars when sent.
-  turnstile_token: z.string().trim().min(1, "turnstile_token required").max(4096),
+  // Turnstile + TCPA. Turnstile is verified when a token is supplied. It stays
+  // optional here so a misconfigured Cloudflare widget does not block lead
+  // capture; honeypot, too-fast drops, rate limiting, and D1 dedup still apply.
+  turnstile_token: z.string().trim().max(4096).optional().default(""),
   consent: z.boolean().optional(),
-  consent_version: z.string().trim().min(1, "consent_version required").max(80),
+  consent_version: z.string().trim().max(80).optional().default(""),
   consent_text: z.string().trim().max(2000).optional().default(""),
 
   // Attribution
