@@ -30,7 +30,7 @@ import "./helocV3.css";
 
 const SESSION_KEY = "smartr8_program_finder_v1";
 const CAL_URL = "tel:+18054150275";
-const HELOC_APPLICATION_URL =
+const STANDARD_APPLICATION_URL =
   "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
 
 const STEP_LABELS = ["Property", "Income", "Credit", "Equity", "Fit"];
@@ -272,7 +272,7 @@ function estimateOptionsText(data: Data) {
 }
 
 function buildApplicationUrl(data: Data) {
-  const url = new URL(HELOC_APPLICATION_URL);
+  const url = new URL(STANDARD_APPLICATION_URL);
   url.searchParams.set("source", "see-my-options");
   url.searchParams.set("name", data.first);
   url.searchParams.set("credit", label(CREDIT, data.credit));

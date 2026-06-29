@@ -106,7 +106,7 @@ export default function HelocInstantOptions() {
 
                   <div className="mt-auto pt-5 border-t border-border">
                     <a
-                      href="https://heloc.deephavenmortgage.com/prequal/consent?lo=mykoal-deshazo"
+                      href="https://heloc.adaxahome.com/account/heloc/register?referrer=2b35db42-99cb-4b47-b9d4-4a3dfe6926d1"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full h-14 rounded-xl font-bold text-base text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
@@ -170,7 +170,7 @@ export default function HelocInstantOptions() {
 
                   <div className="mt-auto pt-5 border-t border-border">
                     <a
-                      href="https://heloc.adaxahome.com/account/heloc/register?referrer=07b7dc41-da1d-4044-8cfc-694ebbc1d3b7"
+                      href="https://heloc.adaxahome.com/account/heloc/register?referrer=2b35db42-99cb-4b47-b9d4-4a3dfe6926d1"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full h-14 rounded-xl font-bold text-base text-white transition-opacity hover:opacity-90 active:scale-[0.98]"

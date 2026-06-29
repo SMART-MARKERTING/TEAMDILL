@@ -24,7 +24,7 @@ const REDIRECT_DELAY_MS = 1500;
 // "Continue" button. Change here to retarget the Fast Digital Path without
 // spelunking the JSX.
 const REDIRECT_DESTINATION_URL =
-  "https://heloc.adaxahome.com/account/heloc/register?referrer=07b7dc41-da1d-4044-8cfc-694ebbc1d3b7";
+  "https://heloc.adaxahome.com/account/heloc/register?referrer=2b35db42-99cb-4b47-b9d4-4a3dfe6926d1";
 
 const TRUST_PILLS = [
   { icon: Shield, label: "Soft credit only" },

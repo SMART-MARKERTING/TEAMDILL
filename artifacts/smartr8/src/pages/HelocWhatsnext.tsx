@@ -10,7 +10,7 @@ import { Link } from "wouter";
 import { useGA4 } from "@/hooks/useGA4";
 import { trackFbEvent } from "@/lib/fbq";
 const CAL_URL = "tel:+18054150275";
-const LENDINGPAD_URL = "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
+const HELOC_APPLICATION_URL = "https://heloc.adaxahome.com/account/heloc/register?referrer=2b35db42-99cb-4b47-b9d4-4a3dfe6926d1";
 
 export default function HelocWhatsnext() {
   const search = useSearch();
@@ -99,7 +99,7 @@ export default function HelocWhatsnext() {
                   <p className="text-sm text-muted-foreground leading-relaxed">Ready to start your formal application? This takes you directly to my secure application portal.</p>
                 </div>
                 <div className="mt-auto">
-                  <a href={LENDINGPAD_URL} target="_blank" rel="noopener noreferrer" onClick={() => ga4.trackWhatsnextClick("continue_application")}>
+                  <a href={HELOC_APPLICATION_URL} target="_blank" rel="noopener noreferrer" onClick={() => ga4.trackWhatsnextClick("continue_application")}>
                     <Button variant="outline" className="w-full h-11">Continue Application <ArrowRight className="ml-2 h-4 w-4" /></Button>
                   </a>
                 </div>
