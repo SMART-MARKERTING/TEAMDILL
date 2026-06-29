@@ -54,7 +54,7 @@ A trust-first mortgage lead funnel. Homeowners land, choose their goal (cash-out
 
 - Always add Google Fonts `@import url(...)` as the VERY FIRST line of index.css — PostCSS will fail silently if it appears after other imports
 - The Vite build uses BASE_PATH env var from the workflow — don't hardcode "/" as base
-- For Cloudflare Pages deployment, build command must install pnpm first: `npm install -g pnpm && pnpm install && pnpm --filter @workspace/smartr8 run build`
+- For Cloudflare Pages deployment, use build command: `pnpm --filter @workspace/smartr8 run build`
 - Build output directory for Cloudflare: `artifacts/smartr8/dist/public`
 
 ## Pointers

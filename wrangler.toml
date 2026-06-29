@@ -1,0 +1,16 @@
+# Cloudflare Pages config for TEAMDILL when the project root is the repo root.
+# Keep this in sync with artifacts/smartr8/wrangler.toml if bindings change.
+
+name = "teamdill"
+pages_build_output_dir = "artifacts/smartr8/dist/public"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "LEADS_DB"
+database_name = "smartr8-leads"
+database_id = "b1be7618-d79e-4889-b21f-9b3782e59b00"
+
+[[kv_namespaces]]
+binding = "LEAD_DEDUP"
+id = "a70020078cbc445eb350f384e1a18be8"

@@ -62,7 +62,7 @@ bash scripts/push-github.sh
 | Setting | Value |
 |---|---|
 | Framework preset | **None** |
-| Build command | `npm install -g pnpm && pnpm install && pnpm --filter @workspace/smartr8 run build` |
+| Build command | `pnpm --filter @workspace/smartr8 run build` |
 | Build output directory | `artifacts/smartr8/dist/public` |
 | Root directory | `/` (repo root) |
 
@@ -93,7 +93,7 @@ D1 audit + KV dedup details:
 
 ## Required Pages env vars
 
-Set these in **Cloudflare Pages → Settings → Environment variables** for both **Production** and **Preview**. Bindings (D1, KV) are declared in `artifacts/smartr8/wrangler.toml`.
+Set these in **Cloudflare Pages → Settings → Environment variables** for both **Production** and **Preview**. Bindings (D1, KV) are declared in the root `wrangler.toml` for Cloudflare's repo-root build, and mirrored in `artifacts/smartr8/wrangler.toml` for local app-root deploys.
 
 | Name | Purpose |
 |---|---|
