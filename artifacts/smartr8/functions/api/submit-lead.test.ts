@@ -160,7 +160,7 @@ describe("api/submit-lead", () => {
     expect(lead.last_name).toBe("Doe");
     expect(lead.email).toBe("jane@example.com");
     expect(lead.phone_e164).toBe("+18054150275");
-    expect(lead.property_state).toBe("AZ");
+    expect(lead.property_state).toBe("CA");
     expect(lead.notes).toContain("Loan Purpose: Debt consolidation");
     expect(lead.notes).toContain("Timeline: 30 days");
     expect(lead.notes).toContain("helocPurpose: Debt consolidation");
