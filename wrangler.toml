@@ -6,11 +6,14 @@ pages_build_output_dir = "artifacts/smartr8/dist/public"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+[vars]
+CRM_LEAD_WEBHOOK = "https://services.leadconnectorhq.com/hooks/Y7TSFuVUuK9teeQ0Q9uX/webhook-trigger/b7636a3e-187c-45fb-b3b4-6cf092f39bf6"
+
 [[d1_databases]]
 binding = "LEADS_DB"
-database_name = "smartr8-leads"
-database_id = "b1be7618-d79e-4889-b21f-9b3782e59b00"
+database_name = "teamdill-leads"
+database_id = "9478f62a-ddc6-46d3-baa9-d743caced1aa"
 
 [[kv_namespaces]]
 binding = "LEAD_DEDUP"
-id = "a70020078cbc445eb350f384e1a18be8"
+id = "282d96afa275466a9d6ffb69d56ed4d9"

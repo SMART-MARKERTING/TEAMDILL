@@ -285,7 +285,7 @@ describe("processLead — CRM webhook", () => {
       const ctx = makeCtxMock();
       await processLead(makeLead(), null, env, ctx);
       await drainWaitUntil(ctx);
-      const crmCall = fetchMock.mock.calls.find((c) => String(c[0]).includes("crm.smartr8.com/webhooks/lead"));
+      const crmCall = fetchMock.mock.calls.find((c) => String(c[0]).includes("services.leadconnectorhq.com/hooks/"));
       expect(crmCall).toBeDefined();
     } finally {
       vi.unstubAllGlobals();

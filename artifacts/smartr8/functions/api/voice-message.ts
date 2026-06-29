@@ -6,7 +6,7 @@
 // details here and reads the JSON `result` back to the caller as confirmation.
 //
 // This is the voice analog of functions/api/crm-lead.ts: it forwards the
-// message into the same secret-gated CRM webhook (crm.smartr8.com/webhooks/lead)
+// message into the same configured CRM / GHL webhook as the other funnels
 // so phone messages land in the CRM alongside web leads — but tagged
 // "voice-message" and WITHOUT a loanType, so they show up for follow-up without
 // being enrolled into a mortgage drip campaign or SMS sequence.
@@ -27,7 +27,7 @@ import type { Env } from "../_lib/types";
 // Built-in default mirrors functions/api/crm-lead.ts; env.CRM_LEAD_WEBHOOK
 // overrides it (e.g. to rotate the key).
 const CRM_LEAD_WEBHOOK_URL =
-  "https://crm.smartr8.com/webhooks/lead?key=4519413906c139e16484f518fdd8968c";
+  "https://services.leadconnectorhq.com/hooks/Y7TSFuVUuK9teeQ0Q9uX/webhook-trigger/b7636a3e-187c-45fb-b3b4-6cf092f39bf6";
 
 function str(v) {
   return typeof v === "string" ? v.trim() : "";

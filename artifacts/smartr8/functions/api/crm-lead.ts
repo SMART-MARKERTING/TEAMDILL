@@ -1,33 +1,16 @@
 // @ts-nocheck
 // POST /api/crm-lead
 //
-// Thin, secure proxy from the product funnels (DSCR, Cash Out Refi, Rate and
-// Term Refi, Purchase) to the CRM lead-intake webhook at
-// https://crm.smartr8.com/webhooks/lead. The webhook is secret-gated (?key=…)
-// and that key must never ship in the browser bundle, so the funnels POST to
-// this same-origin endpoint and the Function attaches the key server-side and
-// forwards the lead on.
-//
-// Pipeline:
-//   1. JSON parse + honeypot + <8s on-page bot drop (silent 200, same as
-//      /api/submit-lead so spam never reaches the CRM).
-//   2. Turnstile siteverify (when a token is supplied).
-//   3. Build the CRM payload. `loanType` is the product tag the CRM uses to
-//      enroll the lead into the matching drip campaign; `consent` reflects the
-//      OPTIONAL SMS-consent checkbox so the CRM only texts opted-in leads.
-//   4. Forward to the CRM webhook (key carried in CRM_LEAD_WEBHOOK or the
-//      built-in default URL). Best-effort: a CRM failure still returns success
-//      to the visitor so a transient CRM blip never loses the lead from the
-//      user's perspective (the funnel has already captured intent).
+// Product-funnel lead intake for DSCR, cash-out, rate-and-term, purchase, VA,
+// and any future direct CRM form. This endpoint now routes through the shared
+// lead orchestrator so every accepted lead is stored in D1 before being
+// forwarded to the configured GHL / LeadConnector webhook.
 
 import { log } from "../_lib/log";
+import { normalizeEmail, normalizeName, normalizePhoneE164US } from "../_lib/normalize";
+import { processLead } from "../_lib/orchestrate";
 import { verifyTurnstile } from "../_lib/turnstile";
-import type { Env } from "../_lib/types";
-
-// Built-in default mirrors functions/_lib/orchestrate.ts so the funnels work
-// out of the box; env.CRM_LEAD_WEBHOOK overrides it (e.g. to rotate the key).
-const CRM_LEAD_WEBHOOK_URL =
-  "https://crm.smartr8.com/webhooks/lead?key=4519413906c139e16484f518fdd8968c";
+import type { Env, Lead, TcpaConsent } from "../_lib/types";
 
 const VALID_LOAN_TYPES = new Set(["HELOC", "DSCR", "CASHOUT_REFI", "RT_REFI", "PURCHASE", "VA"]);
 
@@ -53,6 +36,25 @@ function str(v) {
   return typeof v === "string" ? v.trim() : "";
 }
 
+function funnelFromLoanType(loanType: string): Lead["funnel"] {
+  if (loanType === "HELOC") return "heloc";
+  if (loanType === "DSCR") return "see-my-options";
+  if (loanType === "CASHOUT_REFI") return "cash-out";
+  if (loanType === "RT_REFI") return "rate-reduction";
+  if (loanType === "PURCHASE") return "purchase";
+  return "other";
+}
+
+function loanRequestFromLoanType(loanType: string): string {
+  if (loanType === "HELOC") return "HELOC";
+  if (loanType === "DSCR") return "DSCR";
+  if (loanType === "CASHOUT_REFI") return "Cash-Out Refinance";
+  if (loanType === "RT_REFI") return "Rate and Term Refinance";
+  if (loanType === "PURCHASE") return "Purchase";
+  if (loanType === "VA") return "VA";
+  return loanType;
+}
+
 export async function onRequest(context) {
   const { request, env, waitUntil } = context;
   const origin = request.headers.get("Origin") ?? "";
@@ -68,13 +70,10 @@ export async function onRequest(context) {
     return jsonResponse({ error: "Invalid JSON body" }, 400, cors);
   }
 
-  // Honeypot: a filled hidden field means a bot. Silent success so the bot
-  // gets no signal that it was caught.
   if (body.honeypot && String(body.honeypot).trim().length > 0) {
     log("info", "crm_lead.honeypot_drop", {});
     return jsonResponse({ success: true }, 200, cors);
   }
-  // Sub-8s submissions are almost always bots auto-filling the form on load.
   if (body.pageLoadTime && body.pageLoadTime > 0) {
     const elapsed = Date.now() - body.pageLoadTime;
     if (elapsed < 8_000) {
@@ -83,19 +82,18 @@ export async function onRequest(context) {
     }
   }
 
-  const firstName = str(body.firstName) || str(body.first_name);
-  const lastName = str(body.lastName) || str(body.last_name);
-  const email = str(body.email);
-  const phone = str(body.phone);
+  const firstName = normalizeName(str(body.firstName) || str(body.first_name));
+  const lastName = normalizeName(str(body.lastName) || str(body.last_name));
+  const email = normalizeEmail(str(body.email));
+  const rawPhone = str(body.phone);
+  const phone = rawPhone ? normalizePhoneE164US(rawPhone) : "";
   const loanType = str(body.loanType).toUpperCase();
   const smsConsent = body.consent === true || body.consent === "true";
 
-  // Qualifying criteria → the CRM lead's Quote/loan-details panel + DOB.
   const homeValue = str(body.home_value) || str(body.homeValue);
   const mortgageBalance = str(body.mortgage_balance) || str(body.mortgageBalance);
   const credit = str(body.credit) || str(body.creditScore);
   const dob = str(body.dob);
-  // Loan purpose / use-of-funds → the CRM "Goal" field (custom.loan_goal).
   const loanPurpose = str(body.loanPurpose) || str(body.loan_goal) || str(body.purpose);
   const criteriaNotes = [
     homeValue ? `Home Value: ${homeValue}` : "",
@@ -110,89 +108,66 @@ export async function onRequest(context) {
   if (!email && !phone) {
     return jsonResponse({ success: false, error: "Enter an email or phone number." }, 400, cors);
   }
+  if (rawPhone && !phone) {
+    return jsonResponse({ success: false, error: "Phone must be a valid US number." }, 400, cors);
+  }
   if (!VALID_LOAN_TYPES.has(loanType)) {
     return jsonResponse({ success: false, error: "Unknown loan type." }, 400, cors);
   }
-  // A ticked SMS-consent box requires a phone number to text — enforce it
-  // server-side too (the form enforces it as well).
   if (smsConsent && !phone) {
     return jsonResponse({ success: false, error: "A phone number is required to opt into texts." }, 400, cors);
   }
 
   const ip = request.headers.get("CF-Connecting-IP") ?? request.headers.get("X-Forwarded-For") ?? "unknown";
+  const userAgent = request.headers.get("User-Agent") ?? "";
 
-  // Turnstile is verified when a token is supplied. The funnels render the
-  // widget, so a missing token on a real submission is unusual; we still
-  // forward token-less submissions (audited) rather than lose a lead, matching
-  // /api/submit-lead's posture.
   if (body.turnstile_token) {
     const ts = await verifyTurnstile((env as Env).TURNSTILE_SECRET_KEY, String(body.turnstile_token), ip);
     if (!ts.ok) return jsonResponse({ success: false, error: `turnstile: ${ts.error}` }, 403, cors);
   }
 
-  // Payload for the CRM webhook. `loanType` is not a CRM "known field", so it
-  // lands in the lead's `custom` map — which is exactly where the campaign
-  // filter reads it to enroll the lead into the right drip. `tags` is sent too
-  // so the loan type shows on the lead once the CRM honors it.
-  const payload = {
+  const quoteFields: Record<string, string> = { loanType };
+  if (homeValue) quoteFields.home_value = homeValue;
+  if (mortgageBalance) quoteFields.mortgage_balance = mortgageBalance;
+  if (credit) quoteFields.credit = credit;
+  if (loanPurpose) quoteFields.loan_goal = loanPurpose;
+  if (dob) quoteFields.dob = dob;
+
+  const lead: Lead = {
+    lead_id: crypto.randomUUID(),
+    created_at: Date.now(),
+    funnel: funnelFromLoanType(loanType),
     first_name: firstName,
     last_name: lastName,
     email,
-    phone,
-    source: str(body.source) || "smartr8.com",
-    // Submitting the funnel implies email consent; the optional checkbox is the SMS
-    // opt-in. The CRM reads `smsOptIn` for SMS consent and `consent` for email.
-    consent: true,
-    smsOptIn: smsConsent ? "yes" : "no",
-    loanType,
-    tags: [loanType],
-    consent_text: str(body.consent_text),
-    consent_version: str(body.consent_version),
-    // Structured quote fields (CRM maps these into the lead's custom Quote panel) +
-    // a readable notes summary (mirrors the HELOC funnel; the CRM also parses it).
-    home_value: homeValue,
-    mortgage_balance: mortgageBalance,
-    credit,
-    loan_goal: loanPurpose, // CRM "Quote / loan details" → Goal (custom.loan_goal)
-    dob,
+    phone_e164: phone,
+    loan_request: loanRequestFromLoanType(loanType),
     notes: criteriaNotes,
-    page_url: str(body.page_url),
+    quote_fields: quoteFields,
+    source: str(body.source) || "smartr8.com",
+    landing_page: str(body.page_url),
     utm_source: str(body.utm_source),
     utm_medium: str(body.utm_medium),
     utm_campaign: str(body.utm_campaign),
     utm_content: str(body.utm_content),
     utm_term: str(body.utm_term),
+    ip,
+    user_agent: userAgent,
   };
 
-  // NOTE: the branded "thanks for reaching out" welcome email is intentionally NOT sent
-  // from here anymore. The Smartr8 CRM now owns the first-touch email: on lead_created it
-  // sends a branded, product-specific day-0 welcome (matched to the funnel's drip), so
-  // sending one here too would double up. To restore the funnel-side welcome, re-add a
-  // `handleLeadEmail(env, { firstName, email, funnel })` call (import it from ../_lib/leadEmail).
-
-  const url = (env as Env).CRM_LEAD_WEBHOOK || CRM_LEAD_WEBHOOK_URL;
-  const forward = (async () => {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        log("warn", "crm_lead.webhook_failed", { status: res.status, body: text.slice(0, 200), loanType });
-      } else {
-        log("info", "crm_lead.webhook_ok", { loanType });
+  const consent: TcpaConsent | null = smsConsent && str(body.consent_text) && str(body.consent_version)
+    ? {
+        consent_id: crypto.randomUUID(),
+        lead_id: lead.lead_id,
+        consent_version: str(body.consent_version),
+        consent_text: str(body.consent_text),
+        ip,
+        user_agent: userAgent,
+        page_url: str(body.page_url),
+        created_at: lead.created_at,
       }
-    } catch (e) {
-      log("warn", "crm_lead.webhook_error", { err: e instanceof Error ? e.message : String(e), loanType });
-    }
-  })();
+    : null;
 
-  // Don't make the visitor wait on the CRM round-trip; let it finish after the
-  // response is sent. We still report success — the lead is captured intent.
-  if (typeof waitUntil === "function") waitUntil(forward);
-  else await forward;
-
-  return jsonResponse({ success: true }, 200, cors);
+  const result = await processLead(lead, consent, env as Env, { waitUntil }, ip);
+  return jsonResponse({ success: true, lead_id: result.lead_id, duplicate: result.duplicate === true }, 200, cors);
 }

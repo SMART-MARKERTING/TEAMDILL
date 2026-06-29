@@ -133,13 +133,13 @@ Run these commands once after merging the lead-capture pipeline PR, before the f
 
 ```bash
 # from artifacts/smartr8/
-wrangler d1 create smartr8-leads
+wrangler d1 create teamdill-leads
 # paste the returned database_id into wrangler.toml [[d1_databases]]
 
 wrangler kv:namespace create LEAD_DEDUP
 # paste the returned id into wrangler.toml [[kv_namespaces]]
 
-wrangler d1 migrations apply smartr8-leads --remote
+wrangler d1 execute teamdill-leads --remote --file artifacts/smartr8/migrations/0001_init.sql
 ```
 
 A convenience script that lists these in order lives at `scripts/setup-cloudflare.sh`.

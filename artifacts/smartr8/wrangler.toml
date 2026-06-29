@@ -17,10 +17,13 @@
 # deploy ("Configuration file for Pages projects does not support keep_vars"),
 # so it is deliberately absent.
 
-name = "smartr8"
+name = "teamdill"
 pages_build_output_dir = "dist/public"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
+
+[vars]
+CRM_LEAD_WEBHOOK = "https://services.leadconnectorhq.com/hooks/Y7TSFuVUuK9teeQ0Q9uX/webhook-trigger/b7636a3e-187c-45fb-b3b4-6cf092f39bf6"
 
 # ─── Bindings ──────────────────────────────────────────────────────────
 # Now that the file is the source of truth, every binding the Functions use
@@ -28,18 +31,17 @@ compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
 binding = "LEADS_DB"
-database_name = "smartr8-leads"
-database_id = "b1be7618-d79e-4889-b21f-9b3782e59b00"
+database_name = "teamdill-leads"
+database_id = "9478f62a-ddc6-46d3-baa9-d743caced1aa"
 
 [[kv_namespaces]]
 binding = "LEAD_DEDUP"
-id = "a70020078cbc445eb350f384e1a18be8"
+id = "282d96afa275466a9d6ffb69d56ed4d9"
 
 # CF_KV_NAMESPACE — legacy /api/submit-lead rate limiter. It is OPTIONAL:
 # submit-lead.ts skips rate limiting when this binding is absent, so leaving it
-# off only disables that belt-and-suspenders limiter (no breakage). The account
-# has a KV titled "smartr8-leads" (id c36ddeb55cea4e9da51a47526d7aaf73) that is
-# the likely target — confirm it against the dashboard binding, then uncomment.
+# off only disables that belt-and-suspenders limiter without breaking lead
+# capture. Confirm the intended namespace in Cloudflare before enabling it.
 # [[kv_namespaces]]
 # binding = "CF_KV_NAMESPACE"
 # id = "c36ddeb55cea4e9da51a47526d7aaf73"  # VERIFY in dashboard before enabling

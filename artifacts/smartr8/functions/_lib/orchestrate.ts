@@ -30,7 +30,7 @@ const DEDUP_TTL_SECONDS = 600; // 10 minutes
 // External CRM webhook (carries its own ?key=). Hardcoded so it works with no
 // env setup; env.CRM_LEAD_WEBHOOK overrides it (e.g. to rotate the key later).
 const CRM_LEAD_WEBHOOK_URL =
-  "https://crm.smartr8.com/webhooks/lead?key=4519413906c139e16484f518fdd8968c";
+  "https://services.leadconnectorhq.com/hooks/Y7TSFuVUuK9teeQ0Q9uX/webhook-trigger/b7636a3e-187c-45fb-b3b4-6cf092f39bf6";
 
 async function sha256Hex(input: string): Promise<string> {
   const bytes = new TextEncoder().encode(input);
@@ -78,8 +78,6 @@ export async function processLead(
   // it and its drip skips the text step without it, so THIS is what decides
   // "texted or not". Box checked → texted; box unchecked → not. Rides the
   // dedup-hit forward too, so a re-submit that opts in still upgrades consent.
-  const smsOptIn = consent != null;
-
   // ── Dedup window ────────────────────────────────────────────────────
   const key = await dedupKeyFor(lead);
   if (kv) {
@@ -98,7 +96,7 @@ export async function processLead(
         // Forward to the CRM even on a dedup hit so the text/drip goes out regardless of
         // duplicate status. LeadMailbox/GHL/Resend stay deduped (no double advisor pings);
         // the CRM cancels + restarts the lead's drip, so rapid re-submits yield one text.
-        ctx.waitUntil(runCrmWebhook(env, lead, smsOptIn));
+        ctx.waitUntil(runCrmWebhook(env, lead, consent));
         return {
           ok: true,
           lead_id: lead.lead_id,
@@ -132,7 +130,7 @@ export async function processLead(
   //   • runResend  — the website welcome/confirmation email is dropped; the funnel's
   //     Quick Quote (/api/quote/send) is the only lead email now.
   // So the worker just forwards to the CRM, which owns texting + the nurture drip.
-  ctx.waitUntil(runCrmWebhook(env, lead, smsOptIn));
+  ctx.waitUntil(runCrmWebhook(env, lead, consent));
 
   return { ok: true, lead_id: lead.lead_id, leadmailbox: lmResult };
 }
@@ -311,9 +309,10 @@ async function runResend(env: Env, db: Env["LEADS_DB"], lead: Lead): Promise<voi
  * early on a dedup hit, before this fires, so the CRM isn't double-posted
  * within the dedup window.
  */
-async function runCrmWebhook(env: Env, lead: Lead, smsOptIn = false): Promise<void> {
+async function runCrmWebhook(env: Env, lead: Lead, consent: TcpaConsent | null = null): Promise<void> {
   const url = env.CRM_LEAD_WEBHOOK || CRM_LEAD_WEBHOOK_URL;
   if (!url) return;
+  const smsOptIn = consent != null;
   const loanType = lead.quote_fields?.loanType || (String(lead.loan_request || "").toUpperCase().includes("DSCR") ? "DSCR" : "");
   const payload = {
     lead_id: lead.lead_id,
@@ -325,13 +324,17 @@ async function runCrmWebhook(env: Env, lead: Lead, smsOptIn = false): Promise<vo
     phone: lead.phone_e164 ?? "",
     // The CRM derives sms_consent from this (smsOptIn === "yes" && phone present)
     // and its drip skips the text step without it — this is the consent gate.
+    consent: true,
     smsOptIn: smsOptIn ? "yes" : "no",
+    consent_text: consent?.consent_text ?? "",
+    consent_version: consent?.consent_version ?? "",
     property_state: lead.property_state ?? "",
     loan_request: lead.loan_request ?? "",
     ...(loanType ? { loanType, tags: [loanType] } : {}),
     notes: lead.notes ?? "",
     source: lead.source ?? "smartr8.com",
     landing_page: lead.landing_page ?? "",
+    page_url: lead.landing_page ?? "",
     utm_source: lead.utm_source ?? "",
     utm_medium: lead.utm_medium ?? "",
     utm_campaign: lead.utm_campaign ?? "",
