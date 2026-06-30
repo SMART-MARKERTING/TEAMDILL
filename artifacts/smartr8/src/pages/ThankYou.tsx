@@ -47,13 +47,13 @@ export default function ThankYou() {
           p(cal, ar);
         };
       })(window, "https://app.cal.com/embed/embed.js", "init");
-      Cal("init", "15-min-loan-consult-meeting", { origin: "https://app.cal.com" });
-      Cal.ns["15-min-loan-consult-meeting"]("inline", {
+      Cal("init", "cdill-15min", { origin: "https://app.cal.com" });
+      Cal.ns["cdill-15min"]("inline", {
         elementOrSelector: "#my-cal-inline",
         config: { layout: "month_view" },
-        calLink: "mykoal/15-min-loan-consult-meeting",
+        calLink: "cdill/15min",
       });
-      Cal.ns["15-min-loan-consult-meeting"]("ui", { hideEventTypeDetails: false, layout: "month_view" });
+      Cal.ns["cdill-15min"]("ui", { hideEventTypeDetails: false, layout: "month_view" });
     `;
     document.body.appendChild(script);
 

@@ -9,7 +9,7 @@ import { ArrowRight, CalendarDays, FileText, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { useGA4 } from "@/hooks/useGA4";
 import { trackFbEvent } from "@/lib/fbq";
-const CAL_URL = "tel:+18054150275";
+const CAL_URL = "https://cal.com/cdill/15min";
 const HELOC_APPLICATION_URL = "https://heloc.adaxahome.com/account/heloc/register?referrer=2b35db42-99cb-4b47-b9d4-4a3dfe6926d1";
 
 export default function HelocWhatsnext() {
@@ -79,8 +79,8 @@ export default function HelocWhatsnext() {
                   <p className="text-sm text-muted-foreground leading-relaxed">Want help comparing your options before moving forward? Book a time to talk through your goals.</p>
                 </div>
                 <div className="mt-auto">
-                  <a href={CAL_URL} rel="noopener noreferrer" onClick={() => ga4.trackWhatsnextClick("schedule_call")}>
-                    <Button variant="outline" className="w-full h-11">Call Cameron <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                  <a href={CAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => ga4.trackWhatsnextClick("schedule_call")}>
+                    <Button variant="outline" className="w-full h-11">Book a Time <ArrowRight className="ml-2 h-4 w-4" /></Button>
                   </a>
                 </div>
               </CardContent>

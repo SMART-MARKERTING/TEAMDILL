@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CalendarDays, Phone, MessageSquare, Zap } from "lucide-react";
 import { Link } from "wouter";
+const CAL_URL = "https://cal.com/cdill/15min";
+
 export default function HelocNextSteps() {
   const search = useSearch();
   const firstName = new URLSearchParams(search).get("name") || "";
@@ -92,12 +94,13 @@ export default function HelocNextSteps() {
                 </div>
                 <div className="mt-auto">
                   <a
-                    href="tel:+18054150275"
+                    href={CAL_URL}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Call Cameron Dill"
+                    aria-label="Book a call with Cameron Dill"
                   >
                     <Button variant="outline" className="w-full h-11">
-                      Call Cameron
+                      Book a Time
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </a>

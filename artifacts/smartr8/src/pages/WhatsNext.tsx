@@ -9,7 +9,7 @@ import { ArrowRight, CalendarDays, FileText, Zap } from "lucide-react";
 import { trackFbEvent } from "@/lib/fbq";
 import { appendNextStepAction, type FunnelEntryButton } from "@/lib/submitLead";
 
-const CAL_URL = "tel:+18054150275";
+const CAL_URL = "https://cal.com/cdill/15min";
 const LENDINGPAD_URL =
   "https://prod.lendingpad.com/adaxa-home/pos#/?loid=6544142c-ce2a-4b1b-a621-c1d33fa3eb67";
 
@@ -154,7 +154,7 @@ export default function WhatsNext() {
               </p>
               <div className="mt-auto">
                 <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent text-white font-semibold px-4 py-2.5 text-sm group-hover:bg-accent/90 transition-colors">
-                  Call Cameron <ArrowRight className="h-4 w-4" />
+                  Book a Time <ArrowRight className="h-4 w-4" />
                 </span>
                 <div className="text-xs text-white/70 font-medium text-center mt-3">
                   No cost · No obligation · No credit pull
