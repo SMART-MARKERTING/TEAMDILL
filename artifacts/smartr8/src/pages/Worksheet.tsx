@@ -40,7 +40,7 @@ const PURCHASE_KEY = "smartr8_funnel_purchase_v1";
 // ── Funnel FAQ content (cash-out + rate-reduction only) ──────────────────────
 // Rendered below the funnel card on the indexable per-product routes. Each set
 // emits its own FAQPage schema (exactly one per page) via <FunnelFAQ/>. Copy is
-// compliance-safe: conditional language, no rates/figures. mykoal.com deep
+// compliance-safe: conditional language, no rates/figures. camdill.com deep
 // links carry the funnel-FAQ UTM set.
 interface FunnelFaqConfig {
   /** snake_case analytics page key. */

@@ -45,20 +45,20 @@ export function makeFunnelTracker(page: string) {
     formSubmit: () => ev("form", "submit"),
     faqExpand: (question: string) => ev("faq", "expand", { faq_question: question }),
     outboundCameronClick: (url: string) =>
-      ev("outbound_mykoal", "click", { destination_url: url }),
+      ev("outbound_camdill", "click", { destination_url: url }),
   };
 }
 
 export type FunnelTracker = ReturnType<typeof makeFunnelTracker>;
 
-// ── mykoal.com cross-domain links ───────────────────────────────────────────
-// Every smartr8 → mykoal link carries the funnel-FAQ UTM set so cross-domain
-// attribution stitches with the mirror convention on mykoal.com
+// ── camdill.com cross-domain links ───────────────────────────────────────────
+// Every smartr8 → CAMDILL link carries the funnel-FAQ UTM set so cross-domain
+// attribution stitches with the mirror convention on camdill.com
 // (utm_source=mykoal, utm_medium=learn_article, utm_campaign=ai_search_visibility).
 
-const MYKOAL_ORIGIN = "https://mykoal.com";
+const MYKOAL_ORIGIN = "https://camdill.com";
 
-/** Builds a UTM-tagged mykoal.com URL from a path like "/learn/...". */
+/** Builds a UTM-tagged camdill.com URL from a path like "/learn/...". */
 export function mykoalUrl(path: string): string {
   const base = path.startsWith("http") ? path : `${MYKOAL_ORIGIN}${path}`;
   try {
@@ -72,7 +72,7 @@ export function mykoalUrl(path: string): string {
   }
 }
 
-/** Canonical mykoal.com learn-article paths referenced from the funnels. */
+/** Canonical camdill.com learn-article paths referenced from the funnels. */
 export const MYKOAL_ARTICLES = {
   helocVsCashOut: "/learn/heloc-vs-cash-out-refinance",
   whenRefinance: "/learn/when-does-refinancing-make-sense",

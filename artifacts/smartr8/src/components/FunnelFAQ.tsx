@@ -29,7 +29,7 @@ export interface FaqItem {
 export interface GuideLink {
   href: string;
   label: string;
-  /** True when this link points at mykoal.com (fires the outbound event). */
+  /** True when this link points at camdill.com (fires the outbound event). */
   mykoal?: boolean;
 }
 
@@ -49,7 +49,7 @@ export interface FunnelFAQProps {
  * matching FAQPage JSON-LD built from the SAME `items` array — so the schema
  * text is always an exact match of what's on the page (exactly one FAQPage
  * block per page). Expanding an item fires a tracking event; clicking a
- * mykoal.com link fires an outbound event.
+ * camdill.com link fires an outbound event.
  */
 export function FunnelFAQ({ items, guideLinks, track, heading = "Frequently asked questions" }: FunnelFAQProps) {
   // Only fire faq_expand on open (not on collapse), once per question per open.

@@ -1,7 +1,7 @@
 // Compliance + licensing config for the conversion funnels.
 //
 // The exported names mirror the {{PLACEHOLDER}} contract shared with the
-// mykoal.com repo so the TrustBlock / ComplianceFooter component API matches
+// camdill.com repo so the TrustBlock / ComplianceFooter component API matches
 // across both sites. Values here are the real, public, site-wide figures that
 // are ALREADY rendered in <Footer/> and the funnel trust rows (NMLS numbers,
 // licensed states, EHO) — so live pages show real text, not "{{...}}".
